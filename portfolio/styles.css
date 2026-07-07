@@ -1,0 +1,325 @@
+/* =========================================================
+   Jacek Waz — Portfolio
+   Desktop-only, pixel-faithful bento layout (1440 design width)
+   ========================================================= */
+
+:root{
+  --page-bg:      #F2EFEF;
+  --card-white:   #FFFFFF;
+  --card-gray:    #E8E8E8;
+  --ink:          #1A1A1A;
+  --ink-body:     #404040;
+  --ink-muted:    #7A7A7A;
+  --border-soft:  #D4D4D4;
+  --pill-bg:      #EFF4FF;
+  --blue:         #007AFF;
+  --radius:       14px;
+}
+
+*{ box-sizing:border-box; }
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--page-bg);
+  font-family:"Inter","Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---------- Stage / canvas ---------- */
+.stage{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:24px;
+  box-sizing:border-box;
+}
+
+/* Wrapper occupies the SCALED layout size, so a scaled-down canvas no longer
+   reserves its full un-scaled height — this is what prevents a stray vertical
+   scrollbar when the interface shrinks responsively. */
+.canvas-wrap{
+  --s:1;
+  width:calc(1440px * var(--s));
+  height:calc(837px * var(--s));
+  flex:0 0 auto;
+}
+
+/* The design canvas keeps the exact Figma proportions and is scaled to fit
+   the viewport (see the fit() script; media queries are the no-JS fallback). */
+.canvas{
+  position:relative;
+  width:1440px;
+  height:837px;
+  transform:scale(var(--s));
+  transform-origin:top left;
+}
+
+/* ---------- Generic module / card ---------- */
+.module{
+  position:absolute;
+  transition:transform .28s cubic-bezier(.22,.61,.36,1);
+}
+.card{
+  position:absolute;
+  inset:0;
+  background:var(--card-white);
+  border-radius:var(--radius);
+  transition:box-shadow .28s cubic-bezier(.22,.61,.36,1);
+}
+.pad{ position:absolute; inset:0; padding:24px; }
+
+/* Hover lift + shadow — shadow only on the white/gray card shape,
+   never on protruding decorations (they are siblings of .card). */
+.module:not(.module--header):hover{ transform:translateY(-6px); }
+.module:not(.module--header):hover .card{
+  box-shadow:0 16px 34px -10px rgba(17,17,17,.22),
+             0 6px 14px -8px rgba(17,17,17,.16);
+}
+
+/* ---------- Positions (Figma-accurate) ---------- */
+.module--header{ left:29px;  top:40px;  width:1382px; height:83px; }
+.module--a1{     left:29px;  top:147px; width:666px;  height:313px; }
+.module--b1{     left:719px; top:147px; width:333px;  height:313px; }
+.module--c1{     left:1076px;top:147px; width:333px;  height:177px; }
+.module--c2{     left:1076px;top:348px; width:333px;  height:236px; }
+.module--c3{     left:1076px;top:608px; width:333px;  height:189px; }
+.module--a2{     left:29px;  top:484px; width:345px;  height:313px; }
+.module--b2{     left:398px; top:484px; width:654px;  height:313px; }
+
+/* Card fills */
+.module--header .card,
+.module--c3 .card{ background:var(--card-gray); }
+
+/* ---------- Header ---------- */
+.header__inner{
+  position:absolute; inset:0;
+  padding:16px 26px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+}
+.header__intro p{ margin:0; line-height:1.11; }
+.header__name{ font-size:16px; font-weight:600; color:var(--ink); letter-spacing:.1px; }
+.header__role,
+.header__tags{ font-size:15px; font-weight:500; color:#2c2c2c; }
+.header__contact{ text-align:right; }
+.header__line{ margin:0; font-size:14px; color:#2c2c2c; line-height:1.11; }
+
+.text-link{
+  color:#2c2c2c;
+  text-decoration:underline;
+  text-underline-offset:2px;
+  transition:color .18s ease;
+}
+.text-link:hover,
+.text-link:focus-visible{ color:var(--blue); text-decoration:underline; outline:none; }
+
+/* ---------- Typography ---------- */
+.title{
+  margin:0;
+  font-family:"ADLaM Display", system-ui, sans-serif;
+  font-weight:400;
+  font-size:24px;
+  line-height:1.112;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  text-transform:uppercase;
+}
+.title--sm{ font-size:24px; }
+.subtle{ margin:9px 0 0; font-size:13px; color:var(--ink-muted); font-weight:400; }
+.body{ margin:0; font-size:13px; line-height:1.5; color:var(--ink-body); }
+.bullets{
+  margin:10px 0 0; padding-left:16px;
+  font-size:13px; line-height:1.5; color:var(--ink-body);
+}
+.bullets li{ margin-bottom:7px; }
+.bullets strong{ color:var(--ink); font-weight:600; }
+strong{ font-weight:600; }
+
+/* ---------- CTA buttons ---------- */
+.cta{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  height:32px;
+  padding:0 8px 0 14px;
+  border:1px solid var(--border-soft);
+  border-radius:8px;
+  background:transparent;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background-color .18s ease, border-color .18s ease, color .18s ease;
+  color:var(--ink-body);
+}
+.cta__label{
+  font-size:13px;
+  font-weight:600;
+  line-height:1;
+  white-space:nowrap;
+  color:inherit;
+}
+.cta__icon{ display:inline-flex; width:20px; height:20px; flex:0 0 20px; }
+.cta__icon svg{ width:20px; height:20px; display:block; }
+.cta__icon svg path,
+.cta__icon svg line,
+.cta__icon svg polyline{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.67;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.cta__icon--ext svg path,
+.cta__icon--ext svg line,
+.cta__icon--ext svg polyline{ stroke-width:2; }
+
+/* Default: gray text + gray icon, light-gray border (inherited above) */
+
+/* Hover: text + icon turn vibrant blue, border unchanged, subtle fill */
+.cta:hover{
+  color:var(--blue);
+  background:#FAFAFA;
+  border-color:var(--border-soft);
+}
+
+/* Focused (keyboard): text + icon stay dark gray, border turns blue */
+.cta:focus-visible{
+  outline:none;
+  color:var(--ink-body);
+  border-color:var(--blue);
+  box-shadow:0 0 0 1px var(--blue);
+}
+
+/* ---------- A1 · UX/UI B2B SAAS ---------- */
+.a1__top{ display:flex; justify-content:space-between; align-items:flex-start; }
+.module--a1 .a1__top .cta{ margin-top:2px; }
+.a1__subtitle{ margin-top:12px; }
+.a1__body{ position:static; }
+/* Picture: dropped toward the bottom of the card, 24px visual left padding
+   aligned with the title/text above it. */
+.a1__dashboard{
+  position:absolute;
+  left:24px;
+  bottom:14px;
+  width:298px;
+  height:auto;
+  border-radius:8px;
+}
+/* Copy: raised up to start near the subtitle level */
+.a1__copy{
+  position:absolute;
+  top:86px;
+  right:22px;
+  width:296px;
+}
+.a1__copy .body{ font-size:12.5px; }
+.a1__copy .bullets{ margin-top:10px; font-size:12.5px; line-height:1.42; }
+.a1__copy .bullets li{ margin-bottom:6px; }
+
+/* ---------- B1 · Command Deck ---------- */
+.module--b1 .cta{ margin-top:17px; }
+/* Planets graphic aligned to the right edge of the white module and clipped
+   to the card's rounded rectangle (the teal sphere is cut at the right edge). */
+.module--b1 .card{ overflow:hidden; }
+.b1__graphic{
+  position:absolute;
+  right:0;
+  bottom:6px;
+  width:320px;
+  height:auto;
+}
+
+/* ---------- C1 · Saas Workflow ---------- */
+/* C1/C2/C3 CTA buttons anchored to the bottom-left of the module (24px padding) */
+.module--c1 .cta,
+.module--c2 .cta,
+.module--c3 .cta{
+  position:absolute;
+  left:24px;
+  bottom:24px;
+  margin-top:0;
+}
+.deco{ position:absolute; pointer-events:none; z-index:3; }
+.deco--loveit{ width:118px; height:auto; right:-27px; top:30px; }
+
+/* ---------- C2 · Forex Online Mobile ---------- */
+/* Phones sit bottom-right and are clipped by the card's rounded rectangle. */
+.module--c2 .card{ overflow:hidden; }
+.c2__phones{
+  position:absolute;
+  width:224px;
+  height:auto;
+  right:-27px;    /* nudged 7px right to hide a small black element at the edge */
+  top:122px;
+  pointer-events:none;
+}
+/* This CTA overlaps the phone graphic, so give it an opaque white fill
+   (exception — all other CTAs are transparent by default). */
+.module--c2 .cta{ background:#ffffff; }
+.module--c2 .cta:hover{ background:#fafafa; }
+
+/* ---------- C3 · Native Mobile Apps ---------- */
+.deco--b2c{ width:116px; height:auto; right:-24px; top:22px; }
+
+/* ---------- A2 · Fintech Dashboards ---------- */
+.module--a2 .cta{ margin-top:14px; }
+.a2__journey{
+  margin:26px 0 0;
+  font-size:11px; font-weight:700; letter-spacing:.6px;
+  color:#2c2c2c; text-transform:uppercase;
+}
+.a2__flow{ display:flex; align-items:stretch; gap:10px; margin-top:12px; }
+.pill{
+  flex:1 1 0;
+  background:var(--pill-bg);
+  border-radius:10px;
+  padding:14px 14px 16px;
+}
+.pill__title{ margin:0; font-size:15px; font-weight:600; color:var(--ink); line-height:1.2; }
+.pill__desc{ margin:8px 0 0; font-size:10.5px; line-height:1.35; color:#5a5f6b; }
+.pill__arrow{ align-self:center; font-size:18px; color:#3a3a3a; }
+.deco--great{ width:94px; height:auto; right:-22px; top:128px; }
+
+/* ---------- B2 · Forex Withdrawal ---------- */
+.b2__top{ display:flex; justify-content:space-between; align-items:flex-start; }
+.b2__body{ position:static; }
+/* Picture: down + left. PNG has ~6px built-in whitespace, so left:18 gives
+   a 24px visual padding aligned with the title/subtitle above it. */
+.b2__screens{
+  position:absolute;
+  left:18px;
+  bottom:24px;
+  width:300px;
+  height:auto;
+  border-radius:8px;
+}
+/* Copy sits to the right of the picture with a 14px gap (image right edge is
+   at 318px; copy starts at 332px) and never crosses that internal padding.
+   Both picture and copy are anchored to the bottom with a 24px padding. */
+.b2__copy{
+  position:absolute;
+  bottom:24px;
+  left:332px;
+  right:24px;
+}
+.b2__copy .body{ font-size:12px; }
+.b2__copy .bullets{ margin-top:10px; font-size:12px; line-height:1.44; }
+.b2__copy .bullets li{ margin-bottom:6px; }
+
+/* ---------- Responsive desktop scaling ---------- */
+/* Keeps exact proportions; only scales the whole canvas so the design
+   remains fully visible on smaller desktop displays. Not a mobile layout. */
+@media (max-width:1500px){
+  .canvas-wrap{ --s:.96; }
+}
+@media (max-width:1400px){
+  .canvas-wrap{ --s:.9; }
+}
+@media (max-width:1300px){
+  .canvas-wrap{ --s:.84; }
+}
+@media (max-width:1180px){
+  .canvas-wrap{ --s:.76; }
+}
