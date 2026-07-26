@@ -9,11 +9,33 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* SaaS/Fintech section image carousel — overlays the original image box, changes nothing else */
+    .a1__carousel{ position:relative; overflow:hidden; top:24px; }
+    .a1__carousel-sizer{ display:block; width:100%; height:auto; visibility:hidden; } /* invisible: keeps the exact original image box */
+    .a1__carousel-stage{ position:absolute; inset:0; }
+    .a1__carousel-slide{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:left bottom; opacity:0; transition:opacity .8s ease-in-out; }
+    .a1__carousel-slide.is-active{ opacity:1; }
+    /* Automated hover demo — mirrors the manual :hover lift + shadow exactly */
+    .module.is-auto-hover{ transform:translateY(-1.5px); }
+    .module.is-auto-hover .card{
+      box-shadow:0 16px 34px -10px rgba(17,17,17,.22),
+                 0 6px 14px -8px rgba(17,17,17,.16);
+    }
+    /* Faster transition while the auto-demo is running (manual hover keeps its own speed) */
+    .module.is-demo{ transition:transform .16s cubic-bezier(.22,.61,.36,1); }
+    .module.is-demo .card{ transition:box-shadow .16s cubic-bezier(.22,.61,.36,1); }
+    /* Star swarm layering: stars pass BEHIND these two modules (canvas z-index:10),
+       and OVER all the others (which stay below the canvas). */
+    .module--a1, .module--a2{ z-index:20; }
+  </style>
 </head>
 <body>
   <div class="stage">
     <div class="canvas-wrap">
     <main class="canvas" role="main" aria-label="Portfolio">
+      <!-- WEKTOROWY RÓJ GWIAZD (canvas wewnątrz skalowanej sceny) -->
+      <canvas id="starSwarmCanvas" style="position:absolute; pointer-events:none; z-index:10;"></canvas>
 
       <!-- ============ HEADER ============ -->
       <header class="module module--header">
@@ -38,7 +60,7 @@
           <div class="a1__top">
             <h2 class="title">UX/UI B2B SAAS<br />&amp; FINTECH WORK</h2>
             <a class="cta" href="saas-fintech-work.html" aria-label="View More SaaS Work">
-              <span class="cta__label">View More SaaS Work</span>
+              <span class="cta__label">View SaaS &amp; Fintech Work</span>
               <span class="cta__icon">
                 <svg viewBox="102 7 20 20" aria-hidden="true"><path d="M112 13.6667L115.333 17L112 20.3333M115.333 17H108.667M120.333 17C120.333 21.6024 116.602 25.3333 112 25.3333C107.398 25.3333 103.667 21.6024 103.667 17C103.667 12.3976 107.398 8.66666 112 8.66666C116.602 8.66666 120.333 12.3976 120.333 17Z"/></svg>
               </span>
@@ -46,7 +68,10 @@
           </div>
           <p class="subtle a1__subtitle">B2B SaaS &amp; Fintech, Enterprise Dashboards</p>
           <div class="a1__body">
-            <img class="a1__dashboard" src="assets/img_dashboard.png" alt="Enterprise SaaS analytics dashboard with charts and KPI metrics" />
+            <div class="a1__dashboard a1__carousel" role="img" aria-label="Enterprise SaaS analytics dashboard slideshow">
+              <img class="a1__carousel-sizer" src="assets/img_dashboard.png" alt="" aria-hidden="true" />
+              <div class="a1__carousel-stage" id="a1Carousel"></div>
+            </div>
             <div class="a1__copy">
               <p class="body">Measurable outcomes across data-heavy user-configurable SaaS dashboards:</p>
               <ul class="bullets">
@@ -203,6 +228,251 @@
       fit();
       window.addEventListener('resize', fit);
     })();
+  </script>
+
+  <script>
+    // Auto-cycling image carousel for the UX/UI B2B SaaS & Fintech section.
+    // Images mirror saas-fintech-work.html; cycles every 2 seconds with a crossfade.
+    (function () {
+      var DIR = './UX:UI B2B SAAS & FINTECH WORK/';
+      var FILES = ['2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png'];
+      var stage = document.getElementById('a1Carousel');
+      if (!stage) return;
+
+      // If the original dashboard image is unavailable, size the box from the first slide instead.
+      var sizer = document.querySelector('.a1__carousel-sizer');
+      if (sizer) sizer.addEventListener('error', function () { this.src = DIR + FILES[0]; }, { once: true });
+
+      var slides = FILES.map(function (file, i) {
+        var img = document.createElement('img');
+        img.className = 'a1__carousel-slide' + (i === 0 ? ' is-active' : '');
+        img.src = DIR + file;
+        img.alt = 'UX/UI B2B SaaS & Fintech work — image ' + (i + 1);
+        img.decoding = 'async';
+        // Fallback to a sibling copy of the file if the folder path isn't present.
+        img.addEventListener('error', function () { this.src = file; }, { once: true });
+        stage.appendChild(img);
+        return img;
+      });
+      if (slides.length < 2) return;
+
+      var idx = 0;
+      setInterval(function () {
+        slides[idx].classList.remove('is-active');
+        idx = (idx + 1) % slides.length;
+        slides[idx].classList.add('is-active');
+      }, 2000);
+
+      // Align the carousel's left edge exactly with the module title (accounts for the scaled frame).
+      var carousel = document.querySelector('.a1__carousel');
+      var title = document.querySelector('.module--a1 .title');
+      function alignLeft() {
+        if (!carousel || !title) return;
+        carousel.style.left = '0px';
+        var scaleEl = document.querySelector('.canvas-wrap') || document.body;
+        var s = parseFloat(getComputedStyle(scaleEl).getPropertyValue('--s')) || 1;
+        var diff = title.getBoundingClientRect().left - carousel.getBoundingClientRect().left;
+        carousel.style.left = (diff / s) + 'px';
+      }
+      alignLeft();
+      window.addEventListener('resize', alignLeft);
+      window.addEventListener('load', alignLeft);
+    })();
+  </script>
+
+  <script>
+  (function() {
+      const canvas = document.getElementById('starSwarmCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const CONFIG = {
+          intervalSeconds: 7,
+          durationSeconds: 2.9,
+          starCount: 75,
+          glowBlur: 15,
+          pathType: 'wave',
+          dynamicDistances: true,
+          colors: ["#7A22C8","#A838E8","#D846FF","#00E5FF","#00C853","#FFFFFF"]
+      };
+
+      // Rój zawsze pokrywa 100% szerokości/wysokości ekranu, niezależnie od
+      // skalowania sceny — canvas zostaje w kontekście .canvas (dla warstw z-index),
+      // ale jest rozciągany i przesuwany tak, by sięgać krawędzi viewportu.
+      const design = canvas.parentElement; // <main class="canvas">
+      function resize() {
+          const rect = design.getBoundingClientRect();
+          const s = (rect.width / 1440) || 1;
+          canvas.style.left   = (-rect.left / s) + 'px';
+          canvas.style.top    = (-rect.top  / s) + 'px';
+          canvas.style.width  = (window.innerWidth  / s) + 'px';
+          canvas.style.height = (window.innerHeight / s) + 'px';
+          canvas.width  = window.innerWidth;
+          canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      window.addEventListener('load', resize);
+      resize();
+
+      class StarParticle {
+          constructor(total, index) {
+              this.reset(total, index);
+          }
+          reset(total, index) {
+              this.relX = (Math.random() - 0.5) * 260 - (index / total) * 140;
+              this.normY = (Math.random() - 0.5) * 2;
+              this.phaseOffset = Math.random() * Math.PI * 2;
+              this.driftSpeedX = Math.random() * 2 + 1.5;
+              this.driftSpeedY = Math.random() * 2 + 1;
+              this.driftAmpX = Math.random() * 45 + 15;
+              this.driftAmpY = Math.random() * 40 + 15;
+              this.baseSize = Math.random() * 4 + 2.5;
+              this.size = this.baseSize;
+              this.color = CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+              this.twinkleSpeed = Math.random() * 0.08 + 0.03;
+              this.twinklePhase = Math.random() * Math.PI * 2;
+              this.opacity = Math.random() * 0.7 + 0.3;
+              this.rotation = Math.random() * Math.PI;
+              this.rotSpeed = (Math.random() - 0.5) * 0.04;
+              this.type = Math.random() > 0.4 ? 'sparkle' : (Math.random() > 0.5 ? 'diamond' : 'circle');
+          }
+          update() {
+              this.twinklePhase += this.twinkleSpeed;
+              this.rotation += this.rotSpeed;
+              this.size = this.baseSize * (1 + Math.sin(this.twinklePhase) * 0.25);
+          }
+          draw(ctx, cx, cy, swarmOpacity, progress = 0) {
+              const fullHeightY = this.normY * (canvas.height * 0.44);
+              let currentRelX = this.relX;
+              let currentRelY = fullHeightY;
+
+              if (CONFIG.dynamicDistances) {
+                  const distanceScale = 1 + Math.sin(progress * Math.PI * 2.5 + this.phaseOffset) * 0.35;
+                  const driftX = Math.sin(progress * Math.PI * this.driftSpeedX + this.phaseOffset) * this.driftAmpX;
+                  const driftY = Math.cos(progress * Math.PI * this.driftSpeedY + this.phaseOffset) * this.driftAmpY;
+                  currentRelX = (this.relX * distanceScale) + driftX;
+                  currentRelY = (fullHeightY * distanceScale) + driftY;
+              }
+
+              const x = cx + currentRelX;
+              const y = cy + currentRelY;
+              const alpha = this.opacity * swarmOpacity;
+              if (alpha <= 0.01) return;
+
+              ctx.save();
+              ctx.translate(x, y);
+              ctx.rotate(this.rotation);
+              ctx.globalAlpha = alpha;
+
+              if (CONFIG.glowBlur > 0) {
+                  ctx.shadowColor = this.color;
+                  ctx.shadowBlur = CONFIG.glowBlur;
+              }
+              ctx.fillStyle = this.color;
+
+              if (this.type === 'sparkle') {
+                  const outer = this.size * 1.8, inner = this.size * 0.35;
+                  ctx.beginPath();
+                  for (let i = 0; i < 4; i++) {
+                      const a = (i * Math.PI) / 2, na = a + Math.PI / 4;
+                      ctx.lineTo(Math.cos(a) * outer, Math.sin(a) * outer);
+                      ctx.lineTo(Math.cos(na) * inner, Math.sin(na) * inner);
+                  }
+                  ctx.closePath();
+                  ctx.fill();
+              } else if (this.type === 'diamond') {
+                  const w = this.size * 0.8, h = this.size * 1.4;
+                  ctx.beginPath();
+                  ctx.moveTo(0, -h); ctx.lineTo(w, 0); ctx.lineTo(0, h); ctx.lineTo(-w, 0);
+                  ctx.closePath(); ctx.fill();
+              } else {
+                  ctx.beginPath();
+                  ctx.arc(0, 0, this.size * 0.5, 0, Math.PI * 2);
+                  ctx.fill();
+              }
+              ctx.restore();
+          }
+      }
+
+      const particles = Array.from({ length: CONFIG.starCount }, (_, i) => new StarParticle(CONFIG.starCount, i));
+      let isSwarmActive = false;
+      let swarmStartTime = 0;
+      let lastLaunchTime = Date.now();
+
+      // Moduły podnoszone samoczynnie tylko w chwili, gdy przelatuje pod nimi rój.
+      const modA1 = document.querySelector('.module--a1'); // UX/UI B2B SAAS & FINTECH WORK
+      const modA2 = document.querySelector('.module--a2'); // FINTECH DASHBOARDS
+      const LIFT_PAD = 160;  // jak wcześnie/późno moduł reaguje na środek roju (px ekranu)
+      const A2_DELAY = 500;      // a2 podnosi się 0,5 s po a1
+      const A2_DROP_DELAY = 500;  // a2 opada 0,5 s po opadnięciu a1
+      let a1LiftTime = 0;    // moment podniesienia a1 w bieżącym cyklu
+      let a1DropTime = 0;    // moment opadnięcia a1 w bieżącym cyklu
+      function setLift(mod, on) {
+          if (!mod) return;
+          mod.classList.toggle('is-auto-hover', on);
+      }
+      function clearLift() { setLift(modA1, false); setLift(modA2, false); a1LiftTime = 0; a1DropTime = 0; }
+
+      function launch() {
+          isSwarmActive = true;
+          swarmStartTime = performance.now();
+          lastLaunchTime = Date.now();
+          particles.forEach((p, i) => p.reset(CONFIG.starCount, i));
+          a1LiftTime = 0;
+          a1DropTime = 0;
+      }
+
+      function animate(now) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const timeSinceLast = (Date.now() - lastLaunchTime) / 1000;
+
+          if (timeSinceLast >= CONFIG.intervalSeconds && !isSwarmActive) {
+              launch();
+          }
+
+          if (isSwarmActive) {
+              const elapsed = (now - swarmStartTime) / 1000;
+              const progress = elapsed / CONFIG.durationSeconds;
+
+              if (progress >= 1.0) {
+                  isSwarmActive = false;
+                  clearLift();
+              } else {
+                  const cx = -150 + progress * (canvas.width + 300);
+                  let cy = canvas.height * 0.45;
+                  if (CONFIG.pathType === 'wave') {
+                      cy = (canvas.height * 0.4) + Math.sin(progress * Math.PI * 1.5) * (canvas.height * 0.18);
+                  } else if (CONFIG.pathType === 'diagonal') {
+                      cy = (canvas.height * 0.25) + progress * (canvas.height * 0.5);
+                  }
+
+                  let opacity = 1.0;
+                  if (progress < 0.15) opacity = progress / 0.15;
+                  else if (progress > 0.85) opacity = (1.0 - progress) / 0.15;
+
+                  particles.forEach(p => { p.update(); p.draw(ctx, cx, cy, opacity, progress); });
+
+                  // a1 podnosi się, gdy środek roju wchodzi w jego poziomy zakres.
+                  const r1 = modA1.getBoundingClientRect();
+                  const a1On = cx >= r1.left - LIFT_PAD && cx <= r1.right + LIFT_PAD;
+                  if (a1On && a1LiftTime === 0) a1LiftTime = now;
+                  setLift(modA1, a1On);
+                  // a2 (FINTECH DASHBOARDS): podnosi się 0,5 s po a1, opada od razu gdy rój opuści jego przestrzeń.
+                  const r2 = modA2.getBoundingClientRect();
+                  let a2On = false;
+                  if (a1LiftTime > 0 && (now - a1LiftTime) >= A2_DELAY) {
+                      a2On = cx <= r2.right + LIFT_PAD;
+                  }
+                  setLift(modA2, a2On);
+              }
+          } else {
+              clearLift();
+          }
+          requestAnimationFrame(animate);
+      }
+
+      launch();
+      requestAnimationFrame(animate);
+  })();
   </script>
 </body>
 </html>

@@ -21,6 +21,7 @@
 html,body{
   margin:0;
   padding:0;
+  overflow:hidden;
   background:var(--page-bg);
   font-family:"Inter","Helvetica Neue",Arial,sans-serif;
   color:var(--ink);
