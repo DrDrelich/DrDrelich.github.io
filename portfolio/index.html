@@ -28,6 +28,24 @@
     /* Star swarm layering: stars pass BEHIND these two modules (canvas z-index:10),
        and OVER all the others (which stay below the canvas). */
     .module--a1, .module--a2{ z-index:20; }
+
+    /* B1 · UX FLOW MAP — EXAMPLES.
+       Scoped to .module--b1 only; the module keeps its original 333×313 box. */
+    .module--b1 .title{ letter-spacing:-0.02em; } /* -2% */
+    .module--b1 .b1flow{
+      position:absolute;
+      left:24px; right:24px;
+      top:112px; bottom:70px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .module--b1 .b1flow__img{ max-width:100%; max-height:100%; width:auto; height:auto; display:block; }
+    /* Anchor the CTA to the bottom-left like the C-column modules
+       (overrides the inherited .module--b1 .cta{margin-top:17px}). */
+    .module--b1 .b1flow__cta{
+      position:absolute;
+      left:24px; bottom:24px;
+      margin-top:0;
+    }
   </style>
 </head>
 <body>
@@ -85,15 +103,16 @@
         </div>
       </section>
 
-      <!-- ============ B1 · COMMAND DECK ============ -->
+      <!-- ============ B1 · UX FLOW MAP — EXAMPLES ============ -->
       <section class="module module--b1">
-        <div class="card">
-          <img class="b1__graphic" src="assets/img_planets.png" alt="Space-themed project management interface with orbital station nodes" />
-        </div>
+        <div class="card"></div>
         <div class="pad">
-          <h2 class="title">COMMAND DECK.<br />PROJECT MANAGEMENT</h2>
-          <p class="subtle">Interactive website</p>
-          <a class="cta cta--ext" href="https://drdrelich.github.io/command-deck-space-project-management/starboard-index.html" target="_blank" rel="noopener noreferrer" aria-label="View In New Window — Command Deck">
+          <h2 class="title">UX FLOW MAP -<br />EXAMPLES</h2>
+          <p class="subtle">Figma File</p>
+          <div class="b1flow">
+            <img class="b1flow__img" src="assets/schema.png" alt="UX flow map diagram: a Start step leads to a Process step that branches into two parallel Process steps, which feed a Decision that resolves to Success." />
+          </div>
+          <a class="cta cta--ext b1flow__cta" href="https://www.figma.com/design/pux59eq55df1Taos9BN1IV/UX-Flow-Example?node-id=0-1&t=ByRMduNkmhP1G8Zs-1" target="_blank" rel="noopener noreferrer" aria-label="View In New Window — UX Flow Map, Examples">
             <span class="cta__label">View In New Window</span>
             <span class="cta__icon cta__icon--ext">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
