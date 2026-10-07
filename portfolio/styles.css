@@ -264,23 +264,44 @@ strong{ font-weight:600; }
 /* ---------- C3 · Native Mobile Apps ---------- */
 .deco--b2c{ width:116px; height:auto; right:-24px; top:22px; }
 
-/* ---------- A2 · Fintech Dashboards ---------- */
+/* ---------- A2 · Design System — Samples ---------- */
 .module--a2 .cta{ margin-top:14px; }
-.a2__journey{
-  margin:26px 0 0;
-  font-size:11px; font-weight:700; letter-spacing:.6px;
-  color:#2c2c2c; text-transform:uppercase;
+/* Token rows anchored to the bottom of the card (24px padding), full content width. */
+.ds__rows{
+  position:absolute;
+  left:24px; right:24px; bottom:24px;
+  display:flex; flex-direction:column; gap:6px;
 }
-.a2__flow{ display:flex; align-items:stretch; gap:10px; margin-top:12px; }
-.pill{
+.ds__row{ display:flex; align-items:center; gap:7px; }
+.ds__token,
+.ds__value{
   flex:1 1 0;
-  background:var(--pill-bg);
-  border-radius:10px;
-  padding:14px 14px 16px;
+  min-width:0;
+  display:flex; align-items:center; gap:8px;
+  padding:3px 10px;
+  border-radius:7px;
+  font-size:10.5px;
+  line-height:1;
+  color:var(--ink-muted);
+  white-space:nowrap;
+  overflow:hidden;
 }
-.pill__title{ margin:0; font-size:15px; font-weight:600; color:var(--ink); line-height:1.2; }
-.pill__desc{ margin:8px 0 0; font-size:10.5px; line-height:1.35; color:#5a5f6b; }
-.pill__arrow{ align-self:center; font-size:18px; color:#3a3a3a; }
+.ds__token{ background:#F2F2F1; }
+.ds__value{ background:#fff; border:1px solid #E7E7E5; }
+.ds__arrow{ flex:0 0 auto; color:#b4b4b4; font-size:12px; }
+.ds__dot{
+  flex:0 0 auto; width:13px; height:13px; border-radius:50%;
+  border:1.5px solid #9aa0a6;
+  background:linear-gradient(to right, #9aa0a6 50%, transparent 50%);
+}
+.ds__swatch{
+  flex:0 0 auto; width:13px; height:13px; border-radius:3px;
+  border:1px solid #D4D4D4;
+}
+.ds__swatch--white{ background:#ffffff; }
+.ds__swatch--gray{ background:#F3F4F6; }
+.ds__swatch--navy{ background:#334155; border-color:#334155; }
+.ds__swatch--sky{ background:#38BDF8; border-color:#38BDF8; }
 .deco--great{ width:94px; height:auto; right:-22px; top:128px; }
 
 /* ---------- B2 · Forex Withdrawal ---------- */
