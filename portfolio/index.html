@@ -46,6 +46,39 @@
       left:24px; bottom:24px;
       margin-top:0;
     }
+
+    /* C2 · INTERACTION DESIGN — submission timeline from the handoff spec.
+       Scoped to .module--c2; the module keeps its original 333×236 box. */
+    .module--c2 .ixd{
+      position:absolute;
+      left:25px; right:0;           /* 0 ms tick sits on the title's left edge */
+      top:93px; height:68px;
+    }
+    .module--c2 .ixd__tick{           /* ms label centred over a 1px gridline */
+      position:absolute; top:0; bottom:0; width:1px;
+      display:flex; justify-content:center; white-space:nowrap;
+      font-size:10.5px; line-height:1; color:#9A9A9A;
+    }
+    .module--c2 .ixd__tick::after{
+      content:""; position:absolute; left:0; top:13px; bottom:0;
+      width:1px; background:#D4D4D4;
+    }
+    .module--c2 .ixd__bar{
+      position:absolute; height:24px;
+      display:flex; align-items:center; padding-left:8px;
+      font-size:10.5px; font-weight:600; letter-spacing:-0.01em; color:#fff;
+      white-space:nowrap; overflow:hidden; border-radius:6px;
+    }
+    .module--c2 .ixd__bar--pressed{ left:0;    width:60px; top:17px; background:#12225C; }
+    .module--c2 .ixd__bar--swap{    left:61px; width:79px; top:43px; background:#10803F; }
+    .module--c2 .ixd__bar--loading{ left:142px; right:0;   top:43px; background:#16994F; border-radius:6px 0 0 6px; }
+    .module--c2 .ixd__ctas{
+      position:absolute; left:24px; bottom:24px;
+      display:flex; gap:10px;
+    }
+    /* Two CTAs share the 285px content width, so they're a touch more compact than the others. */
+    .module--c2 .ixd__ctas .cta{ position:static; gap:9px; padding:0 7px 0 11px; }
+    .module--c2 .ixd__ctas .cta__label{ font-size:12px; }
   </style>
 </head>
 <body>
@@ -137,20 +170,35 @@
         <img class="deco deco--loveit" src="assets/deco_love_it.png" alt="" aria-hidden="true" />
       </section>
 
-      <!-- ============ C2 · FOREX MARKET ONLINE MOBILE ============ -->
+      <!-- ============ C2 · INTERACTION DESIGN ============ -->
       <section class="module module--c2">
-        <div class="card">
-          <img class="c2__phones" src="assets/forex_phones_hd.png" alt="" aria-hidden="true" />
-        </div>
+        <div class="card"></div>
         <div class="pad">
-          <h2 class="title">FOREX MARKET<br />ONBOARDING.<br />MOBILE PROTOTYPE</h2>
-          <p class="subtle">Mobile web views</p>
-          <a class="cta cta--ext" href="https://onboarding-mobile-78764d.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="View In New Window — Forex Onboarding Mobile Website">
-            <span class="cta__label">View In New Window</span>
-            <span class="cta__icon cta__icon--ext">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </span>
-          </a>
+          <h2 class="title">INTERACTION DESIGN</h2>
+          <p class="subtle">Case Study + Specification</p>
+          <div class="ixd" role="img" aria-label="Submission timeline: Pressed from 0 to 100 ms, Swap from 100 to 250 ms, then a loading spinner at 800 ms per revolution">
+            <span class="ixd__tick" style="left:0">0</span>
+            <span class="ixd__tick" style="left:60px">100</span>
+            <span class="ixd__tick" style="left:141px">250</span>
+            <span class="ixd__tick" style="left:268px">500</span>
+            <span class="ixd__bar ixd__bar--pressed">Pressed</span>
+            <span class="ixd__bar ixd__bar--swap">Swap</span>
+            <span class="ixd__bar ixd__bar--loading">Loading spinner (800 ms / rev)</span>
+          </div>
+          <div class="ixd__ctas">
+            <a class="cta" href="interaction-design-case-study.html" aria-label="View Case Study — Interaction Design">
+              <span class="cta__label">View Case Study</span>
+              <span class="cta__icon">
+                <svg viewBox="102 7 20 20" aria-hidden="true"><path d="M112 13.6667L115.333 17L112 20.3333M115.333 17H108.667M120.333 17C120.333 21.6024 116.602 25.3333 112 25.3333C107.398 25.3333 103.667 21.6024 103.667 17C103.667 12.3976 107.398 8.66666 112 8.66666C116.602 8.66666 120.333 12.3976 120.333 17Z"/></svg>
+              </span>
+            </a>
+            <a class="cta" href="interaction-design-handoff-spec.html" aria-label="Handoff Spec — Interaction Design handoff specification">
+              <span class="cta__label">Handoff Spec</span>
+              <span class="cta__icon">
+                <svg viewBox="102 7 20 20" aria-hidden="true"><path d="M112 13.6667L115.333 17L112 20.3333M115.333 17H108.667M120.333 17C120.333 21.6024 116.602 25.3333 112 25.3333C107.398 25.3333 103.667 21.6024 103.667 17C103.667 12.3976 107.398 8.66666 112 8.66666C116.602 8.66666 120.333 12.3976 120.333 17Z"/></svg>
+              </span>
+            </a>
+          </div>
         </div>
       </section>
 
