@@ -7,7 +7,7 @@
   <meta name="description" content="Interaction design handoff specification by Jacek Waz — FOREX onboarding triggers, states, motion and accessibility." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Inter:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     /* =========================================================
@@ -191,6 +191,114 @@
       border-radius:12px;
       border:1px solid #E7E7E5;        /* white PDF pages on a white panel */
     }
+
+    /* ---------- Cover: clickable Contents rows over the image ---------- */
+    .gallery__cover{ position:relative; }
+    .toc-link{
+      position:absolute;
+      left:61%;                        /* Contents rows, as % of the cover image */
+      width:30.8%;
+      height:4.1%;
+      border-radius:6px;
+      transition:background-color .18s ease;
+    }
+    .toc-link:hover{ background:rgba(255,255,255,.08); }
+    .toc-link:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+    /* ---------- Live page: B · Easing curves (animated, replaces 4.png) ----------
+       Laid out at the print page size (297 × 210 mm = 1122.5 × 793.7 px) with the
+       spec's own styles, then scaled to the gallery width like the PNG pages. */
+    .mip-wrap{
+      position:relative;
+      width:100%;
+      aspect-ratio:2668 / 1886;
+      overflow:hidden;
+      border-radius:12px;
+      border:1px solid #E7E7E5;
+      background:#FFFFFF;
+    }
+    .mip{
+      --fg:#111827; --muted:#5B6472; --line:#E1E5EB; --surface:#FFFFFF; --surface-2:#F1F3F6;
+      --navy:#12225C; --brand:#10803F; --brand-soft:#E8F5EE; --warn:#B45309; --warn-soft:#FFF7E6;
+      --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --slow:1;
+      --ease-enter:cubic-bezier(0.2, 0, 0, 1);
+      --ease-exit:cubic-bezier(0.3, 0, 1, 1);
+      --ease-standard:cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-success:cubic-bezier(0.34, 1.56, 0.64, 1);
+      position:absolute; top:0; left:0;
+      width:1122.5px; height:793.7px;
+      transform:scale(var(--k, 1)); transform-origin:top left;
+      padding:49px 57px 0;
+      display:flex; flex-direction:column;
+      font-family:"DM Sans", ui-sans-serif, system-ui, sans-serif;
+      font-size:12px; line-height:1.45; color:var(--fg);
+      -webkit-font-smoothing:antialiased;
+    }
+    .mip code{ font-family:var(--mono); font-size:.88em; }
+    .mip-ph{ display:flex; flex-direction:column; gap:4px; margin-bottom:22px; }
+    .mip-eyebrow{ font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--brand); }
+    .mip h2{ margin:0; font-size:26px; line-height:1.15; letter-spacing:-.01em; font-weight:700; }
+    .mip h2 .mip-tag{ font-family:var(--mono); font-size:15px; font-weight:500; color:var(--brand); margin-right:10px; vertical-align:3px; }
+    .mip-lede{ margin:2px 0 0; color:var(--muted); font-size:13px; max-width:756px; }
+
+    .mip-bar{ display:flex; align-items:center; justify-content:space-between; gap:24px; margin-bottom:14px; }
+    .mip-bar p{ margin:0; color:var(--muted); font-size:12.5px; max-width:640px; }
+    .mip-slowmo{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap; }
+    .mip-slowmo input{ width:15px; height:15px; margin:0; accent-color:var(--brand); cursor:pointer; }
+
+    .mip-curves{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:19px; }
+    .mip-curve{ display:flex; flex-direction:column; min-width:0; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+    .mip-curve > svg{ display:block; height:150px; width:auto; align-self:flex-start; margin-bottom:10px; overflow:visible; }
+    .mip-curve h3{ margin:0 0 2px; font-size:15px; }
+    .mip-curve > p{ margin:0; font-size:11px; color:var(--muted); white-space:nowrap; }
+
+    .mip-demo{ margin:12px 0 0; }
+    .mip-screen{ position:relative; height:180px; border-radius:12px; background:var(--surface-2); border:1px solid var(--line); overflow:hidden; }
+    .mip-ghost, .mip-content{ position:absolute; top:12px; left:12px; right:12px; display:grid; gap:7px; }
+    .mip-ghost i, .mip-content i{ display:block; height:7px; border-radius:4px; background:#DDE1E7; }
+    .mip-ghost i.field, .mip-content i.field{ height:22px; border-radius:6px; background:var(--surface); border:1px solid var(--line); }
+    .mip-content i.cta{ height:22px; border-radius:999px; background:var(--brand); margin-top:2px; }
+    .mip-ghost i.otp{ height:26px; background:none; display:grid; grid-template-columns:repeat(6, 1fr); gap:4px; }
+    .mip-ghost i.otp s{ border-radius:5px; background:var(--surface); border:1px solid var(--line); }
+
+    .mip-scrim{ position:absolute; inset:0; background:rgba(17,24,39,.4); opacity:0; }
+    .mip-sheet{ position:absolute; left:0; right:0; bottom:0; display:grid; gap:2px; padding:6px 10px 8px; background:var(--surface); border-radius:14px 14px 0 0; box-shadow:0 -6px 18px rgba(0,0,0,.15); font-size:11px; transform:translateY(100%); }
+    .mip-grab{ width:26px; height:3px; border-radius:2px; background:var(--line); justify-self:center; margin-bottom:3px; }
+    .mip-sheet b{ font-size:11.5px; margin-bottom:2px; }
+    .mip-row{ display:flex; align-items:center; gap:6px; padding:3px 5px; border-radius:7px; }
+    .mip-row.sel{ background:var(--brand-soft); font-weight:600; }
+    .mip-row em{ font-style:normal; font-size:8px; font-weight:700; color:var(--muted); width:17px; height:17px; border-radius:50%; background:var(--surface-2); display:grid; place-items:center; flex:none; }
+    .mip-row small{ margin-left:auto; color:var(--muted); font-size:11px; }
+    .mip-demo.play .mip-scrim{ opacity:1; transition:opacity calc(320ms * var(--slow)) var(--ease-enter); }
+    .mip-demo.play .mip-sheet{ transform:none; transition:transform calc(320ms * var(--slow)) var(--ease-enter); }
+
+    .mip-toast{ position:absolute; left:9px; right:9px; bottom:9px; display:flex; align-items:center; gap:7px; padding:8px 10px; background:#111827; color:#fff; border-radius:10px; font-size:11px; box-shadow:0 6px 16px rgba(0,0,0,.25); }
+    .mip-toast .info{ width:13px; height:13px; border-radius:50%; background:#70747D; flex:none; display:grid; place-items:center; }
+    .mip-toast .info svg{ width:9px; height:9px; display:block; }
+    .mip-demo.play .mip-toast{ transform:translateY(calc(100% + 20px)); opacity:0; transition:transform calc(250ms * var(--slow)) var(--ease-exit), opacity calc(250ms * var(--slow)) var(--ease-exit); }
+
+    .mip-banner{ position:absolute; top:0; left:0; right:0; height:28px; display:flex; align-items:center; gap:7px; padding:0 10px; background:var(--warn-soft); color:var(--warn); font-size:11px; font-weight:600; transform:translateY(-100%); }
+    .mip-wifi{ width:9px; height:9px; border-radius:50%; border:2px solid currentColor; flex:none; }
+    .mip-demo.play .mip-banner{ transform:none; transition:transform calc(250ms * var(--slow)) var(--ease-standard); }
+    .mip-demo.play .mip-content{ transform:translateY(28px); transition:transform calc(250ms * var(--slow)) var(--ease-standard); }
+
+    .mip-screen.center{ display:grid; place-items:center; align-content:center; gap:8px; }
+    .mip-check{ width:52px; height:52px; opacity:0; transform:scale(.6); }
+    .mip-check circle{ fill:var(--brand); }
+    .mip-check path{ fill:none; stroke:#fff; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:40; stroke-dashoffset:40; }
+    .mip-done{ font-size:13px; opacity:0; }
+    .mip-demo.play .mip-check{ opacity:1; transform:none; transition:transform calc(400ms * var(--slow)) var(--ease-success), opacity calc(150ms * var(--slow)) linear; }
+    .mip-demo.play .mip-check path{ stroke-dashoffset:0; transition:stroke-dashoffset calc(300ms * var(--slow)) var(--ease-enter) calc(150ms * var(--slow)); }
+    .mip-demo.play .mip-done{ opacity:1; transition:opacity calc(200ms * var(--slow)) linear calc(250ms * var(--slow)); }
+
+    .mip-demo figcaption{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; font-size:11px; color:var(--muted); }
+    .mip-replay{ font:inherit; font-size:11px; font-weight:600; color:var(--brand); background:none; border:1px solid var(--line); border-radius:999px; padding:3px 10px; cursor:pointer; white-space:nowrap; transition:background-color .18s ease; }
+    .mip-replay:hover{ background:var(--brand-soft); }
+    .mip-replay:focus-visible, .mip-slowmo input:focus-visible{ outline:2px solid #0955B5; outline-offset:2px; }
+
+    .mip-pf{ flex:none; height:45px; margin-top:auto; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--line); font-size:10px; color:var(--muted); }
+    .mip-pf b{ color:var(--fg); font-weight:600; }
   </style>
 </head>
 <body>
@@ -239,6 +347,75 @@
    </div>
   </div>
 
+  <!-- Live page 4 (B · Easing curves): rendered in place of 4.png by the gallery script -->
+  <template id="live-motion">
+    <section class="mip-wrap" aria-label="B · Easing curves in the interface">
+      <div class="mip">
+        <header class="mip-ph">
+          <div class="mip-eyebrow">Section B · Motion in practice</div>
+          <h2><span class="mip-tag">B</span>Easing curves in the interface</h2>
+          <p class="mip-lede">Each curve with the onboarding moment it drives. Charts plot progress (vertical) over time (horizontal); the dashed line is the end state.</p>
+        </header>
+        <div class="mip-bar">
+          <p>Each curve has a live example from this onboarding. Examples loop while they are on screen; turn on slow motion to see the shape of the curve.</p>
+          <label class="mip-slowmo"><input type="checkbox" class="mip-slow-toggle"> Slow motion (4×)</label>
+        </div>
+        <div class="mip-curves">
+          <div class="mip-curve">
+            <svg viewBox="0 -26 120 146" aria-hidden="true"><path d="M10 110 L10 -20 M10 110 L110 110" fill="none" stroke="#E1E5EB" stroke-width="1.5"/><path d="M10 10 L110 10" stroke="#E1E5EB" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M10 110 C30 110 10 10 110 10" fill="none" stroke="#10803F" stroke-width="3" stroke-linecap="round"/></svg>
+            <h3>Emphasized decelerate</h3><p>Enter · <code>0.2, 0, 0, 1</code></p>
+            <figure class="mip-demo play" data-demo="enter">
+              <div class="mip-screen" aria-hidden="true">
+                <div class="mip-ghost"><i style="width:62%"></i><i style="width:86%"></i><i class="field"></i><i class="field"></i></div>
+                <div class="mip-scrim"></div>
+                <div class="mip-sheet"><span class="mip-grab"></span><b>Select country code</b>
+                  <span class="mip-row sel"><em>PL</em>Poland<small>+48</small></span>
+                  <span class="mip-row"><em>DE</em>Germany<small>+49</small></span>
+                  <span class="mip-row"><em>GB</em>United Kingdom<small>+44</small></span>
+                </div>
+              </div>
+              <figcaption><span>Country sheet slides in · 320 ms</span><button type="button" class="mip-replay" aria-label="Replay country sheet animation">Replay</button></figcaption>
+            </figure>
+          </div>
+          <div class="mip-curve">
+            <svg viewBox="0 -26 120 146" aria-hidden="true"><path d="M10 110 L10 -20 M10 110 L110 110" fill="none" stroke="#E1E5EB" stroke-width="1.5"/><path d="M10 10 L110 10" stroke="#E1E5EB" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M10 110 C40 110 110 10 110 10" fill="none" stroke="#10803F" stroke-width="3" stroke-linecap="round"/></svg>
+            <h3>Accelerate</h3><p>Exit · <code>0.3, 0, 1, 1</code></p>
+            <figure class="mip-demo" data-demo="exit">
+              <div class="mip-screen" aria-hidden="true">
+                <div class="mip-ghost"><i style="width:62%"></i><i style="width:86%"></i><i class="otp"><s></s><s></s><s></s><s></s><s></s><s></s></i></div>
+                <div class="mip-toast"><span class="info"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.5v4"/><circle cx="8" cy="5" r=".4" fill="#fff"/></svg></span>Code sent to +48 ••• 123</div>
+              </div>
+              <figcaption><span>Toast leaves the screen · 250 ms</span><button type="button" class="mip-replay" aria-label="Replay toast animation">Replay</button></figcaption>
+            </figure>
+          </div>
+          <div class="mip-curve">
+            <svg viewBox="0 -26 120 146" aria-hidden="true"><path d="M10 110 L10 -20 M10 110 L110 110" fill="none" stroke="#E1E5EB" stroke-width="1.5"/><path d="M10 10 L110 10" stroke="#E1E5EB" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M10 110 C50 110 30 10 110 10" fill="none" stroke="#10803F" stroke-width="3" stroke-linecap="round"/></svg>
+            <h3>Standard</h3><p>On-screen move · <code>0.4, 0, 0.2, 1</code></p>
+            <figure class="mip-demo play" data-demo="move">
+              <div class="mip-screen" aria-hidden="true">
+                <div class="mip-banner"><span class="mip-wifi"></span>No internet connection</div>
+                <div class="mip-content"><i style="width:62%"></i><i style="width:86%"></i><i class="field"></i><i class="field"></i><i class="cta"></i></div>
+              </div>
+              <figcaption><span>Offline banner pushes content · 250 ms</span><button type="button" class="mip-replay" aria-label="Replay offline banner animation">Replay</button></figcaption>
+            </figure>
+          </div>
+          <div class="mip-curve">
+            <svg viewBox="0 -26 120 146" aria-hidden="true"><path d="M10 110 L10 -20 M10 110 L110 110" fill="none" stroke="#E1E5EB" stroke-width="1.5"/><path d="M10 10 L110 10" stroke="#E1E5EB" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M10 110 C44 -46 74 10 110 10" fill="none" stroke="#10803F" stroke-width="3" stroke-linecap="round"/></svg>
+            <h3>Overshoot</h3><p>Completion · <code>0.34, 1.56, 0.64, 1</code></p>
+            <figure class="mip-demo play" data-demo="success">
+              <div class="mip-screen center" aria-hidden="true">
+                <svg class="mip-check" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30"/><path d="M20 33 L28 41 L44 24"/></svg>
+                <b class="mip-done">Account created</b>
+              </div>
+              <figcaption><span>Success check pops in · 400 ms</span><button type="button" class="mip-replay" aria-label="Replay success animation">Replay</button></figcaption>
+            </figure>
+          </div>
+        </div>
+        <footer class="mip-pf"><span><b>FOREX onboarding interaction spec</b> · B · Easing curves</span><span>4 / 12</span></footer>
+      </div>
+    </section>
+  </template>
+
   <script>
     /* -----------------------------------------------------------------
        Gallery images.
@@ -251,17 +428,29 @@
 
     var IMAGES = [
       { file: "1.png", alt: "Cover — FOREX onboarding interaction spec, with contents" },
-      { file: "2.png", alt: "Principles and open decision" },
-      { file: "3.png", alt: "A · Triggers and responses — account creation controls" },
-      { file: "4.png", alt: "A · Triggers and responses — gestures, sheets and network" },
-      { file: "5.png", alt: "B · State logic matrix — idle, loading and success" },
-      { file: "6.png", alt: "B · State logic matrix — errors, offline and empty" },
-      { file: "7.png", alt: "C · Animation and timing tokens" },
-      { file: "8.png", alt: "C · Easing curves in the interface" },
-      { file: "9.png", alt: "D · Submission timeline" },
-      { file: "10.png", alt: "E · Accessibility and edge cases — targets, focus and announcements" },
-      { file: "11.png", alt: "E · Accessibility and edge cases — motion, text size and resilience" },
-      { file: "12.png", alt: "F · Prototype flows and components" }
+      { file: "2.png", alt: "A · Principles and open decision" },
+      { file: "3.png", alt: "B · Animation and timing tokens" },
+      { file: "4.png", alt: "B · Easing curves in the interface", live: "live-motion" },
+      { file: "5.png", alt: "C · Submission timeline" },
+      { file: "6.png", alt: "D · Triggers and responses — account creation controls" },
+      { file: "7.png", alt: "D · Triggers and responses — gestures, sheets and network" },
+      { file: "8.png", alt: "E · State logic matrix — idle, loading and success" },
+      { file: "9.png", alt: "E · State logic matrix — errors, offline and empty" },
+      { file: "10.png", alt: "F · Accessibility and edge cases — targets, focus and announcements" },
+      { file: "11.png", alt: "F · Accessibility and edge cases — motion, text size and resilience" },
+      { file: "12.png", alt: "G · Prototype flows and components" }
+    ];
+
+    /* Cover Contents rows → target page (rows top to bottom, % from image top) */
+    var TOC = [
+      { page: 2,  top: 25.2, label: "A · Principles and open decision" },
+      { page: 3,  top: 29.4, label: "B · Animation and timing tokens" },
+      { page: 4,  top: 33.5, label: "B · Easing curves in the interface" },
+      { page: 5,  top: 37.6, label: "C · Submission timeline" },
+      { page: 6,  top: 41.8, label: "D · Triggers and responses" },
+      { page: 8,  top: 45.9, label: "E · State logic matrix" },
+      { page: 10, top: 50.0, label: "F · Accessibility and edge cases" },
+      { page: 12, top: 54.1, label: "G · Prototype flows and components" }
     ];
 
     /* -----------------------------------------------------------------
@@ -290,18 +479,109 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (item){
+      IMAGES.forEach(function (item, i){
+        // Live HTML page in place of the PNG
+        if (item.live) {
+          var live = document.getElementById(item.live).content.firstElementChild.cloneNode(true);
+          live.id = 'page-' + (i + 1);
+          frag.appendChild(live);
+          return;
+        }
+
         var img = document.createElement('img');
         img.className = 'gallery__img';
+        img.id = 'page-' + (i + 1);
         img.src = IMAGE_DIR + item.file;
         img.alt = "Interaction Design - Handoff Specification \u2014 " + item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);
-        frag.appendChild(img);
+
+        if (i > 0) { frag.appendChild(img); return; }
+
+        // Cover: overlay a link on each Contents row
+        var cover = document.createElement('div');
+        cover.className = 'gallery__cover';
+        cover.appendChild(img);
+        TOC.forEach(function (row){
+          var a = document.createElement('a');
+          a.className = 'toc-link';
+          a.href = '#page-' + row.page;
+          a.style.top = row.top + '%';
+          a.setAttribute('aria-label', 'Go to ' + row.label);
+          cover.appendChild(a);
+        });
+        frag.appendChild(cover);
+      });
+
+      // The frame is CSS-scaled, so scroll by the rendered position, not the anchor
+      gallery.addEventListener('click', function (e){
+        var a = e.target.closest('.toc-link');
+        if (!a) return;
+        e.preventDefault();
+        var target = document.querySelector(a.getAttribute('href'));
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' });
+        history.replaceState(null, '', a.getAttribute('href'));
       });
 
       gallery.appendChild(frag);
+    })();
+
+    /* -----------------------------------------------------------------
+       Live easing examples (page 4). Each demo shows its start state,
+       then gets .play so the CSS transition runs; demos loop while on
+       screen. Slow motion multiplies every duration by 4.
+    ----------------------------------------------------------------- */
+    (function liveMotion(){
+      var wrap = document.querySelector('.mip-wrap');
+      if (!wrap) return;
+      var page = wrap.querySelector('.mip');
+      var demos = [].slice.call(wrap.querySelectorAll('.mip-demo'));
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var timers = new Map(), leads = new Map();
+      var slow = 1;
+
+      // Scale the 1122.5px print page to the gallery width (like the PNG pages)
+      function scalePage(){ page.style.setProperty('--k', wrap.clientWidth / 1122.5); }
+      scalePage();
+      window.addEventListener('resize', scalePage);
+
+      // The exit demo needs the toast on screen for a moment before it can leave
+      function play(d){
+        clearTimeout(leads.get(d));
+        d.classList.remove('play');
+        void d.offsetWidth;
+        var lead = d.dataset.demo === 'exit' ? 1100 * slow : 0;
+        if (lead) leads.set(d, setTimeout(function(){ d.classList.add('play'); }, lead));
+        else requestAnimationFrame(function(){ requestAnimationFrame(function(){ d.classList.add('play'); }); });
+      }
+      function loop(d){
+        clearTimeout(timers.get(d));
+        play(d);
+        timers.set(d, setTimeout(function(){ loop(d); }, 2600 * slow));
+      }
+      function stop(d){ clearTimeout(timers.get(d)); clearTimeout(leads.get(d)); timers.delete(d); }
+
+      demos.forEach(function (d){
+        d.querySelector('.mip-replay').addEventListener('click', function(){ reduce ? play(d) : loop(d); });
+      });
+      if (!reduce) {
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries){
+            entries.forEach(function (e){ e.isIntersecting ? loop(e.target) : stop(e.target); });
+          }, { threshold: 0.4 });
+          demos.forEach(function (d){ io.observe(d); });
+        } else {
+          demos.forEach(loop);
+        }
+      }
+
+      var cb = wrap.querySelector('.mip-slow-toggle');
+      cb.addEventListener('change', function(){
+        slow = cb.checked ? 4 : 1;
+        page.style.setProperty('--slow', slow);
+        Array.from(timers.keys()).forEach(loop);
+      });
     })();
 
     fit();
