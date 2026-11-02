@@ -191,6 +191,17 @@
       border-radius:12px;
       border:1px solid #E7E7E5;        /* white PDF pages on a white panel */
     }
+
+    /* ---------- Cover: clickable Contents rows over the image ---------- */
+    .gallery__cover{ position:relative; }
+    .toc-link{
+      position:absolute;
+      height:3.3%;                     /* Contents rows, as % of the cover image */
+      border-radius:6px;
+      transition:background-color .18s ease;
+    }
+    .toc-link:hover{ background:rgba(255,255,255,.08); }
+    .toc-link:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
   </style>
 </head>
 <body>
@@ -260,6 +271,18 @@
       { file: "8.png", alt: "Mobile system states — Flow C, advanced patterns" }
     ];
 
+    /* Cover Contents rows → target page (two columns; % of the cover image) */
+    var TOC_COLS = [ { left: 5.4, width: 43.4 }, { left: 50.2, width: 44.3 } ];
+    var TOC = [
+      { page: 2, col: 0, top: 79.4, label: "Onboarding journey · 10-step happy path" },
+      { page: 3, col: 0, top: 82.8, label: "Component state matrices · Buttons & text fields" },
+      { page: 4, col: 0, top: 86.1, label: "Component state matrices · Input & progress controls" },
+      { page: 5, col: 0, top: 89.5, label: "Component state matrices · Feedback & loading" },
+      { page: 6, col: 1, top: 79.4, label: "Mobile system states · Flow A · Account creation" },
+      { page: 7, col: 1, top: 82.8, label: "Mobile system states · Flow B · Verification" },
+      { page: 8, col: 1, top: 86.1, label: "Mobile system states · Flow C · Advanced patterns" }
+    ];
+
     /* -----------------------------------------------------------------
        Responsive scaling — mirrors the homepage's fit() exactly so the
        shared gray header bar sits at the identical position and size on
@@ -286,15 +309,43 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (item){
+      IMAGES.forEach(function (item, i){
         var img = document.createElement('img');
         img.className = 'gallery__img';
+        img.id = 'page-' + (i + 1);
         img.src = IMAGE_DIR + item.file;
         img.alt = "Interaction Design \u2014 " + item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);
-        frag.appendChild(img);
+
+        if (i > 0) { frag.appendChild(img); return; }
+
+        // Cover: overlay a link on each Contents row
+        var cover = document.createElement('div');
+        cover.className = 'gallery__cover';
+        cover.appendChild(img);
+        TOC.forEach(function (row){
+          var a = document.createElement('a');
+          a.className = 'toc-link';
+          a.href = '#page-' + row.page;
+          a.style.top = row.top + '%';
+          a.style.left = TOC_COLS[row.col].left + '%';
+          a.style.width = TOC_COLS[row.col].width + '%';
+          a.setAttribute('aria-label', 'Go to ' + row.label);
+          cover.appendChild(a);
+        });
+        frag.appendChild(cover);
+      });
+
+      // The frame is CSS-scaled, so scroll by the rendered position, not the anchor
+      gallery.addEventListener('click', function (e){
+        var a = e.target.closest('.toc-link');
+        if (!a) return;
+        e.preventDefault();
+        var target = document.querySelector(a.getAttribute('href'));
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' });
+        history.replaceState(null, '', a.getAttribute('href'));
       });
 
       gallery.appendChild(frag);
