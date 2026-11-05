@@ -228,7 +228,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="Forex Market withdrawal improvement process case study gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="Forex Market withdrawal improvement process case study gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -249,13 +249,13 @@
     var IMAGE_DIR = './FOREX MARKET. WITHDRAWAL…/';
 
     var IMAGES = [
-      '2.png',
-      '3.png',
-      '4.png',
-      '5.png',
-      '6.png',
-      '7.png',
-      '8.png'
+      {"file": "2.png", "alt": "Introduction, meet the user: Sarah, a first-time trader who wants to withdraw her first profits; the problem of one withdrawal split across several deposit methods; and the AML back-to-source regulation"},
+      {"file": "3.png", "alt": "Key problem visualised: the user expects 100% of the funds to go to a bank transfer, but AML rules auto-split the withdrawal across two credit cards and a bank transfer"},
+      {"file": "4.png", "alt": "The challenge, the back-to-source barrier: the original withdrawal request screens and the goal of explaining the regulation without making users feel they have lost control of their funds"},
+      {"file": "5.png", "alt": "The solution, visualising the flow: a $300 withdrawal shown as payment cards, $200 back to a Visa debit card and $100 to a Mastercard debit card"},
+      {"file": "6.png", "alt": "User empowerment, the Edit Amount feature: inline editing of the amount for each card, with the total validated in real time before the request is sent"},
+      {"file": "7.png", "alt": "Success state, providing peace of mind: confirmation that the funds were transferred, expected review and bank processing times, and a help section"},
+      {"file": "8.png", "alt": "Summary, building trust through simplicity: 35% fewer support tickets, 72% lower user anxiety, 89% better understanding, a confidence flow chart and a quote from Sarah"}
     ];
 
     /* -----------------------------------------------------------------
@@ -284,11 +284,11 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (file, i){
+      IMAGES.forEach(function (item, i){
         var img = document.createElement('img');
         img.className = 'gallery__img';
-        img.src = IMAGE_DIR + file;
-        img.alt = 'Forex Market withdrawal improvement process — image ' + (i + 1);
+        img.src = IMAGE_DIR + item.file;
+        img.alt = item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);

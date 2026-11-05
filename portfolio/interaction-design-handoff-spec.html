@@ -337,7 +337,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="Interaction Design handoff specification gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="Interaction Design handoff specification gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -492,7 +492,7 @@
         img.className = 'gallery__img';
         img.id = 'page-' + (i + 1);
         img.src = IMAGE_DIR + item.file;
-        img.alt = "Interaction Design - Handoff Specification \u2014 " + item.alt;
+        img.alt = "Interaction Design handoff specification \u2014 " + item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);
@@ -508,7 +508,7 @@
           a.className = 'toc-link';
           a.href = '#page-' + row.page;
           a.style.top = row.top + '%';
-          a.setAttribute('aria-label', 'Go to ' + row.label);
+          a.setAttribute('aria-label', row.label + ' — go to section');
           cover.appendChild(a);
         });
         frag.appendChild(cover);

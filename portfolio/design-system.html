@@ -228,7 +228,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="Design System samples gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="Design System samples gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -249,12 +249,12 @@
     var IMAGE_DIR = './DESIGN SYSTEM SAMPLES/';
 
     var IMAGES = [
-      '1.png',
-      '2.png',
-      '3.png',
-      '4.png',
-      '5.png',
-      '6.png'
+      {"file": "1.png", "alt": "Multi-brand design system primitives: slate, blue, emerald, violet, amber, rose and sky colour ramps from 50 to 950 in light and dark mode, 155 variables across 3 collections"},
+      {"file": "2.png", "alt": "Token architecture in four layers, primitives, brand, semantic and component, with semantic background, text, border and status tokens mapped for light and dark mode"},
+      {"file": "3.png", "alt": "One Upgrade to Pro card component rendered for three brands, blue, green and violet, in light and dark themes using the same tokens as in Figma"},
+      {"file": "4.png", "alt": "Figma variables: semantic colour tokens with light and dark values, and brand primary and accent ramps for Brand A, B and C"},
+      {"file": "5.png", "alt": "Component documentation for the Card Info component: purpose, functional requirements for structure, flexibility, states and responsiveness, plus do's and don'ts"},
+      {"file": "6.png", "alt": "Card component annotated with the variables applied to each element: font, size, weight, corner radius, padding, fill and stroke tokens"}
     ];
 
     /* -----------------------------------------------------------------
@@ -283,11 +283,11 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (file, i){
+      IMAGES.forEach(function (item, i){
         var img = document.createElement('img');
         img.className = 'gallery__img';
-        img.src = IMAGE_DIR + file;
-        img.alt = 'Design System samples — image ' + (i + 1);
+        img.src = IMAGE_DIR + item.file;
+        img.alt = item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);

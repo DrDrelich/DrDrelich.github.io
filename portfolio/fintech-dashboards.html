@@ -228,7 +228,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="Fintech Dashboards case study gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="Fintech Dashboards case study gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -249,12 +249,12 @@
     var IMAGE_DIR = './FINTECH DASHBOARDS CASE STUDY/';
 
     var IMAGES = [
-      '2.png',
-      '3.png',
-      '4.png',
-      '5.png',
-      '6.png',
-      '7.png'
+      {"file": "2.png", "alt": "Introduction, meet the user: persona Andrew, an internal resource and data operator at a Forex brokerage who relies on real-time market data from 50+ separate applications"},
+      {"file": "3.png", "alt": "The challenge, a fragmented data ecosystem: data scattered across 50+ legacy internal applications forces context switching; the goal and the journey from fragmented system to unified dashboards to measurable impact"},
+      {"file": "4.png", "alt": "The solution: aggregating 50+ separate applications into unified, configurable dashboards that give the operator one source of truth"},
+      {"file": "5.png", "alt": "Start with a first draft and validate: a dashboard wireframe on a laptop annotated with margins, padding and widget header heights"},
+      {"file": "6.png", "alt": "User empowerment, flexibility and control: configurable dashboard tabs, modular drag-and-drop widgets and an Edit Mode with undo, based on the user control and freedom heuristic"},
+      {"file": "7.png", "alt": "Measuring success and impact: 1.5 hours saved daily per operator, 45% faster task completion, SUS up from 54 to 82 and CSAT up from 48% to 88%"}
     ];
 
     /* -----------------------------------------------------------------
@@ -283,11 +283,11 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (file, i){
+      IMAGES.forEach(function (item, i){
         var img = document.createElement('img');
         img.className = 'gallery__img';
-        img.src = IMAGE_DIR + file;
-        img.alt = 'Fintech Dashboards case study — image ' + (i + 1);
+        img.src = IMAGE_DIR + item.file;
+        img.alt = item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);

@@ -228,7 +228,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="UX/UI B2B SaaS &amp; Fintech work gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="UX/UI B2B SaaS &amp; Fintech work gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -252,16 +252,16 @@
     var IMAGE_DIR = './UX:UI B2B SAAS & FINTECH WORK/';   // leading ./ avoids the "UX:" scheme trap
 
     var IMAGES = [
-      '2.png',
-      '3.png',
-      '4.png',
-      '5.png',
-      '6.png',
-      '7.png',
-      '8.png',
-      '9.png',
-      '10.png',
-      '11.png'
+      {"file": "2.png", "alt": "SaaS aggregator dashboard with live commodity tickers, a draggable natural gas managed-money chart and KPI cards for revenue, active users, conversion and bounce rate, shown with share-widget and user-settings dialogs"},
+      {"file": "3.png", "alt": "Command Deck, a dark space-themed project management dashboard with planet-shaped project hubs, system status, a task overview donut chart, active projects and team status"},
+      {"file": "4.png", "alt": "StoneX Partner EA Module trading dashboard: a position manager table with OTE and margin values next to a deal ticket with bid, offer and sell/buy controls"},
+      {"file": "5.png", "alt": "Forex mobile onboarding in five screens: welcome, market benefits, preferences, account creation with password rules and identity verification with an SMS code"},
+      {"file": "6.png", "alt": "SaaS fintech dashboard homepage with a total users line chart, revenue and conversion KPIs and a filterable recent transactions table with approval statuses, next to the design token panel"},
+      {"file": "7.png", "alt": "Status tracking dashboard over a world map: a Europe market treemap of equities, indices, FX, commodities and metals, clients logged in, accounts opened, cumulative payments and high-level stats"},
+      {"file": "8.png", "alt": "Fintech solutions screens: an internal transfer form, an Edit Product approval stepper across operations, risk, compliance and AML, and a My Requests table with a status pie chart"},
+      {"file": "9.png", "alt": "Online trading tools: a Germany 30 options chain, position history, a Wall Street candlestick chart with sell/buy buttons, open positions and a news feed"},
+      {"file": "10.png", "alt": "SaaS fintech dashboard with a positions table and deal ticket above a client profile panel showing personal details, vulnerability level and expandable account sections"},
+      {"file": "11.png", "alt": "SaaS fintech dashboard with transaction history, an audit log of changed client details with old and new values, client account balances and a posting manager for balance conversion"}
     ];
 
     /* -----------------------------------------------------------------
@@ -290,11 +290,11 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (file, i){
+      IMAGES.forEach(function (item, i){
         var img = document.createElement('img');
         img.className = 'gallery__img';
-        img.src = IMAGE_DIR + file;
-        img.alt = 'UX/UI B2B SaaS & Fintech work — image ' + (i + 1);
+        img.src = IMAGE_DIR + item.file;
+        img.alt = item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);

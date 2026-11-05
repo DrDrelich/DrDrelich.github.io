@@ -247,7 +247,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="Native mobile apps gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="Native mobile apps gallery">
           <!-- Sections are injected here by the script below -->
         </div>
 
@@ -267,11 +267,11 @@
     var IMAGE_DIR = './NATIVE MOBILE APPS/';
 
     var SECTIONS = [
-      { file: '1.webp', title: 'Native iOS application' },
-      { file: '2.webp', title: 'Native iOS application' },
-      { file: '4.webp', title: 'Native iOS application' },
-      { file: '3.webp', title: 'Native iOS application' },
-      { file: '5.webp', title: 'Responsive website' }
+      {"file": "1.webp", "title": "Native iOS application", "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
+      {"file": "2.webp", "title": "Native iOS application", "alt": "Native iOS in-flight quiz game: dashboard, the Berlin challenge category, an opponent match-up and a trivia question about Brussels sprouts"},
+      {"file": "4.webp", "title": "Native iOS application", "alt": "Native iOS group hunting app: joining a group hunt with Frank on a map, hunting history, and success and failure result screens"},
+      {"file": "3.webp", "title": "Native iOS application", "alt": "Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges"},
+      {"file": "5.webp", "title": "Responsive website", "alt": "Responsive website: Forex account onboarding in ten mobile screens, from benefits and preferences through account creation, identity, personal details and document checks to the success screen"}
     ];
     /* -----------------------------------------------------------------
        Responsive scaling — mirrors the homepage's fit() exactly so the
@@ -310,7 +310,7 @@
         var img = document.createElement('img');
         img.className = 'gallery__img';
         img.src = IMAGE_DIR + section.file;
-        img.alt = section.title + ' — screens ' + (i + 1);
+        img.alt = section.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);

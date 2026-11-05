@@ -228,7 +228,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="SaaS Dashboard workflow gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="SaaS Dashboard workflow gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -249,18 +249,18 @@
     var IMAGE_DIR = './SAAS DASHBOARD. WORKFLOW/';
 
     var IMAGES = [
-      '2.png',
-      '3.png',
-      '4.png',
-      '5.png',
-      '6.png',
-      '7.png',
-      '8.png',
-      '9.png',
-      '10.png',
-      '11.png',
-      '12.png',
-      '13.png'
+      {"file": "2.png", "alt": "Introduction, meet the user: persona Andrew, an internal resource and data operator at a Forex broker who works across four monitors and gets real-time market data from 50+ separate applications"},
+      {"file": "3.png", "alt": "The problem, a fragmented data ecosystem: data scattered across 50+ legacy internal applications causes constant context switching; the goal and the journey from fragmented system to unified dashboards to measurable impact"},
+      {"file": "4.png", "alt": "Product requirements document created by business, product owner, developers, head of UX and product designer, with the KPI to increase daily task completion speed by at least 30% within 3 months"},
+      {"file": "5.png", "alt": "The solution: aggregating 50+ separate applications into unified, configurable dashboards that give the operator one source of truth"},
+      {"file": "6.png", "alt": "Start with a first draft: a low-fidelity dashboard wireframe with tabs, an Edit Mode toggle and empty widget placeholders"},
+      {"file": "7.png", "alt": "Design system, adaptation or from scratch: Figma variables for neutral colours, the font-size scale and corner radius tokens"},
+      {"file": "8.png", "alt": "Select the type of navigation: a collapsed sidebar with a flyout menu of pinned apps and the full My Apps list"},
+      {"file": "9.png", "alt": "Develop and validate, dashboard view V1: a data table widget with saved filters, app search and a natural gas storage chart"},
+      {"file": "10.png", "alt": "Develop and validate, dashboard view V2: commodity tickers, several dashboard tabs, a drag-and-drop chart widget and embed-URL configuration forms"},
+      {"file": "11.png", "alt": "Develop and validate, dashboard view V3: widgets for tickers, real-time and historic postings, balances with nested sub-accounts and market charts"},
+      {"file": "12.png", "alt": "Develop and validate, dashboard view V4: homepage with a total users chart, KPI cards, a recent transactions table and traffic, acquisition and revenue widgets"},
+      {"file": "13.png", "alt": "Measuring success and impact: 1.5 hours saved daily per operator, 45% faster task completion, SUS up from 54 to 82 and CSAT up from 48% to 88%"}
     ];
 
     /* -----------------------------------------------------------------
@@ -289,11 +289,11 @@
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
 
-      IMAGES.forEach(function (file, i){
+      IMAGES.forEach(function (item, i){
         var img = document.createElement('img');
         img.className = 'gallery__img';
-        img.src = IMAGE_DIR + file;
-        img.alt = 'SaaS Dashboard workflow — image ' + (i + 1);
+        img.src = IMAGE_DIR + item.file;
+        img.alt = item.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
         img.addEventListener('load', fit);

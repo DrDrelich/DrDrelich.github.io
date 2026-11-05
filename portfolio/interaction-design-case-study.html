@@ -240,7 +240,7 @@
         </header>
 
         <!-- Vertical image gallery -->
-        <div class="gallery" id="gallery" aria-label="Interaction Design case study gallery">
+        <div class="gallery" id="gallery" role="region" aria-label="Interaction Design case study gallery">
           <!-- Images are injected here by the script below -->
         </div>
 
@@ -332,7 +332,7 @@
           a.style.top = row.top + '%';
           a.style.left = TOC_COLS[row.col].left + '%';
           a.style.width = TOC_COLS[row.col].width + '%';
-          a.setAttribute('aria-label', 'Go to ' + row.label);
+          a.setAttribute('aria-label', row.label + ' — go to section');
           cover.appendChild(a);
         });
         frag.appendChild(cover);
