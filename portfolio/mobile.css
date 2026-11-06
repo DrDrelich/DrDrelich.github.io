@@ -1,0 +1,441 @@
+/* =========================================================
+   Jacek Waz — Portfolio · MOBILE LAYOUT (≤759px)
+   Source: Figma "PORTFOLIO MOBILE" (390px frame, node 112:1649).
+
+   Loaded from index.html with media="(max-width: 759px)", so none of
+   these rules can reach the desktop canvas. Above 759px the existing
+   scaled 1440px canvas (styles.css + fit()) is untouched.
+
+   Why 759px: two Figma cards (358px) side by side need
+   2×358 + 16 gap + 2×16 gutter ≈ 764px — below that only a single
+   column fits.
+   ========================================================= */
+
+:root{
+  --m-gutter:   16px;
+  --m-gap:      16px;
+  --m-pad-x:    20px;
+  --m-radius:   20px;
+  --m-ink:      #1A1A1A;
+  --m-muted:    #6B6B6B;
+  --m-gray:     #E4E4E4;   /* header + native-apps card */
+  --m-line:     #D4D4D4;   /* button border */
+  --m-divider:  #CFCFCF;
+  --m-grid:     #D1D1D6;   /* timeline gridlines */
+}
+
+/* ---------- Page: normal vertical scrolling, no horizontal scroll ---------- */
+html, body{
+  overflow-x:hidden;
+  overflow-y:auto;
+  height:auto;
+}
+body{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.stage{
+  display:block;
+  min-height:0;
+  padding:var(--m-gutter);
+}
+.canvas-wrap{
+  width:auto;
+  height:auto;
+  max-width:560px;           /* large phones / small tablets: keep a phone-like measure */
+  margin:0 auto;
+}
+.canvas{
+  width:auto;
+  height:auto;
+  transform:none;
+  display:flex;
+  flex-direction:column;
+  gap:var(--m-gap);
+}
+
+/* ---------- Mobile/desktop-only markup ---------- */
+.canvas .d-only{ display:none; }
+.canvas img.m-only{ display:block; }
+.canvas span.m-only{ display:inline; }
+.canvas div.m-only{ display:block; }
+
+/* ---------- Cards in normal flow, Figma order ---------- */
+.module{
+  position:relative;
+  left:auto; top:auto;
+  width:auto; height:auto;
+}
+.module--header{ order:0; }
+.module--a1{     order:1; }   /* UX/UI B2B SaaS & Fintech Work */
+.module--b1{     order:2; }   /* UX Flow Map */
+.module--c1{     order:3; }   /* SaaS Dashboard. Workflow */
+.module--c2{     order:4; }   /* Interaction Design */
+.module--b2{     order:5; }   /* Forex Withdrawal */
+.module--a2{     order:6; }   /* Design System */
+.module--c3{     order:7; }   /* Native Mobile Apps */
+
+.card{ border-radius:var(--m-radius); }
+.module--header .card,
+.module--c3 .card{ background:var(--m-gray); }
+
+.pad{
+  position:relative;
+  inset:auto;
+  padding:21px var(--m-pad-x) 24px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---------- Typography ---------- */
+.canvas .title{
+  font-size:26px;
+  line-height:1.1;
+  letter-spacing:0;
+}
+.canvas .subtle{
+  margin-top:8px;
+  font-size:15px;
+  line-height:1.2;
+  color:var(--m-muted);
+}
+.canvas .body{
+  font-size:15px;
+  line-height:1.5;
+  color:var(--m-ink);
+}
+.canvas .bullets{
+  list-style:none;
+  margin:20px 0 0;
+  padding-left:20px;
+  font-size:15px;
+  line-height:1.5;
+  color:var(--m-ink);
+}
+.canvas .bullets li{
+  position:relative;
+  margin:0 0 10px;
+}
+.canvas .bullets li:last-child{ margin-bottom:0; }
+.canvas .bullets li::before{          /* 5px Figma bullet dot */
+  content:"";
+  position:absolute;
+  left:-13.5px;
+  top:8.75px;
+  width:5px; height:5px;
+  border-radius:50%;
+  background:var(--m-ink);
+}
+.canvas .bullets strong{ font-weight:700; color:var(--m-ink); }
+
+/* ---------- CTA buttons: full width, 50px touch target ---------- */
+.canvas .cta{
+  position:static;
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+  height:50px;
+  margin:24px 0 0;
+  padding:0 19px 0 20px;
+  gap:12px;
+  border-radius:10px;
+  background:transparent;
+  color:var(--m-ink);
+  transition:background-color .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
+}
+.canvas .cta__label{ font-size:16px; font-weight:400; }
+.canvas .cta__icon,
+.canvas .cta__icon svg{ width:19px; height:19px; flex:0 0 19px; }
+.canvas .cta__icon svg path,
+.canvas .cta__icon svg line,
+.canvas .cta__icon svg polyline{ stroke-width:1.8; }
+
+/* Same three states as desktop (styles.css):
+   Hover — text + icon turn blue, subtle fill, border unchanged.
+   Focus (keyboard) — text stays dark, border becomes a blue ring.
+   Active (touch press) — blue text, slightly darker fill, tiny press-in. */
+.canvas .cta:hover,
+.module--c2 .ixd__ctas .cta:hover{
+  color:var(--blue);
+  background:#FAFAFA;
+  border-color:var(--border-soft);
+}
+.canvas .cta:active,
+.module--c2 .ixd__ctas .cta:active{
+  color:var(--blue);
+  background:#F2F2F2;
+  transform:scale(.985);
+}
+.canvas .cta:focus-visible{
+  color:var(--m-ink);
+  border-color:var(--blue);
+  box-shadow:0 0 0 1px var(--blue);
+}
+
+/* Touch screens: no sticky card lift after a tap (buttons/links keep their hover state) */
+@media (hover:none){
+  .module:not(.module--header):hover{ transform:none; }
+  .module:not(.module--header):hover .card{ box-shadow:none; }
+}
+
+/* ---------- Decorations ---------- */
+.deco--loveit,
+.deco--great{ display:none; }        /* replaced by the Figma mobile SVGs */
+.deco-m{
+  position:absolute;
+  z-index:3;
+  pointer-events:none;
+  max-width:none;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+.header__m{
+  position:relative;
+  padding:22px var(--m-pad-x) 24px;
+}
+.header__m p,
+.header__m ul{ margin:0; }
+.header__m-name{
+  font-family:"ADLaM Display", system-ui, sans-serif;
+  font-size:24px;
+  line-height:1.25;
+  color:var(--m-ink);
+}
+.header__m-loc{
+  margin-top:6px !important;
+  font-size:15px;
+  line-height:1.2;
+  color:#4A4A4A;
+}
+.header__m-roles{
+  list-style:none;
+  padding:0;
+  margin-top:18px !important;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.header__m-roles li{
+  display:inline-flex;
+  align-items:center;
+  height:28px;
+  padding:0 12px;
+  border-radius:14px;
+  background:#fff;
+  font-size:13px;
+  color:var(--m-ink);
+  white-space:nowrap;
+}
+.header__m-tags{
+  margin-top:17px !important;
+  font-size:15px;
+  line-height:1.5;
+  color:#333;
+}
+.header__m-contact{
+  list-style:none;
+  margin-top:19px !important;
+  padding:11px 0 0;
+  border-top:1px solid var(--m-divider);
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.header__m-link{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  min-height:44px;
+  padding-left:2.5px;
+  max-width:100%;
+  font-size:15px;
+  color:var(--m-ink);
+  text-decoration:none;
+  border-radius:6px;
+  transition:color .18s ease;
+}
+/* Icons are the Figma SVGs used as masks, so they take the link colour
+   and turn blue together with the text on hover/focus. */
+.header__m-icon{
+  flex:0 0 auto;
+  display:block;
+  background-color:currentColor;
+  -webkit-mask:var(--icon) center / contain no-repeat;
+          mask:var(--icon) center / contain no-repeat;
+}
+.header__m-icon--mail{     --icon:url("assets/mobile/icon-mail.svg");     width:16.4995px; height:13.1661px; }
+.header__m-icon--linkedin{ --icon:url("assets/mobile/icon-linkedin.svg"); width:16.4993px; height:16.4993px; }
+.header__m-link span{
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  overflow-wrap:anywhere;
+}
+.header__m-link:hover,
+.header__m-link:active{ color:var(--blue); }
+.header__m-link:focus-visible{
+  outline:2px solid var(--blue);
+  outline-offset:2px;
+  color:var(--blue);
+}
+
+/* =========================================================
+   A1 · UX/UI B2B SAAS & FINTECH WORK
+   ========================================================= */
+.module--a1 .a1__top{ display:contents; }          /* lets the CTA move to the bottom */
+.module--a1 .a1__top .cta{ order:10; margin-top:20px; }
+.module--a1 .a1__subtitle{ margin-top:8px; }
+.module--a1 .a1__body{ display:flex; flex-direction:column; }
+.module--a1 .a1__carousel{
+  position:relative;
+  left:auto; top:auto; bottom:auto;
+  width:100%;
+  margin-top:19px;
+  border-radius:8px;
+}
+.module--a1 .a1__copy{
+  position:static;
+  width:auto;
+  margin-top:26px;
+}
+.module--a1 .a1__copy .body{ font-size:15px; }
+
+/* =========================================================
+   B1 · UX FLOW MAP
+   ========================================================= */
+.module--b1 .b1flow{
+  position:static;
+  margin-top:26px;
+  display:flex;
+  justify-content:center;
+}
+.module--b1 .b1flow__img{
+  width:84%;
+  max-width:360px;
+  max-height:none;
+  height:auto;
+}
+
+/* =========================================================
+   C1 · SAAS DASHBOARD. WORKFLOW
+   ========================================================= */
+.module--c1 .title{ max-width:210px; }   /* SAAS / DASHBOARD. / WORKFLOW, as in Figma */
+.deco-m--loveit{  top:19.5px;  right:25px; }
+.deco-m--comment{ top:82.5px;  right:53.8px; }
+/* Eyes on the left of the head, above the "nose" (bubble tail), as in the Figma file:
+   eye box at x 14.7 / y 17.8 of the 74.3×61.5 bubble SVG, same right anchor. */
+.deco-m--eyes{    top:100.3px; right:87.5px; transform:scaleX(-1); }
+
+/* =========================================================
+   C2 · INTERACTION DESIGN (timeline in % of content width)
+   ========================================================= */
+.module--c2 .title{ max-width:220px; }   /* INTERACTION / DESIGN */
+.module--c2 .ixd{
+  position:relative;
+  left:auto; right:auto; top:auto;
+  height:86px;
+  margin-top:17px;
+}
+.module--c2 .ixd__tick{ font-size:12px; color:var(--m-muted); }
+.module--c2 .ixd__tick::after{ top:21px; background:var(--m-grid); }
+.module--c2 .ixd__tick--0{   left:0.63%;  justify-content:flex-start; }
+.module--c2 .ixd__tick--100{ left:20.75%; }
+.module--c2 .ixd__tick--250{ left:50.31%; }
+.module--c2 .ixd__tick--500{ left:99.37%; justify-content:flex-end; }
+.module--c2 .ixd__bar{
+  height:30px;
+  padding-left:6px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0;
+  border-radius:4px;
+  text-overflow:ellipsis;
+}
+.module--c2 .ixd__bar--pressed{ left:0.94%;  width:19.81%; top:21px; background:#14215B; }
+.module--c2 .ixd__bar--swap{    left:21.07%; width:29.25%; top:55.5px; background:#1C8A4A; }
+.module--c2 .ixd__bar--loading{ left:50.79%; width:48.58%; right:auto; top:55.5px; background:#1C8A4A; border-radius:4px; }
+
+.module--c2 .ixd__ctas{
+  position:static;
+  display:flex;
+  flex-wrap:wrap;                 /* stacks automatically on very narrow phones */
+  gap:10px;
+  margin-top:16px;
+}
+.module--c2 .ixd__ctas .cta{
+  flex:1 1 145px;
+  width:auto;
+  margin:0;
+  padding:0 12px;
+  gap:6px;
+  background:transparent;
+}
+.module--c2 .ixd__ctas .cta__label{ font-size:15px; }
+.module--c2 .ixd__ctas .cta__icon,
+.module--c2 .ixd__ctas .cta__icon svg{ width:17.4px; height:17.4px; flex-basis:17.4px; }
+
+/* =========================================================
+   B2 · FOREX WITHDRAWAL
+   ========================================================= */
+.module--b2 .b2__top{ display:contents; }
+.module--b2 .b2__top .cta{ order:10; margin-top:20px; }
+.module--b2 .title{ max-width:240px; }   /* 4 lines, as in Figma */
+.module--b2 .b2__body{ display:flex; flex-direction:column; }
+.module--b2 .b2__screens{
+  position:static;
+  width:100%;
+  height:auto;
+  margin-top:17px;
+  border-radius:8px;
+}
+.module--b2 .b2__copy{
+  position:static;
+  margin-top:17px;
+}
+.module--b2 .b2__copy .body{ font-size:15px; }
+
+/* =========================================================
+   A2 · DESIGN SYSTEM — SAMPLES
+   ========================================================= */
+.module--a2 .cta{ order:10; margin-top:16px; }
+.module--a2 .ds__rows{
+  position:static;
+  margin-top:43px;
+  gap:8px;
+}
+.module--a2 .ds__row{ gap:8px; }
+.module--a2 .ds__token,
+.module--a2 .ds__value{
+  height:32px;
+  padding:0 10px;
+  border-radius:8px;
+  font-size:13px;
+  color:var(--m-muted);
+  text-overflow:ellipsis;
+}
+.module--a2 .ds__value{ padding-left:11px; gap:8px; }
+.module--a2 .ds__dot{ display:none; }
+.module--a2 .ds__swatch{ width:17px; height:17px; border-radius:4px; }
+.module--a2 .ds__arrow{ font-size:13px; }
+.deco-m--great{ top:74.5px; right:37.7px; }
+
+/* =========================================================
+   C3 · UX/UI NATIVE MOBILE APPS
+   ========================================================= */
+.module--c3 .deco--b2c{ width:108.6px; top:24.5px; right:21.4px; }
+
+/* ---------- Narrow phones (≤359px, e.g. 320px) ---------- */
+@media (max-width:359px){
+  /* Not enough room beside the title for the comment bubble */
+  .canvas img.deco-m--comment,
+  .canvas img.deco-m--eyes{ display:none; }
+  .module--c3 .deco--b2c{ width:81px; top:10px; right:-4px; }
+  .module--c2 .ixd__bar{ font-size:11px; padding-left:4px; }
+  .module--a2 .ds__token,
+  .module--a2 .ds__value{ font-size:12px; padding:0 8px; }
+  .module--a2 .ds__token{ flex-grow:1.2; }
+}
