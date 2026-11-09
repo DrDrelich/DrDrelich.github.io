@@ -1,0 +1,209 @@
+/* =========================================================
+   Jacek Waz — Portfolio · SUBPAGES MOBILE LAYOUT (≤759px)
+   Shared by the 8 gallery/case-study pages. Loaded with
+   media="(max-width: 759px)", so the scaled 1440px desktop
+   frame above that width is untouched.
+   Visual language follows the homepage mobile layout (mobile.css):
+   16px gutters, 20px card radius, ADLaM 26px titles, 15px Inter,
+   44–50px touch targets, desktop hover/focus colours.
+   ========================================================= */
+
+:root{
+  --m-ink:    #1A1A1A;
+  --m-muted:  #6B6B6B;
+  --m-gray:   #E4E4E4;
+  --m-radius: 20px;
+}
+
+html, body{ overflow-x:hidden; }
+body{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ---------- Mobile/desktop-only markup ---------- */
+.d-only{ display:none !important; }
+.topnav .m-only{ display:flex; }
+.toc-m.m-only{ display:block; }
+
+/* ---------- Frame: normal flow, no scaling ---------- */
+.wrap{
+  width:auto;               /* desktop: calc(1440px * var(--s)) */
+  margin:0 auto;
+  max-width:720px;          /* phones in landscape: wide but not stretched */
+}
+.frame{
+  width:auto;
+  padding:16px;
+  transform:none;
+}
+
+/* ---------- Compact header card ---------- */
+.topnav{
+  height:auto;
+  padding:16px 16px 16px 20px;
+  border-radius:var(--m-radius);
+  background:var(--m-gray);
+  align-items:center;
+}
+.topnav__m{
+  width:100%;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.topnav__m-id{ min-width:0; }
+.topnav__m-id p{ margin:0; }
+.topnav__m-name{
+  font-family:"ADLaM Display", system-ui, sans-serif;
+  font-size:24px;
+  line-height:1.25;
+  color:var(--m-ink);
+}
+.topnav__m-loc{
+  margin-top:2px !important;
+  font-size:14px;
+  line-height:1.3;
+  color:#4A4A4A;
+}
+.topnav__m-links{
+  display:flex;
+  gap:8px;
+  flex:0 0 auto;
+}
+.topnav__m-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px; height:44px;
+  border-radius:22px;
+  background:#fff;
+  color:var(--m-ink);
+  transition:color .18s ease, background-color .18s ease, transform .12s ease;
+}
+/* Figma SVGs used as masks so they take the link colour */
+.topnav__m-icon{
+  display:block;
+  background-color:currentColor;
+  -webkit-mask:var(--icon) center / contain no-repeat;
+          mask:var(--icon) center / contain no-repeat;
+}
+.topnav__m-icon--mail{     --icon:url("assets/mobile/icon-mail.svg");     width:16.4995px; height:13.1661px; }
+.topnav__m-icon--linkedin{ --icon:url("assets/mobile/icon-linkedin.svg"); width:16.4993px; height:16.4993px; }
+.topnav__m-btn:hover{ color:var(--blue); background:#FAFAFA; }
+.topnav__m-btn:active{ color:var(--blue); background:#F2F2F2; transform:scale(.96); }
+.topnav__m-btn:focus-visible{ outline:none; box-shadow:0 0 0 2px var(--blue); }
+
+/* ---------- Content card ---------- */
+.content{
+  margin-top:16px;
+  border-radius:var(--m-radius);
+  padding:0 12px 12px;
+}
+.pagehead{
+  height:auto;
+  flex-direction:column;
+  align-items:flex-start;
+  padding:20px 8px 20px;
+}
+.back-btn{
+  height:44px;
+  margin-bottom:18px;
+  transition:background-color .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
+}
+.back-btn:active{ color:var(--blue); background:#F2F2F2; transform:scale(.97); }
+.pagehead__title{
+  margin-left:0;
+  white-space:normal;
+  font-size:26px;
+  line-height:1.1;
+  letter-spacing:0;
+  color:var(--m-ink);
+}
+.pagehead__desc{
+  margin:8px 0 0;
+  font-size:15px;
+  line-height:1.4;
+  color:var(--m-muted);
+}
+
+/* ---------- Gallery ---------- */
+.gallery__img{ border-radius:10px; }
+.gallery__section{ border-radius:10px; }
+.gallery__title{
+  padding:16px 16px 0;
+  font-size:18px;
+}
+
+/* ---------- Contents list (case study + handoff spec) ----------
+   The cover's contents rows are tiny at phone width, so mobile
+   also lists them as full-size links (same #page-N targets). */
+.toc-m{
+  margin:0;
+  padding:16px 16px 8px;
+  border:1px solid #E7E7E5;
+  border-radius:10px;
+}
+.toc-m__title{
+  margin:0 0 6px;
+  font-family:"ADLaM Display", system-ui, sans-serif;
+  font-size:18px;
+  line-height:1.2;
+  color:var(--m-ink);
+}
+.toc-m__list{ list-style:none; margin:0; padding:0; }
+.toc-m__list li + li{ border-top:1px solid #EFEFEF; }
+.toc-m__link{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:48px;
+  padding:6px 0;
+  font-size:15px;
+  line-height:1.35;
+  color:var(--m-ink);
+  text-decoration:none;
+  transition:color .18s ease;
+}
+.toc-m__link svg{ flex:0 0 19px; width:19px; height:19px; }
+.toc-m__link svg path{
+  fill:none; stroke:currentColor; stroke-width:1.8;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.toc-m__link:hover,
+.toc-m__link:active{ color:var(--blue); }
+.toc-m__link:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; border-radius:6px; }
+
+/* ---------- Handoff spec · live easing page, reflowed ----------
+   Desktop scales a 1122px print page; on a phone that is ~30% scale,
+   so the page is laid out in normal flow at real size instead. */
+.mip-wrap{
+  aspect-ratio:auto;
+  overflow:visible;
+  border-radius:10px;
+}
+.mip{
+  position:static;
+  width:auto; height:auto;
+  transform:none;
+  padding:20px 16px 0;
+}
+.mip h2{ font-size:22px; }
+.mip-lede{ font-size:14px; }
+.mip-bar{ flex-direction:column; align-items:flex-start; gap:12px; margin-bottom:16px; }
+.mip-bar p{ font-size:13.5px; }
+.mip-slowmo{ min-height:44px; font-size:14px; }
+.mip-slowmo input{ width:20px; height:20px; }
+.mip-curves{ grid-template-columns:1fr; gap:12px; }
+.mip-curve > svg{ height:110px; }
+.mip-curve > p{ white-space:normal; font-size:12.5px; }
+.mip-curve h3{ font-size:16px; }
+.mip-demo figcaption{ font-size:12.5px; }
+.mip-replay{ min-height:36px; padding:0 14px; font-size:13px; }
+.mip-pf{ margin-top:16px; flex-wrap:wrap; gap:4px; height:auto; min-height:45px; }
+
+@media (min-width:520px){
+  .mip-curves{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+}
