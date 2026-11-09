@@ -218,24 +218,23 @@
        Duel 130:4447. Each covers one phone of 2.webp. Screens are authored
        at their Figma size (402×920) and scaled to fit by fitLiveScreens().
     ================================================================= */
-    /* When live screens cover a section, its image only reserves the space;
-       hiding it stops the old screens' shadows showing between the phones. */
-    .gallery__media--live .gallery__img{ visibility:hidden; }
+    /* A live section has no image: its box takes the aspect ratio from the
+       section's "layout" (set inline), and each slot is one phone wide. */
     .live-slot{
       position:absolute;
-      display:flex;
-      justify-content:center;
-      overflow:hidden;
+      aspect-ratio:402 / 920;
+      min-height:0;      /* lets aspect-ratio win over the unscaled 920px child (keeps the shadow unclipped) */
     }
     .cs{
       --ink:#0b141b; --g27:#444746; --g19:#303030; --line:#d7e1e6; --amber:#ffae01;
-      flex:none;
       width:402px; height:920px;
-      transform-origin:top center;
+      transform-origin:top left;
       background:#E5E5E5;
       border-radius:32px;
       overflow:hidden;
-      box-shadow:0 0 0 1px #dadada;     /* hairline outline only, no drop shadow */
+      /* Hairline + the drop shadow of the phones in the other sections, fitted
+         to their pixels (3.webp: 0 7px 25px -6px at 459px wide → ×402/459). */
+      box-shadow:0 0 0 1px #dadada, 0 6px 22px -5px rgba(0,0,0,.13);
       display:flex; flex-direction:column; justify-content:space-between;
       color:var(--ink);
       font-family:"Barlow", system-ui, sans-serif;
@@ -246,7 +245,11 @@
     .cs-mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
     .cs-cond{ font-family:"Barlow Condensed", sans-serif; font-weight:600; }
     .cs-label{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:11px; line-height:16px; letter-spacing:.6px; color:var(--g27); white-space:nowrap; }
-    .cs-card{ background:#fff; border:1px solid var(--line); }
+    /* Figma strokes are "inside" and take no layout space, so the 1px card
+       border is drawn as an overlay instead of a CSS border (which would add
+       2px to every auto-height card). */
+    .cs-card{ position:relative; background:#fff; }
+    .cs-card::after{ content:""; position:absolute; inset:0; border:1px solid var(--line); border-radius:inherit; pointer-events:none; }
 
     .cs-status{ height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 28px; }
     .cs-status__time{ font-family:"IBM Plex Mono", monospace; font-weight:600; font-size:14px; }
@@ -272,19 +275,19 @@
     .cs-tab{ height:100%; padding-top:11px; display:flex; flex-direction:column; justify-content:space-between; }
     .cs-tab__label{ font-weight:600; font-size:14px; color:var(--g19); white-space:nowrap; }
     .cs-tab__bar{ height:3px; background:var(--amber); }
-    .cs-tab--idle{ width:178px; font-size:14px; color:var(--g27); }
+    .cs-tab--idle{ width:200px; font-size:14px; color:var(--g27); }
 
     .cs-dest{ width:100%; height:150px; border-radius:12px; display:flex; overflow:hidden; }
     .cs-dest__img{ width:114px; height:100%; object-fit:cover; flex:none; }
     .cs-dest__body{ flex:1 0 0; min-width:0; padding:14px; display:flex; flex-direction:column; gap:7px; }
-    .cs-dest__title{ font-size:29px; line-height:28px; }
+    .cs-dest__title{ font-size:30px; line-height:28px; }
     .cs-dest__meta{ font-size:13px; line-height:18px; color:var(--g27); }
 
     .cs-search{ width:100%; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:9px; }
     .cs-search__head{ display:flex; justify-content:space-between; align-items:flex-start; }
     .cs-signal{ display:flex; align-items:center; gap:7px; }
     .cs-instruments{ display:flex; align-items:center; gap:10px; }
-    .cs-search__title{ font-size:27px; line-height:30px; }
+    .cs-search__title{ font-size:24px; line-height:30px; }
     .cs-search__desc{ font-size:13px; line-height:18px; color:#6f8792; }
 
     /* Radar — positions are the Figma coordinates inside a 210×186 box */
@@ -307,7 +310,7 @@
     .cs-stats__mode{ display:flex; flex-direction:column; gap:5px; }
     .cs-stats__mode-val{ font-family:"IBM Plex Mono", monospace; font-size:12px; color:var(--g27); }
 
-    .cs-spacer{ width:15px; height:15px; }
+    .cs-spacer{ width:15px; height:5px; }
     .cs-cancel{ display:grid; }
     .cs-cancel > *{ grid-area:1 / 1; }
     .cs-cancel__x{ width:15px; height:15px; margin-top:.5px; }
@@ -383,7 +386,7 @@
     .cs-results__body{ height:193px; flex:none; padding:16px; display:flex; flex-direction:column; gap:12px; }
     .cs-results__won{ font-size:24px; line-height:normal; text-align:center; }
     .cs-results__gap{ height:5px; flex:none; }
-    .cs-results__badge{ height:88px; flex:none; width:100%; object-fit:cover; }
+    .cs-results__badge{ height:103px; flex:none; width:100%; object-fit:cover; }
 
     /* Entrance (Figma "once", 2.38s): each card rises 16px and fades in,
        staggered 1.00s / 1.24s / 1.48s. Starts when the screen scrolls into view. */
@@ -402,7 +405,7 @@
     .cs-found-area{ height:714px; flex:none; }
     .cs-found{ height:707px; display:flex; flex-direction:column; gap:12px; padding:8px 24px 20px; }
     .cs-found > *{ flex:none; width:100%; }
-    .cs-opp{ border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
+    .cs-opp{ height:471px; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
     .cs-opp__status{ padding:16px; display:flex; align-items:center; gap:8px; }
     .cs-opp__status .cs-label{ flex:1 0 0; letter-spacing:.4px; }
     .cs-opp__timer{ font-family:"IBM Plex Mono", monospace; font-size:12px; color:#d73337; animation:cs-blink 2s linear infinite; }
@@ -415,7 +418,7 @@
     .cs-player{ padding:16px; display:flex; flex-direction:column; align-items:center; gap:12px; }
     .cs-player > *{ flex:none; }
     .cs-player__intro{ width:100%; font-size:14px; line-height:20px; color:var(--g27); text-align:center; }
-    .cs-player__id{ width:100%; display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .cs-player__id{ width:100%; height:74px; display:flex; flex-direction:column; align-items:center; gap:6px; }
     .cs-player__name{ width:100%; font-size:32px; line-height:32px; text-align:center; }
     .cs-chip{ background:rgba(255,174,1,.2); border-radius:4px; padding:4px 12px; }
     .cs-chip .cs-label{ letter-spacing:.4px; }
@@ -479,7 +482,7 @@
     .cs-answer--picked{ background:#fff; border:3px solid var(--amber); color:#20372b; }
     .cs-answer__tick{ width:25px; height:25px; flex:none; border-radius:13px; background:#20372b; display:flex; align-items:center; justify-content:center; }
     .cs-answer__tick img{ width:15px; height:15px; }
-    .cs-duel__gap{ width:10.501px; height:17px; }
+    .cs-duel__gap{ width:10px; height:5px; }
     .cs-next{ height:17px; display:flex; align-items:center; gap:9px; }
     .cs .cs-next p{ width:126px; height:15px; font-family:"IBM Plex Mono", monospace; font-size:11px; line-height:16px; }
     .cs-next__arrow{ position:relative; width:10.501px; height:10.501px; flex:none; }
@@ -915,14 +918,17 @@
     var SECTIONS = [
       {"file": "1.webp", "title": "Native iOS application", "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
       {"file": "2.webp", "title": "Native iOS application", "alt": "Native iOS in-flight quiz game: a dashboard with the last played category and a winning streak, an animated radar searching for a duel opponent for the Brussels challenge, the opponent found with their rankings, and a trivia question about Brussels sprouts",
-       /* Live screens laid over the four phones. Each box = that phone's bounds
-          in the 2000×1067 image (y 24–1030; x 25–491, 521–987, 1016–1482,
-          1512–1979), in % of the image. */
+       /* Live screens instead of the image. Geometry copied from the phones in
+          the other sections (3.webp, 2000px wide): each phone 459px wide
+          (22.95%), 33px gaps (1.65%), first phone at x 32 (1.6%), top 24px.
+          A 402×920 Figma screen at that width is 1050.4px tall, so the box is
+          2000 × (24 + 1050.4 + 36) = 2000 × 1110.4. */
+       "layout": {"aspect": "2000 / 1110.4", "top": 2.161, "width": 22.95},
        "overlays": [
-         {"template": "tpl-dashboard",         "left": 1.25,  "top": 2.25, "width": 23.3,  "height": 94.28},
-         {"template": "tpl-challenges-search", "left": 26.05, "top": 2.25, "width": 23.3,  "height": 94.28},
-         {"template": "tpl-opponent-found",    "left": 50.8,  "top": 2.25, "width": 23.3,  "height": 94.28},
-         {"template": "tpl-duel",              "left": 75.6,  "top": 2.25, "width": 23.35, "height": 94.28}
+         {"template": "tpl-dashboard",         "left": 1.6},
+         {"template": "tpl-challenges-search", "left": 26.2},
+         {"template": "tpl-opponent-found",    "left": 50.75},
+         {"template": "tpl-duel",              "left": 75.4}
        ]},
       {"file": "4.webp", "title": "Native iOS application", "alt": "Native iOS group hunting app: joining a group hunt with Frank on a map, hunting history, and success and failure result screens"},
       {"file": "3.webp", "title": "Native iOS application", "alt": "Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges"},
@@ -975,7 +981,7 @@
 
         var img = document.createElement('img');
         img.className = 'gallery__img';
-        img.src = IMAGE_DIR + section.file;
+        if (!section.layout) img.src = IMAGE_DIR + section.file;   // live sections skip the image
         img.alt = section.alt;
         img.decoding = 'async';
         // Each image grows the frame height, so re-fit once it has loaded.
@@ -983,17 +989,23 @@
 
         var media = document.createElement('div');
         media.className = 'gallery__media';
-        media.appendChild(img);
+        var L = section.layout;
+        if (L){
+          // Live section: no image; the box carries the description instead.
+          media.style.aspectRatio = L.aspect;
+          media.setAttribute('role', 'img');
+          media.setAttribute('aria-label', section.alt);
+        } else {
+          media.appendChild(img);
+        }
 
-        if (section.overlays) media.classList.add('gallery__media--live');
         (section.overlays || []).forEach(function (o){
           var slot = document.createElement('div');
           slot.className = 'live-slot';
-          slot.setAttribute('aria-hidden', 'true');   // the img alt already describes it
+          slot.setAttribute('aria-hidden', 'true');   // the box label describes it
           slot.style.left = o.left + '%';
-          slot.style.top = o.top + '%';
-          slot.style.width = o.width + '%';
-          slot.style.height = o.height + '%';
+          slot.style.top = L.top + '%';
+          slot.style.width = L.width + '%';
           slot.appendChild(document.getElementById(o.template).content.cloneNode(true));
           media.appendChild(slot);
           liveSlots.push(slot);
@@ -1007,14 +1019,14 @@
       gallery.appendChild(frag);
     })();
 
-    /* Scale each live 402×920 screen to the height of its slot. The slot
-       is measured untransformed (offsetHeight), so the desktop frame's own
+    /* Scale each live 402×920 screen to the width of its slot. The slot
+       is measured untransformed (offsetWidth), so the desktop frame's own
        scale is applied once, by the frame, not twice. */
     function fitLiveScreens(){
       liveSlots.forEach(function (slot){
         var screen = slot.firstElementChild;
         if (!screen) return;
-        screen.style.transform = 'scale(' + (slot.offsetHeight / 920) + ')';
+        screen.style.transform = 'scale(' + (slot.offsetWidth / 402) + ')';
       });
     }
     if (window.ResizeObserver){
