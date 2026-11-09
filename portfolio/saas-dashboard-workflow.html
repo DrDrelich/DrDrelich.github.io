@@ -190,7 +190,11 @@
       height:auto;
       border-radius:12px;
     }
+    /* Mobile-only markup stays hidden on desktop; subpage-mobile.css reveals it. */
+    .m-only{ display:none; }
   </style>
+  <!-- Mobile layout (≤759px), shared by all subpages -->
+  <link rel="stylesheet" href="subpage-mobile.css" media="(max-width: 759px)" />
 </head>
 <body>
   <div class="stage">
@@ -199,14 +203,25 @@
 
       <!-- ============ TOP NAVIGATION BAR (matches homepage header) ============ -->
       <nav class="topnav" aria-label="Site header">
-        <div class="topnav__intro">
+        <div class="topnav__intro d-only">
           <p class="topnav__name">Jacek Waz, Krakow, Poland, 10yrs+</p>
           <p class="topnav__role">UX/UI Designer&nbsp;&nbsp;|&nbsp;&nbsp;Product Designer&nbsp;&nbsp;|&nbsp;&nbsp;Interaction Designer</p>
           <p class="topnav__tags">Enterprise B2B SaaS Fintech Dashboards&nbsp;&nbsp;|&nbsp;&nbsp;Design Systems&nbsp;&nbsp;|&nbsp;&nbsp;AI-Native Design</p>
         </div>
-        <div class="topnav__contact">
+        <div class="topnav__contact d-only">
           <p class="topnav__line">Email:&nbsp;<a class="text-link" href="mailto:prochow@gmail.com">prochow@gmail.com</a></p>
           <p class="topnav__line">LinkedIn:&nbsp;<a class="text-link" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/jacek-waz-77a4801/</a></p>
+        </div>
+        <!-- Mobile header (≤759px): same email/LinkedIn destinations as above -->
+        <div class="topnav__m m-only">
+          <div class="topnav__m-id">
+            <p class="topnav__m-name">Jacek Waz</p>
+            <p class="topnav__m-loc">Kraków, Poland · 10+ yrs</p>
+          </div>
+          <div class="topnav__m-links">
+            <a class="topnav__m-btn" href="mailto:prochow@gmail.com" aria-label="Email: prochow@gmail.com"><span class="topnav__m-icon topnav__m-icon--mail" aria-hidden="true"></span></a>
+            <a class="topnav__m-btn" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: jacek-waz-77a4801, opens in a new tab"><span class="topnav__m-icon topnav__m-icon--linkedin" aria-hidden="true"></span></a>
+          </div>
         </div>
       </nav>
 
@@ -271,11 +286,20 @@
        SCALED frame (width via CSS, height here) and the tall gallery
        scrolls vertically below.
     ----------------------------------------------------------------- */
+    // Mobile breakpoint — must match the media attribute on subpage-mobile.css.
+    var MOBILE = window.matchMedia('(max-width: 759px)');
     var fit = (function(){
       var DESIGN_W = 1440, DESIGN_H = 837, MARGIN = 24;
       var wrap = document.querySelector('.wrap');
       var frame = document.querySelector('.frame');
       return function fit(){
+        // Mobile: no scaling — the frame flows at real size (subpage-mobile.css)
+        if (MOBILE.matches) {
+          wrap.style.removeProperty('--s');
+          wrap.style.width = '';
+          wrap.style.height = '';
+          return;
+        }
         var availW = window.innerWidth  - MARGIN * 2;
         var availH = window.innerHeight - MARGIN * 2 - 1;
         var s = Math.min(availW / DESIGN_W, availH / DESIGN_H, 1);
@@ -305,6 +329,7 @@
 
     fit();
     window.addEventListener('resize', fit);
+    if (MOBILE.addEventListener) MOBILE.addEventListener('change', fit);
     window.addEventListener('load', fit);
   </script>
 </body>
