@@ -494,6 +494,43 @@
       .cs-rise, .is-visible .cs-rise{ animation:none; opacity:1; transform:none; }
     }
 
+    /* =================================================================
+       Mobile (≤759px): 4-phone sections as a 2 × 2 grid.
+       Image sections: the same 4-phone image is shown in 4 tiles, each
+       cropped to one phone (one download). Crop per tile = phone width
+       22.95% + 0.8% margin each side = 24.55% of the image, so the image
+       is 100 / 24.55 = 407.33% of the tile, shifted by --x (crop start).
+       Live section: the 4 live screens drop into the same grid, with the
+       same margins the phones have inside the image tiles.
+       Desktop keeps the single wide image (tiles stay hidden).
+    ================================================================= */
+    .gallery__tiles{ display:none; }
+    @media (max-width:759px){
+      .gallery__media--phones > .gallery__img{ display:none; }
+      .gallery__tiles,
+      .gallery__media--live{
+        display:grid;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        padding:4px 6px 6px;
+      }
+      .gallery__tile{ overflow:hidden; min-width:0; }
+      .gallery__tile img{
+        display:block;
+        width:407.33%;
+        max-width:none;
+        height:auto;
+        margin-left:calc(var(--x) * -407.33%);
+        border-radius:0;
+      }
+      .gallery__media--live{ aspect-ratio:auto !important; }
+      .gallery__media--live .live-slot{
+        position:relative;
+        left:auto !important; top:auto !important; width:auto !important;
+        min-width:0;
+        margin:4.89% 3.26% 6.9%;    /* = the phone's margins inside an image tile */
+      }
+    }
+
     /* Mobile-only markup stays hidden on desktop; subpage-mobile.css reveals it. */
     .m-only{ display:none; }
   </style>
@@ -916,7 +953,7 @@
     var IMAGE_DIR = './NATIVE MOBILE APPS/';
 
     var SECTIONS = [
-      {"file": "1.webp", "title": "Native iOS application", "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
+      {"file": "1.webp", "title": "Native iOS application", "phones": true, "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
       {"file": "2.webp", "title": "Native iOS application", "alt": "Native iOS in-flight quiz game: a dashboard with the last played category and a winning streak, an animated radar searching for a duel opponent for the Brussels challenge, the opponent found with their rankings, and a trivia question about Brussels sprouts",
        /* Live screens instead of the image. Geometry copied from the phones in
           the other sections (3.webp, 2000px wide): each phone 459px wide
@@ -930,8 +967,8 @@
          {"template": "tpl-opponent-found",    "left": 50.75},
          {"template": "tpl-duel",              "left": 75.4}
        ]},
-      {"file": "4.webp", "title": "Native iOS application", "alt": "Native iOS group hunting app: joining a group hunt with Frank on a map, hunting history, and success and failure result screens"},
-      {"file": "3.webp", "title": "Native iOS application", "alt": "Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges"},
+      {"file": "4.webp", "title": "Native iOS application", "phones": true, "alt": "Native iOS group hunting app: joining a group hunt with Frank on a map, hunting history, and success and failure result screens"},
+      {"file": "3.webp", "title": "Native iOS application", "phones": true, "alt":"Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges"},
       {"file": "5.webp", "title": "Responsive website", "alt": "Responsive website: Forex account onboarding in ten mobile screens, from benefits and preferences through account creation, identity, personal details and document checks to the success screen"}
     ];
     /* -----------------------------------------------------------------
@@ -967,6 +1004,11 @@
 
     var liveSlots = [];
 
+    /* Mobile 2 × 2 tiles: where each phone's crop starts, as a fraction of the
+       image width (phone left − 0.8% margin). Phones sit at 1.6 / 26.2 / 50.75 /
+       75.4% in all three 4-phone images (same geometry as the live overlays). */
+    var PHONE_CROPS = [0.008, 0.254, 0.4995, 0.746];
+
     (function renderGallery(){
       var gallery = document.getElementById('gallery');
       var frag = document.createDocumentFragment();
@@ -993,10 +1035,32 @@
         if (L){
           // Live section: no image; the box carries the description instead.
           media.style.aspectRatio = L.aspect;
+          media.classList.add('gallery__media--live');
           media.setAttribute('role', 'img');
           media.setAttribute('aria-label', section.alt);
         } else {
           media.appendChild(img);
+        }
+
+        // Mobile only (CSS): one tile per phone, cropped from the same image.
+        if (section.phones){
+          media.classList.add('gallery__media--phones');
+          var tiles = document.createElement('div');
+          tiles.className = 'gallery__tiles';
+          tiles.setAttribute('role', 'img');
+          tiles.setAttribute('aria-label', section.alt);
+          PHONE_CROPS.forEach(function (x){
+            var tile = document.createElement('div');
+            tile.className = 'gallery__tile';
+            tile.style.setProperty('--x', x);
+            var t = document.createElement('img');
+            t.src = IMAGE_DIR + section.file;
+            t.alt = '';
+            t.decoding = 'async';
+            tile.appendChild(t);
+            tiles.appendChild(tile);
+          });
+          media.appendChild(tiles);
         }
 
         (section.overlays || []).forEach(function (o){
