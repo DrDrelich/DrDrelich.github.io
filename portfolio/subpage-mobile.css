@@ -87,7 +87,7 @@ body{
   font-size:0;                 /* spaces between roles (for screen readers and
                                   line breaks) take no width; the slot is the gap */
   line-height:1.4;
-  color:#4A4A4A;
+  color:var(--m-muted);        /* same gray as "Kraków, Poland" */
 }
 .topnav__m-roles span{
   display:inline-block;
