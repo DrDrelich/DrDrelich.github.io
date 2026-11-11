@@ -1,0 +1,60 @@
+/* =========================================================
+   CTA confetti burst
+   A fixed, click-through layer at the document root, so the
+   burst isn't scaled by the canvas transform or clipped by
+   a card's overflow. confetti.js sets the per-particle
+   custom properties; CSS does all of the motion.
+   ========================================================= */
+.confetti-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:2147483000;
+  contain:strict;
+}
+
+.confetti{
+  position:absolute;
+  left:var(--x);
+  top:var(--y);
+  width:var(--w, 5px);
+  height:var(--h, 8px);
+  margin:calc(var(--h, 8px) / -2) 0 0 calc(var(--w, 5px) / -2);
+  background:var(--c, #007AFF);
+  border-radius:1px;
+  opacity:0;
+  will-change:transform, opacity;
+  animation:
+    confetti-fly var(--dur, 1000ms) cubic-bezier(.16,.84,.32,1) var(--delay, 0ms) forwards,
+    confetti-fade var(--dur, 1000ms) linear var(--delay, 0ms) forwards;
+}
+.confetti--dot{ border-radius:50%; }
+
+/* Burst outward fast, then drift down a little as if settling. */
+@keyframes confetti-fly{
+  0%{
+    transform:translate(0,0) rotate(0deg) scale(.6);
+  }
+  65%{
+    transform:translate(var(--dx), var(--dy)) rotate(calc(var(--rot) * .7)) scale(1);
+  }
+  100%{
+    transform:translate(var(--dx), calc(var(--dy) + var(--fall, 7px))) rotate(var(--rot)) scale(.45);
+  }
+}
+
+/* Appear instantly, hold briefly, then fade early and steeply —
+   most of the opacity is gone by ~60%, fully invisible before the end. */
+@keyframes confetti-fade{
+  0%   { opacity:0; }
+  6%   { opacity:1; }
+  22%  { opacity:1; }
+  60%  { opacity:.2; }
+  88%  { opacity:0; }
+  100% { opacity:0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .confetti-layer{ display:none; }
+}
