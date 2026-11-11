@@ -51,7 +51,8 @@ body{
   width:100%;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
+  flex-wrap:wrap;              /* roles get their own full-width row */
+  gap:8px 12px;
 }
 .topnav__m-id{ min-width:0; }
 .topnav__m-id p{ margin:0; }
@@ -66,6 +67,37 @@ body{
   font-size:14px;
   line-height:1.3;
   color:#4A4A4A;
+}
+/* Roles: full-width row under name + buttons, "A  |  B  |  C".
+   Each role stays in one piece. Every role is "[sep slot]Text" and is pulled
+   left by one slot (margin-left), while reserving one slot after itself
+   (margin-right), so mid-line the slot lands exactly between two roles.
+   At the start of a wrapped line there is nothing to land on: the slot sits
+   left of the box and is clipped, so no line starts or ends with a "|".
+   The box is one slot wider than the row (negative margin-right) so the
+   trailing slot after the last role doesn't force an early wrap. */
+.topnav__m-roles{
+  --sep:16px;                  /* matches "&nbsp;&nbsp;|&nbsp;&nbsp;" at 12px */
+  flex:0 0 calc(100% + var(--sep));
+  margin:0 calc(-1 * var(--sep)) 0 0;
+  overflow:hidden;
+  font-size:0;                 /* spaces between roles (for screen readers and
+                                  line breaks) take no width; the slot is the gap */
+  line-height:1.4;
+  color:#4A4A4A;
+}
+.topnav__m-roles span{
+  display:inline-block;
+  font-size:12px;
+  white-space:nowrap;
+  margin:0 var(--sep) 0 calc(-1 * var(--sep));
+}
+.topnav__m-roles span::before{
+  content:"|";
+  content:"|" / "";            /* decorative: not read by screen readers */
+  display:inline-block;
+  width:var(--sep);
+  text-align:center;
 }
 .topnav__m-links{
   display:flex;
