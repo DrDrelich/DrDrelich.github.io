@@ -5,9 +5,12 @@
    The default action (link navigation, form submit) is held back
    and replayed exactly when the animation ends.
 
-   - Links opening in a new tab (target="_blank") open immediately:
-     browsers block popups opened later from a timer, and the current
-     page stays visible anyway, so the burst still plays in full.
+   - Links opening in a new tab (target="_blank") wait a shorter
+     NEW_TAB_DELAY, then open the tab themselves. Otherwise the new tab
+     would cover the page before the burst is seen. Browsers only allow
+     a delayed tab while the click still counts as recent (Safari: ~1s),
+     so if that window has closed the link opens in the current tab
+     instead of being blocked silently.
    - Cmd/Ctrl/Shift/Alt and middle clicks keep native behaviour.
    - prefers-reduced-motion: no burst, no delay.
    ========================================================= */
@@ -16,6 +19,7 @@
 
   var SELECTOR = '.cta, [data-confetti]';
   var DURATION = 1000;         // ms, animation length and navigation delay
+  var NEW_TAB_DELAY = 800;     // ms, for target="_blank" links (popup-blocker safe)
   var COUNT = 13;            // particles per burst
   var COLORS = ['#007AFF', '#5AA9FF', '#A838E8', '#D846FF', '#00C2E0', '#00C853', '#1A1A1A'];
 
@@ -35,7 +39,7 @@
 
   function rand(min, max) { return min + Math.random() * (max - min); }
 
-  function burst(el) {
+  function burst(el, duration) {
     if (reducedMotion.matches) return;
     var r = el.getBoundingClientRect();
     var cx = r.left + r.width / 2;
@@ -68,7 +72,7 @@
         '--h:' + (dot ? size : size * rand(1.6, 2.2)).toFixed(1) + 'px;' +
         '--c:' + COLORS[(Math.random() * COLORS.length) | 0] + ';' +
         '--delay:' + rand(0, 40).toFixed(0) + 'ms;' +
-        '--dur:' + (DURATION - 40) + 'ms;';
+        '--dur:' + (duration - 40) + 'ms;';
       frag.appendChild(p);
     }
 
@@ -76,11 +80,28 @@
     host.appendChild(frag);
     setTimeout(function () {
       batch.forEach(function (n) { n.remove(); });
-    }, DURATION + 60);
+    }, duration + 60);
+  }
+
+  // Opens a target="_blank" link after the delay, keeping its target and rel
+  // (noopener/noreferrer). The temporary link has no .cta class, so this
+  // handler ignores its click.
+  function openNewTab(el) {
+    var ua = navigator.userActivation;
+    if (ua && !ua.isActive) { window.location.assign(el.href); return; } // would be blocked
+    var a = document.createElement('a');
+    a.href = el.href;
+    a.target = el.target;
+    a.rel = el.rel || 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
 
   // Replays what the click would have done.
-  function runDefault(el) {
+  function runDefault(el, opensNewTab) {
+    if (opensNewTab) { openNewTab(el); return; }
     if (el.tagName === 'A' && el.href) {
       window.location.assign(el.href);
       return;
@@ -100,19 +121,19 @@
     // Let the browser handle "open in new tab/window" gestures natively.
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-    var opensNewTab = el.tagName === 'A' && el.target && el.target !== '_self';
+    if (reducedMotion.matches) return; // no burst, no delay
 
-    burst(el);
-
-    if (opensNewTab || reducedMotion.matches) return; // no delay needed
+    var opensNewTab = el.tagName === 'A' && !!el.href && !!el.target && el.target !== '_self';
+    var delay = opensNewTab ? NEW_TAB_DELAY : DURATION;
 
     e.preventDefault();
     if (pending) return; // ignore repeat clicks while waiting
     pending = true;
+    burst(el, delay);
     setTimeout(function () {
       pending = false;
-      runDefault(el);
-    }, DURATION);
+      runDefault(el, opensNewTab);
+    }, delay);
   });
 
   // Coming back via the back button restores the page from bfcache; reset state.
