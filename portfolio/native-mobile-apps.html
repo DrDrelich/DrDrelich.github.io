@@ -213,9 +213,9 @@
     .gallery__media{ position:relative; }
 
     /* =================================================================
-       Live in-flight quiz screens (Figma file "Onboarding", page LUFTHANSA):
-       Dashboard 109:2936, Challenges1 109:3168, Challenges2 109:3071,
-       Duel 130:4447. Each covers one phone of 2.webp. Screens are authored
+       Live in-flight quiz screens (Figma file "Onboarding", page LUFTHANSA,
+       light flight-deck): Dashboard 182:1930, Challenges1 182:172,
+       Challenges2 182:76, Duel 182:274. Each covers one phone of 2.webp. Screens are authored
        at their Figma size (402×920) and scaled to fit by fitLiveScreens().
     ================================================================= */
     /* A live section has no image: its box takes the aspect ratio from the
@@ -261,13 +261,13 @@
     .cs-work{ display:flex; flex-direction:column; align-items:center; gap:12px; padding:8px 24px 16px; }
     .cs-work > *{ flex:none; }
 
-    .cs-telemetry{ width:100%; height:72px; border-radius:8px; padding:12px; display:flex; align-items:center; gap:16px; }
+    .cs-telemetry{ width:100%; height:72px; border-radius:8px; display:flex; align-items:center; gap:16px; }   /* light flight-deck: sits on the screen background, no card */
     .cs-route{ flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:8px; }
     .cs-route__codes{ display:flex; justify-content:space-between; align-items:flex-start; }
     .cs-route__code{ font-family:"IBM Plex Mono", monospace; font-size:18px; line-height:normal; }
     .cs-route__path{ height:16px; display:flex; align-items:center; }
     .cs-route__done{ width:131px; height:2px; background:var(--ink); flex:none; }
-    .cs-route__left{ flex:1 0 0; height:2px; background:var(--line); }
+    .cs-route__left{ flex:1 0 0; height:2px; background:#fff; }
     .cs-eta{ width:72px; height:40px; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
     .cs-eta__time{ font-family:"IBM Plex Mono", monospace; font-size:16px; color:var(--g27); }
 
@@ -370,8 +370,8 @@
     .cs-center{ text-align:center; }
     .cs-label.cs-center{ white-space:normal; letter-spacing:.4px; }
 
-    /* ---------- Dashboard (109:2936) ---------- */
-    .cs-dash{ height:695px; display:flex; flex-direction:column; gap:12px; padding:8px 24px 28px; }   /* Figma 109:2952 "Dashboard workspace" */
+    /* ---------- Dashboard (182:1930) ---------- */
+    .cs-dash{ height:695px; display:flex; flex-direction:column; gap:12px; padding:8px 24px 28px; }   /* Figma 182:1946 "Dashboard workspace" */
     .cs-dash > *{ flex:none; width:100%; }
     .cs-checkin{ border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:12px; }
     .cs-checkin__title{ font-size:24px; line-height:29px; color:rgba(11,20,27,.9); text-align:center; }
@@ -379,14 +379,16 @@
     .cs-last__cat{ font-size:36px; line-height:38px; text-align:center; }
     .cs-last__actions{ display:flex; gap:10px; }
     .cs-last__actions .cs-btn{ flex:1 0 0; min-width:0; }
-    .cs-results{ height:332px; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
+    .cs-results{ height:251px; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
     .cs-results__head{ background:rgba(255,174,1,.2); padding:12px 16px; display:flex; align-items:center; gap:8px; }
     .cs-results__head img{ width:18px; height:18px; }
     .cs-results__title{ font-size:24px; line-height:27px; color:#20372b; }
-    .cs-results__body{ height:193px; flex:none; padding:16px; display:flex; flex-direction:column; gap:12px; }
+    .cs-results__body{ height:200px; flex:none; padding:16px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .cs-results__body > *{ width:100%; flex:none; }
+    .cs-results__id{ height:64px; display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .cs-results__id .cs-chip{ width:auto; }
     .cs-results__won{ font-size:24px; line-height:normal; text-align:center; }
-    .cs-results__gap{ height:5px; flex:none; }
-    .cs-results__badge{ height:103px; flex:none; width:100%; object-fit:cover; }
+    .cs-results__gap{ height:5px; }
 
     /* Entrance (Figma "once", 2.38s): each card rises 16px and fades in,
        staggered 1.00s / 1.24s / 1.48s. Starts when the screen scrolls into view. */
@@ -400,7 +402,7 @@
     @keyframes cs-rise{ from{ transform:translateY(16px); } to{ transform:translateY(0); } }
     @keyframes cs-fade{ from{ opacity:0; } to{ opacity:1; } }
 
-    /* ---------- Challenges — opponent found (109:3071) ---------- */
+    /* ---------- Challenges — opponent found (182:76) ---------- */
     .cs-head-block{ height:117px; flex:none; }
     .cs-found-area{ height:714px; flex:none; }
     .cs-found{ height:707px; display:flex; flex-direction:column; gap:12px; padding:8px 24px 20px; }
@@ -450,11 +452,11 @@
     .cs-avatar--me img{ left:-750.31px; top:-137.49px; width:1012px; height:721.689px; }
     .cs-avatar--jan img{ left:-310.5px; top:-214.44px; width:669.706px; height:477.588px; }
 
-    /* ---------- Duel (130:4447) — no motion in Figma ---------- */
+    /* ---------- Duel (182:274) — no motion in Figma ---------- */
     .cs-duel{ display:flex; flex-direction:column; align-items:center; gap:12px; padding:8px 24px 20px; }
     .cs-duel > *{ flex:none; }
     .cs-duel > :not(.cs-duel__gap):not(.cs-next){ width:100%; }
-    .cs-duel__head{ height:58px; display:flex; align-items:center; gap:12px; }   /* Figma 130:4456 "Duel heading" */
+    .cs-duel__head{ height:58px; display:flex; align-items:center; gap:12px; }   /* Figma 182:283 "Duel heading" */
     .cs-duel__titles{ flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:6px; }
     .cs-duel__titles .cs-label{ letter-spacing:.4px; }
     .cs-duel__title{ font-size:27px; line-height:1.05; }
@@ -480,7 +482,7 @@
     .cs-answer{ min-height:60px; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:12px; }
     .cs-answer p{ flex:1 0 0; min-width:0; font-size:18px; line-height:21px; text-align:center; }
     .cs-answer--picked{ background:#fff; border:3px solid var(--amber); color:#20372b; }
-    .cs-answer__tick{ width:25px; height:25px; flex:none; border-radius:13px; background:#20372b; display:flex; align-items:center; justify-content:center; }
+    .cs-answer__tick{ width:25px; height:25px; flex:none; border-radius:13px; background:var(--amber); display:flex; align-items:center; justify-content:center; }
     .cs-answer__tick img{ width:15px; height:15px; }
     .cs-duel__gap{ width:10px; height:5px; }
     .cs-next{ height:17px; display:flex; align-items:center; gap:9px; }
@@ -595,7 +597,7 @@
    </div>
   </div>
 
-  <!-- Live screen 1: Dashboard (Figma 109:2936) -->
+  <!-- Live screen 1: Dashboard (Figma 182:1930) -->
   <template id="tpl-dashboard">
     <div class="cs">
       <div class="cs-content">
@@ -615,6 +617,25 @@
         </div>
 
         <div class="cs-dash">
+          <div class="cs-telemetry">
+            <div class="cs-route">
+              <div class="cs-route__codes">
+                <p class="cs-route__code">KRA</p>
+                <p class="cs-label">NH 212</p>
+                <p class="cs-route__code">ORY</p>
+              </div>
+              <div class="cs-route__path">
+                <div class="cs-route__done"></div>
+                <img src="./NATIVE MOBILE APPS/flight-quiz/plane-route.svg" width="14" height="14" alt="" />
+                <div class="cs-route__left"></div>
+              </div>
+            </div>
+            <div class="cs-eta">
+              <p class="cs-label">TO LANDING</p>
+              <p class="cs-eta__time">01:24</p>
+            </div>
+          </div>
+
           <div class="cs-checkin cs-card cs-rise cs-rise--1">
             <p class="cs-checkin__title cs-cond">GOING TO FLY TODAY?<br />TRY “FUN ON BOARD” CATEGORY!</p>
             <div class="cs-btn cs-card">LET’S TRY NOW<img src="./NATIVE MOBILE APPS/flight-quiz/arrow-right.svg" width="17" height="17" alt="" /></div>
@@ -635,13 +656,14 @@
               <p class="cs-results__title cs-cond">LUCKY YOU!</p>
             </div>
             <div class="cs-results__body">
-              <p class="cs-label cs-center">IN PREVIOUS SET YOU WON</p>
-              <p class="cs-results__won cs-cond">5 GAMES IN A ROW</p>
-              <div class="cs-btn cs-card">GO TO PROFILE<img src="./NATIVE MOBILE APPS/flight-quiz/arrow-right.svg" width="17" height="17" alt="" /></div>
+              <p class="cs-label cs-center">IN THE PREVIOUS SET,<br />CATEGORY: URBAN CULTURE</p>
+              <div class="cs-results__id">
+                <p class="cs-results__won cs-cond">YOU WON 5 GAMES IN A ROW</p>
+                <div class="cs-chip"><p class="cs-label">+750 SKY POINTS</p></div>
+              </div>
+              <div class="cs-btn cs-card">CHECK THE LEADERBOARD<img src="./NATIVE MOBILE APPS/flight-quiz/arrow-right.svg" width="17" height="17" alt="" /></div>
               <div class="cs-results__gap"></div>
-              <p class="cs-label cs-center">YOU ARE A MASTER AT [+3]</p>
             </div>
-            <img class="cs-results__badge" src="./NATIVE MOBILE APPS/flight-quiz/champion-film.webp" alt="" />
           </div>
         </div>
       </div>
@@ -658,7 +680,7 @@
     </div>
   </template>
 
-  <!-- Live screen 3: Challenges — opponent found (Figma 109:3071) -->
+  <!-- Live screen 3: Challenges — opponent found (Figma 182:76) -->
   <template id="tpl-opponent-found">
     <div class="cs">
       <div class="cs-head-block">
@@ -680,7 +702,7 @@
 
       <div class="cs-found-area">
         <div class="cs-found">
-          <div class="cs-telemetry cs-card">
+          <div class="cs-telemetry">
             <div class="cs-route">
               <div class="cs-route__codes">
                 <p class="cs-route__code">KRA</p>
@@ -760,7 +782,7 @@
     </div>
   </template>
 
-  <!-- Live screen 4: Duel (Figma 130:4447) -->
+  <!-- Live screen 4: Duel (Figma 182:274) -->
   <template id="tpl-duel">
     <div class="cs">
       <div class="cs-content">
@@ -810,7 +832,7 @@
 
           <div class="cs-answers">
             <div class="cs-answer cs-answer--picked">
-              <div class="cs-answer__tick"><img src="./NATIVE MOBILE APPS/flight-quiz/check.svg" width="15" height="15" alt="" /></div>
+              <div class="cs-answer__tick"><img src="./NATIVE MOBILE APPS/flight-quiz/check-dark.svg" width="15" height="15" alt="" /></div>
               <p class="cs-cond">ISN'T ORIGINALLY FROM BRUSSELS</p>
             </div>
             <div class="cs-answer cs-card"><p class="cs-cond">MARY OF BURGUNDY ANNOUNCED THAT THE BRUSSELS SPROUT IS A NATIONAL VEGETABLE</p></div>
@@ -828,7 +850,7 @@
     </div>
   </template>
 
-  <!-- Live screen 2: Challenges — finding your opponent (Figma 109:3168) -->
+  <!-- Live screen 2: Challenges — finding your opponent (Figma 182:172) -->
   <template id="tpl-challenges-search">
     <div class="cs">
       <div class="cs-content">
@@ -848,7 +870,7 @@
         </div>
 
         <div class="cs-work">
-          <div class="cs-telemetry cs-card">
+          <div class="cs-telemetry">
             <div class="cs-route">
               <div class="cs-route__codes">
                 <p class="cs-route__code">KRA</p>
@@ -881,7 +903,7 @@
             <div class="cs-dest__body">
               <p class="cs-label">DUEL</p>
               <p class="cs-dest__title cs-cond">BRUSSELS. THE HEART OF EUROPE</p>
-              <p class="cs-dest__meta">4 questions · 90 seconds<br />City culture / +150 sky points</p>
+              <p class="cs-dest__meta">4 questions · 90 seconds<br />Urban Culture / +150 sky points</p>
             </div>
           </div>
 
@@ -955,7 +977,7 @@
 
     var SECTIONS = [
       {"file": "1.webp", "title": "Native iOS application", "phones": true, "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
-      {"file": "2.webp", "title": "Native iOS application", "alt": "Native iOS in-flight quiz game: a dashboard with the last played category and a winning streak, an animated radar searching for a duel opponent for the Brussels challenge, the opponent found with their rankings, and a trivia question about Brussels sprouts",
+      {"file": "2.webp", "title": "Native iOS application", "alt": "Native iOS in-flight quiz game: a flight-deck dashboard with the flight route, the last played category and a winning streak, an animated radar searching for a duel opponent for the Brussels challenge, the opponent found with their rankings, and a trivia question about Brussels sprouts",
        /* Live screens instead of the image. Geometry copied from the phones in
           the other sections (3.webp, 2000px wide): each phone 459px wide
           (22.95%), 33px gaps (1.65%), first phone at x 32 (1.6%), top 24px.
