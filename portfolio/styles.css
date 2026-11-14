@@ -107,7 +107,7 @@ html,body{
 }
 .header__intro{ display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
 .header__intro p{ margin:0; }
-.header__title{ display:flex; align-items:center; gap:8px; }
+.header__title{ display:flex; align-items:baseline; gap:8px; }
 .header__name{
   font-family:"ADLaM Display", system-ui, sans-serif;
   font-weight:400; font-size:24px; line-height:31px; color:#1a1a1a;
