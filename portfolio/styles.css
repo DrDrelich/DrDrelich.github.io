@@ -95,18 +95,43 @@ html,body{
 .module--header .card,
 .module--c3 .card{ background:var(--card-gray); }
 
-/* ---------- Header ---------- */
+/* ---------- Header (desktop, Figma "Header New" 167:400) ---------- */
+/* Desktop only: mobile.css (≤759px) keeps its own header block and card. */
+@media (min-width:760px){
+  .module--header{ top:28px; height:95px; }      /* bottom stays at 123px: same 24px gap to the cards */
+  .module--header .card{ display:none; }        /* new header has no gray card */
+}
 .header__inner{
   position:absolute; inset:0;
-  padding:16px 26px;
   display:flex; justify-content:space-between; align-items:flex-end;
 }
-.header__intro p{ margin:0; line-height:1.11; }
-.header__name{ font-size:16px; font-weight:600; color:var(--ink); letter-spacing:.1px; }
-.header__role,
-.header__tags{ font-size:15px; font-weight:500; color:#2c2c2c; }
-.header__contact{ text-align:right; }
-.header__line{ margin:0; font-size:14px; color:#2c2c2c; line-height:1.11; }
+.header__intro{ display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+.header__intro p{ margin:0; }
+.header__title{ display:flex; align-items:center; gap:8px; }
+.header__name{
+  font-family:"ADLaM Display", system-ui, sans-serif;
+  font-weight:400; font-size:24px; line-height:31px; color:#1a1a1a;
+}
+.header__loc{ font-size:16px; font-weight:400; line-height:17px; color:#4a4a4a; }
+.header__roles{ display:flex; gap:8px; margin:0; padding:0; list-style:none; }
+.header__pill{
+  height:28px; padding:0 12px; border-radius:14px; background:#fff;
+  display:flex; align-items:center;
+  font-size:13px; font-weight:400; line-height:16px; color:#1a1a1a; white-space:nowrap;
+}
+.header__tags{ font-size:13px; font-weight:400; line-height:16px; color:#333; white-space:nowrap; }
+.header__contact{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; padding-bottom:1px; }
+.header__link{
+  display:flex; align-items:center; gap:12px;
+  font-size:13px; line-height:16px; color:#1a1a1a;
+  text-decoration:underline; text-underline-offset:2px;
+  transition:color .18s ease;
+}
+.header__link:hover,
+.header__link:focus-visible{ color:var(--blue); outline:none; }
+.header__icon{ display:block; flex:none; }
+.header__icon--mail{ margin:-.75px; }      /* 16.5×13.17 SVG in a 15×11.67 slot (stroke overflow) */
+.header__icon--linkedin{ margin:-.75px; }  /* 16.5×16.5 SVG in a 15×15 slot */
 
 .text-link{
   color:#2c2c2c;

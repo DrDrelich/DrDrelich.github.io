@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20261114-header" />
   <style>
     /* SaaS/Fintech section image carousel — overlays the original image box, changes nothing else */
     .a1__carousel{ position:relative; overflow:hidden; top:24px; }
@@ -105,13 +105,23 @@
         <div class="card"></div>
         <div class="header__inner d-only">
           <div class="header__intro">
-            <p class="header__name">Jacek Waz, Krakow, Poland</p>
-            <p class="header__role">UX/UI Designer&nbsp;&nbsp;|&nbsp;&nbsp;Product Designer&nbsp;&nbsp;|&nbsp;&nbsp;Interaction Designer</p>
-            <p class="header__tags">Enterprise B2B SaaS Fintech Dashboards&nbsp;&nbsp;|&nbsp;&nbsp;Design Systems&nbsp;&nbsp;|&nbsp;&nbsp;AI-Native Design</p>
+            <p class="header__title"><span class="header__name">Jacek Waz</span> <span class="header__loc">Krakow, Poland</span></p>
+            <ul class="header__roles" aria-label="Roles">
+              <li class="header__pill">UX/UI Designer</li>
+              <li class="header__pill">Product Designer</li>
+              <li class="header__pill">Interaction Designer</li>
+            </ul>
+            <p class="header__tags">Enterprise B2B SaaS Fintech Dashboards&nbsp;&nbsp;·&nbsp;&nbsp;Design Systems&nbsp;&nbsp;·&nbsp;&nbsp;Mobile Design&nbsp;&nbsp;·&nbsp;&nbsp;AI-Native Design</p>
           </div>
           <div class="header__contact">
-            <p class="header__line">Email:&nbsp;<a class="text-link" href="mailto:prochow@gmail.com">prochow@gmail.com</a></p>
-            <p class="header__line">LinkedIn:&nbsp;<a class="text-link" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/jacek-waz-77a4801/</a></p>
+            <a class="header__link" href="mailto:prochow@gmail.com" aria-label="Email: prochow@gmail.com">
+              <img class="header__icon header__icon--mail" src="assets/header-icon-mail.svg" width="16.4995" height="13.1661" alt="" />
+              <span>prochow@gmail.com</span>
+            </a>
+            <a class="header__link" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: jacek-waz-77a4801, opens in a new tab">
+              <img class="header__icon header__icon--linkedin" src="assets/header-icon-linkedin.svg" width="16.4993" height="16.4993" alt="" />
+              <span>LinkedIn - jacek-waz-77a4801</span>
+            </a>
           </div>
         </div>
         <!-- Mobile header (same links/destinations as the desktop header above) -->
