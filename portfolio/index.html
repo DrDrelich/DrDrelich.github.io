@@ -612,6 +612,7 @@
                   let opacity = 1.0;
                   if (progress < 0.15) opacity = progress / 0.15;
                   else if (progress > 0.85) opacity = (1.0 - progress) / 0.15;
+                  opacity *= 0; // rój niewidoczny: nadal leci i podnosi karty, ale nie jest rysowany
 
                   particles.forEach(p => { p.update(); p.draw(ctx, cx, cy, opacity, progress); });
 
