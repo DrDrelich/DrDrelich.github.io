@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@400&display=swap" rel="stylesheet" />
 
   <style>
     /* =========================================================
@@ -215,9 +216,89 @@
     .toc-link:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
     /* Mobile-only markup stays hidden on desktop; subpage-mobile.css reveals it. */
     .m-only{ display:none; }
+
+    /* =========================================================
+       NEW HEADER (homepage "portfolio-layout-new").
+       Shared styles apply at every width; the desktop-only block
+       places it like the homepage canvas. Mobile layout lives in
+       subpage-mobile.css (≤759px).
+       ========================================================= */
+    .hn-title{ margin:0; display:flex; align-items:baseline; white-space:nowrap; }
+    .hn-name{ font-family:"Space Grotesk", system-ui, sans-serif; font-weight:400; font-size:32px; line-height:normal; color:#1F2E25; }
+    .hn-loc{ margin-left:11.8px; font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; line-height:normal; color:#1A1A1A; }
+    .hn-roles, .hn-tags{ display:flex; gap:8px; margin:0; padding:0; list-style:none; }
+    .hn-pill{
+      display:flex; align-items:center; height:28px; padding:0 13px; border-radius:14px;
+      background:#fff; font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:12px; color:#1A1A1A; white-space:nowrap;
+    }
+    .hn-pill--sage{ background:#BCD5B6; }
+    .hn-pill--violet{ background:#C6B6E4; }
+    .hn-pill--lg{ height:30px; padding:0 12px; border-radius:15px; color:#1F2E25; }
+    .hn-link{
+      display:inline-flex; align-items:center; gap:9px;
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:12px; line-height:16px; color:#1F2E25; white-space:nowrap;
+      text-decoration:underline; text-decoration-color:transparent;
+      text-underline-offset:3px; text-decoration-thickness:1px; border-radius:4px;
+      transition:color .18s ease, text-decoration-color .18s ease, opacity .18s ease;
+    }
+    .hn-link:hover{ color:#8A5A44; text-decoration-color:currentColor; }
+    .hn-link:active{ color:#2E4637; text-decoration-thickness:2px; opacity:.72; }
+    .hn-link:focus-visible{ outline:2px solid #2E4637; outline-offset:3px; }
+    .hn-link--mail{ gap:8.65px; }
+    .hn-icon-mail{ display:block; width:12.7938px; height:9.6px; margin:-0.8px; }
+    .hn-icon-ext{ display:block; width:12.8px; height:12.8px; margin:-0.9px; }
+    .hn-m-icon{ display:none; }                 /* mobile icon buttons, see subpage-mobile.css */
+
+    /* Title band: Back · title over subtitle (card typography of the homepage) */
+    .pagehead__title{
+      margin:0; font-family:"Space Grotesk", system-ui, sans-serif; font-weight:400;
+      font-size:22px; line-height:26.39px; letter-spacing:0; color:#1F2E25; white-space:nowrap;
+    }
+    .pagehead__desc{
+      margin:5px 0 0; font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:11px; line-height:14.52px; color:#8A5A44; white-space:nowrap;
+    }
+
+    /* Back — the homepage VIEW button mirrored: arrow on the left */
+    .back-btn{
+      display:inline-flex; align-items:center; gap:14.65px;
+      height:44px; padding:0 16px 0 18px; border:0; border-radius:22px;
+      background:#E4E8E2; color:#1F2E25;
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      text-decoration:none; white-space:nowrap; cursor:pointer; user-select:none;
+      transition:background-color .18s ease, color .18s ease, transform .12s ease, box-shadow .18s ease;
+    }
+    .back-btn__arrow{
+      display:block; width:8px; height:8px; margin:-1px;
+      transform:scaleX(-1);
+      transition:transform .18s ease, filter .18s ease;
+    }
+    .back-btn__label{ font-family:inherit; font-size:11px; font-weight:400; line-height:14.52px; text-transform:uppercase; }
+    .back-btn:hover{ background:#8A5A44; color:#fff; }
+    .back-btn:hover .back-btn__arrow{ transform:translate(-1.5px,-1.5px) scaleX(-1); filter:brightness(0) invert(1); }
+    .back-btn:active{
+      background:#2E4637; color:#fff; transform:scale(.96);
+      box-shadow:inset 0 2px 4px rgba(0,0,0,.18);
+    }
+    .back-btn:active .back-btn__arrow{ filter:brightness(0) invert(1); }
+    .back-btn:focus-visible{ outline:2px solid #2E4637; outline-offset:2px; border-color:transparent; box-shadow:none; color:#1F2E25; }
+
+    @media (min-width:760px){
+      .frame{ padding-top:30px; }                 /* header box 30→107, like the homepage */
+      .topnav{ height:77px; align-items:center; }
+      .content{ margin-top:17px; }                /* panel starts at 124, like the homepage cards */
+      .hn-intro{ flex:none; height:87px; display:flex; flex-direction:column; align-items:flex-start; }
+      .hn-roles{ margin-top:8px; }
+      .hn-right{ display:flex; flex-direction:column; align-items:flex-end; }
+      .hn-contact{ display:flex; align-items:center; gap:19px; height:31.645px; padding-right:3px; }
+      .hn-tags{ margin-top:6.19px; }
+      .pagehead__text{ margin-left:24px; }
+    }
   </style>
   <!-- Mobile layout (≤759px), shared by all subpages -->
-  <link rel="stylesheet" href="subpage-mobile.css" media="(max-width: 759px)" />
+  <link rel="stylesheet" href="subpage-mobile.css?v=20261115d" media="(max-width: 759px)" />
 </head>
 <body>
   <div class="stage">
@@ -226,36 +307,33 @@
 
       <!-- ============ TOP NAVIGATION BAR (matches homepage header) ============ -->
       <nav class="topnav" aria-label="Site header">
-        <div class="topnav__intro d-only">
-          <p class="topnav__title"><span class="topnav__name">Jacek Waz</span> <span class="topnav__loc">Krakow, Poland</span></p>
-          <ul class="topnav__roles" aria-label="Roles">
-            <li class="topnav__pill">UX/UI Designer</li>
-            <li class="topnav__pill">Product Designer</li>
-            <li class="topnav__pill">Interaction Designer</li>
+        <div class="hn-intro">
+          <p class="hn-title"><span class="hn-name">Jacek Waz</span> <span class="hn-loc">Kraków, PL</span></p>
+          <ul class="hn-roles" aria-label="Roles">
+            <li class="hn-pill hn-pill--sage">UX/UI Designer</li>
+            <li class="hn-pill">Product Designer</li>
+            <li class="hn-pill">Interaction Designer</li>
           </ul>
-          <p class="topnav__tags">Enterprise B2B SaaS Fintech Dashboards&nbsp;&nbsp;·&nbsp;&nbsp;Design Systems&nbsp;&nbsp;·&nbsp;&nbsp;Mobile Design&nbsp;&nbsp;·&nbsp;&nbsp;AI-Native Design</p>
         </div>
-        <div class="topnav__contact d-only">
-          <a class="topnav__link" href="mailto:prochow@gmail.com" aria-label="Email: prochow@gmail.com">
-            <img class="topnav__icon" src="assets/header-icon-mail.svg" width="16.4995" height="13.1661" alt="" />
-            <span>prochow@gmail.com</span>
-          </a>
-          <a class="topnav__link" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: jacek-waz-77a4801, opens in a new tab">
-            <img class="topnav__icon" src="assets/header-icon-linkedin.svg" width="16.4993" height="16.4993" alt="" />
-            <span>LinkedIn - jacek-waz-77a4801</span>
-          </a>
-        </div>
-        <!-- Mobile header (≤759px): same email/LinkedIn destinations as above -->
-        <div class="topnav__m m-only">
-          <div class="topnav__m-id">
-            <p class="topnav__m-name">Jacek Waz</p>
-            <p class="topnav__m-loc">Kraków, Poland</p>
+        <div class="hn-right">
+          <div class="hn-contact">
+            <a class="hn-link hn-link--mail" href="mailto:prochow@gmail.com" aria-label="Email: prochow@gmail.com">
+              <span class="hn-m-icon hn-m-icon--mail" aria-hidden="true"></span>
+              <img class="hn-icon-mail" src="assets/new-layout/group1.svg" width="12.7938" height="9.6" alt="" />
+              <span>prochow@gmail.com</span>
+            </a>
+            <a class="hn-link" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: jacek-waz-77a4801, opens in a new tab">
+              <span class="hn-m-icon hn-m-icon--linkedin" aria-hidden="true"></span>
+              <span>linkedin.com/in/jacek-waz-77a4801</span>
+              <img class="hn-icon-ext" src="assets/new-layout/ext-header.svg" width="12.8" height="12.8" alt="" />
+            </a>
           </div>
-          <div class="topnav__m-links">
-            <a class="topnav__m-btn" href="mailto:prochow@gmail.com" aria-label="Email: prochow@gmail.com"><span class="topnav__m-icon topnav__m-icon--mail" aria-hidden="true"></span></a>
-            <a class="topnav__m-btn" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: jacek-waz-77a4801, opens in a new tab"><span class="topnav__m-icon topnav__m-icon--linkedin" aria-hidden="true"></span></a>
-          </div>
-          <p class="topnav__m-roles"><span>UX/UI Designer</span> <span>Product Designer</span> <span>Interaction Designer</span></p>
+          <ul class="hn-tags" aria-label="Focus areas">
+            <li class="hn-pill hn-pill--lg hn-pill--sage">Enterprise B2B SaaS Fintech dashboards</li>
+            <li class="hn-pill hn-pill--lg">Design systems</li>
+            <li class="hn-pill hn-pill--lg">Mobile design</li>
+            <li class="hn-pill hn-pill--lg hn-pill--violet">AI-native design</li>
+          </ul>
         </div>
       </nav>
 
@@ -264,16 +342,14 @@
 
         <!-- Header band (title level) -->
         <header class="pagehead">
-          <a class="back-btn" href="index.html" aria-label="Back to homepage">
-            <span class="back-btn__icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M13.5 8.5 10 12l3.5 3.5M10 12h6M21 12a9 9 0 1 0-18 0 9 9 0 0 0 18 0Z" />
-              </svg>
-            </span>
+          <a class="back-btn" href="index.html" data-confetti aria-label="Back to homepage">
+            <img class="back-btn__arrow" src="assets/new-layout/group6.svg" width="8" height="8" alt="" />
             <span class="back-btn__label">Back</span>
           </a>
-          <h1 class="pagehead__title">INTERACTION DESIGN</h1>
-          <p class="pagehead__desc">Case Study</p>
+          <div class="pagehead__text">
+            <h1 class="pagehead__title">Interaction Design</h1>
+            <p class="pagehead__desc">Case study</p>
+          </div>
         </header>
 
         <!-- Vertical image gallery -->
@@ -420,5 +496,11 @@
     if (MOBILE.addEventListener) MOBILE.addEventListener('change', fit);
     window.addEventListener('load', fit);
   </script>
+  <link rel="stylesheet" href="confetti.css" />
+  <script>
+    // Confetti only on the Back button (the handoff spec has a decorative element with class "cta").
+    window.CONFETTI_SELECTOR = '.back-btn[data-confetti]';
+  </script>
+  <script src="confetti.js?v=20261115" defer></script>
 </body>
 </html>

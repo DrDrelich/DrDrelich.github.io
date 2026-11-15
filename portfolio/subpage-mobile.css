@@ -3,9 +3,9 @@
    Shared by the 8 gallery/case-study pages. Loaded with
    media="(max-width: 759px)", so the scaled 1440px desktop
    frame above that width is untouched.
-   Visual language follows the homepage mobile layout (mobile.css):
-   16px gutters, 20px card radius, ADLaM 26px titles, 15px Inter,
-   44–50px touch targets, desktop hover/focus colours.
+   Header, Back button and page title follow the new homepage
+   layout (index.html mobile): Space Grotesk / JetBrains Mono,
+   16px gutters, 20px card radius, 36–44px touch targets.
    ========================================================= */
 
 :root{
@@ -24,7 +24,6 @@ body{
 
 /* ---------- Mobile/desktop-only markup ---------- */
 .d-only{ display:none !important; }
-.topnav .m-only{ display:flex; }
 .toc-m.m-only{ display:block; }
 
 /* ---------- Frame: normal flow, no scaling ---------- */
@@ -39,96 +38,54 @@ body{
   transform:none;
 }
 
-/* ---------- Compact header card ---------- */
+/* ---------- Header card (new layout) ----------
+   Layout idea from the previous mobile header: card, location under the
+   name, round icon buttons for email/LinkedIn top-right, plain-text
+   specialties. Colours, type and button states from the new layout. */
 .topnav{
   height:auto;
-  padding:16px 16px 16px 20px;
-  border-radius:var(--m-radius);
-  background:var(--m-gray);
-  align-items:center;
-}
-.topnav__m{
-  width:100%;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;              /* roles get their own full-width row */
-  gap:8px 12px;
-}
-.topnav__m-id{ min-width:0; }
-.topnav__m-id p{ margin:0; }
-.topnav__m-name{
-  font-family:"ADLaM Display", system-ui, sans-serif;
-  font-size:24px;
-  line-height:1.25;
-  color:var(--m-ink);
-}
-/* Same type as the page subtitle (.pagehead__desc). */
-.topnav__m-loc{
-  margin-top:2px !important;
-  font-size:15px;
-  font-weight:400;
-  font-style:normal;
-  line-height:1.4;
-  color:var(--m-muted);
-}
-/* Roles: full-width row under name + buttons, "A  |  B  |  C".
-   Each role stays in one piece. Every role is "[sep slot]Text" and is pulled
-   left by one slot (margin-left), while reserving one slot after itself
-   (margin-right), so mid-line the slot lands exactly between two roles.
-   At the start of a wrapped line there is nothing to land on: the slot sits
-   left of the box and is clipped, so no line starts or ends with a "|".
-   The box is one slot wider than the row (negative margin-right) so the
-   trailing slot after the last role doesn't force an early wrap. */
-.topnav__m-roles{
-  --sep:16px;                  /* matches "&nbsp;&nbsp;|&nbsp;&nbsp;" at 12px */
-  flex:0 0 calc(100% + var(--sep));
-  margin:0 calc(-1 * var(--sep)) 0 0;
-  overflow:hidden;
-  font-size:0;                 /* spaces between roles (for screen readers and
-                                  line breaks) take no width; the slot is the gap */
-  line-height:1.4;
-  color:var(--m-muted);        /* same gray as "Kraków, Poland" */
-}
-.topnav__m-roles span{
-  display:inline-block;
-  font-size:12px;
-  white-space:nowrap;
-  margin:0 var(--sep) 0 calc(-1 * var(--sep));
-}
-.topnav__m-roles span::before{
-  content:"|";
-  content:"|" / "";            /* decorative: not read by screen readers */
-  display:inline-block;
-  width:var(--sep);
-  text-align:center;
-}
-.topnav__m-links{
-  display:flex;
-  gap:8px;
-  flex:0 0 auto;
-}
-.topnav__m-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:44px; height:44px;
+  padding:20px;
+  background:#E4E8E2;
   border-radius:22px;
-  background:#fff;
-  color:var(--m-ink);
-  transition:color .18s ease, background-color .18s ease, transform .12s ease;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:
+    "title contact"
+    "roles roles";
+  align-items:start;
+  column-gap:12px;
 }
-/* Figma SVGs used as masks so they take the link colour */
-.topnav__m-icon{
+.hn-intro, .hn-right{ display:contents; }
+.hn-title{ grid-area:title; flex-direction:column; align-items:flex-start; white-space:normal; }
+.hn-loc{ margin:2px 0 0; color:#4F5651; }
+.hn-roles{ grid-area:roles; margin-top:16px; flex-wrap:wrap; gap:8px; }
+.hn-roles .hn-pill{ height:auto; min-height:28px; padding:6px 12px; white-space:normal; line-height:16px; }
+/* Specialties line: homepage only — hidden on mobile subpages */
+.hn-tags{ display:none; }
+
+/* Email / LinkedIn as round icon buttons */
+.hn-contact{ grid-area:contact; display:flex; gap:8px; }
+.hn-link{
+  width:44px; height:44px; padding:0; gap:0;
+  justify-content:center;
+  border-radius:22px;
+  background:#fff; color:#1F2E25;
+  text-decoration:none;
+  transition:background-color .18s ease, color .18s ease, transform .12s ease;
+}
+.hn-link > img,
+.hn-link > span:not(.hn-m-icon){ display:none; }
+.hn-m-icon{
   display:block;
   background-color:currentColor;
   -webkit-mask:var(--icon) center / contain no-repeat;
           mask:var(--icon) center / contain no-repeat;
 }
-.topnav__m-icon--mail{     --icon:url("assets/mobile/icon-mail.svg");     width:16.4995px; height:13.1661px; }
-.topnav__m-icon--linkedin{ --icon:url("assets/mobile/icon-linkedin.svg"); width:16.4993px; height:16.4993px; }
-.topnav__m-btn:hover{ color:var(--blue); background:#FAFAFA; }
-.topnav__m-btn:active{ color:var(--blue); background:#F2F2F2; transform:scale(.96); }
-.topnav__m-btn:focus-visible{ outline:none; box-shadow:0 0 0 2px var(--blue); }
+.hn-m-icon--mail{     --icon:url("assets/mobile/icon-mail.svg");     width:16.4995px; height:13.1661px; }
+.hn-m-icon--linkedin{ --icon:url("assets/mobile/icon-linkedin.svg"); width:16.4993px; height:16.4993px; }
+.hn-link:hover{ background:#8A5A44; color:#fff; opacity:1; }
+.hn-link:active{ background:#2E4637; color:#fff; opacity:1; transform:scale(.96); }
+.hn-link:focus-visible{ outline:2px solid #2E4637; outline-offset:2px; }
 
 /* ---------- Content card ---------- */
 .content{
@@ -142,26 +99,9 @@ body{
   align-items:flex-start;
   padding:20px 8px 20px;
 }
-.back-btn{
-  height:44px;
-  margin-bottom:18px;
-  transition:background-color .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
-}
-.back-btn:active{ color:var(--blue); background:#F2F2F2; transform:scale(.97); }
-.pagehead__title{
-  margin-left:0;
-  white-space:normal;
-  font-size:26px;
-  line-height:1.1;
-  letter-spacing:0;
-  color:var(--m-ink);
-}
-.pagehead__desc{
-  margin:8px 0 0;
-  font-size:15px;
-  line-height:1.4;
-  color:var(--m-muted);
-}
+.back-btn{ margin-bottom:18px; }
+.pagehead__title{ white-space:normal; }
+.pagehead__desc{ white-space:normal; }
 
 /* ---------- Gallery ---------- */
 .gallery__img{ border-radius:10px; }

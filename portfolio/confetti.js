@@ -115,7 +115,7 @@
   }
 
   document.addEventListener('click', function (e) {
-    var el = e.target.closest && e.target.closest(SELECTOR);
+    var el = e.target.closest && e.target.closest(window.CONFETTI_SELECTOR || SELECTOR);
     if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
     if (el.hasAttribute('download') || e.defaultPrevented) return;
     // Let the browser handle "open in new tab/window" gestures natively.
