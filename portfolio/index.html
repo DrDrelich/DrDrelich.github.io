@@ -337,7 +337,7 @@
     .wf__mover{ position:absolute; z-index:2; left:12px; top:29px; width:81.17px; height:14px; opacity:0; pointer-events:none; }
     .wf__look{ position:absolute; left:0; top:0; }
     .wf__look--doing, .wf__look--done{ opacity:0; }
-    .flow__dot{ position:absolute; z-index:3; left:0; top:0; offset-rotate:0deg; opacity:0; pointer-events:none; }
+    .flow__dot{ position:absolute; z-index:3; left:0; top:0; opacity:0; pointer-events:none; }
     .bar, .b2b__kpi path, .seg, .dot, .phone .ui{ transform-box:fill-box; }
     svg.phone{ display:block; overflow:visible; }
     .bar{ transform-origin:50% 100%; }
@@ -354,7 +354,7 @@
       opacity:0; transition:opacity .2s ease;
     }
 
-    @media (prefers-reduced-motion: no-preference) and (hover: hover){
+    @media (prefers-reduced-motion: no-preference){
       /* 1 · B2B */
       .is-play .b2b__kpi path{ animation:a-fadeup .45s var(--lift-ease) calc(var(--i) * 80ms) both; }
       .is-play .bar{ animation:a-grow .6s var(--lift-ease) calc(120ms + var(--i) * 60ms) both; }
@@ -379,7 +379,8 @@
       .is-play .fa-dy{ transform-origin:50% 0; animation:a-drawy .22s ease-out var(--d) both; }
       .is-play .fa-dx{ transform-origin:var(--o) 50%; animation:a-drawx .2s ease-out var(--d) both; }
       .is-play .fa-rot{ animation:a-rot90 .45s var(--lift-ease) var(--d) both; }
-      .is-play .flow__dot{ animation:a-travel 1.25s cubic-bezier(.45,.05,.55,.95) both; }
+      .is-play .flow__dot--l{ animation:a-path-l 1.25s linear both, a-travel 1.25s linear both; }
+      .is-play .flow__dot--r{ animation:a-path-r 1.25s linear both, a-travel 1.25s linear both; }
       .is-play .fa-pop{ animation:a-pop .45s cubic-bezier(.34,1.56,.64,1) var(--d) both; }
 
       /* 5 · Workflow */
@@ -398,6 +399,10 @@
       .is-play .ix-lab{ animation:a-fade .2s ease var(--d) both; }
       .is-play .ix__playhead{ animation:a-sweep 1.15s linear both; }
       .module:hover .ix__spin{ opacity:1; transition-delay:.5s; animation:a-spin .8s linear infinite; }
+      @media (hover: none){
+        .module:hover .ix__spin{ opacity:0; animation:none; }                     /* no sticky hover after a tap */
+        .is-play .ix__spin{ opacity:1; transition-delay:.5s; animation:a-spin .8s linear infinite; }
+      }
 
       /* 7 · Design System */
       .is-play .ds__row{ animation:a-flash .5s ease calc(var(--i) * 90ms) both; }
@@ -435,7 +440,27 @@
     @keyframes a-sweep{ 0%{ opacity:1; transform:translateX(0); } 87%{ opacity:1; transform:translateX(241px); } 100%{ opacity:0; transform:translateX(241px); } }
     @keyframes a-spin{ to{ transform:rotate(360deg); } }
     @keyframes a-flash{ 0%,100%{ background:transparent; box-shadow:0 0 0 6px transparent; } 35%{ background:rgba(188,213,182,.55); box-shadow:0 0 0 6px rgba(188,213,182,.55); } }
-    @keyframes a-travel{ 0%{ offset-distance:0%; opacity:0; } 6%,94%{ opacity:1; } 100%{ offset-distance:100%; opacity:0; } }
+    @keyframes a-travel{ 0%{ opacity:0; } 6%,94%{ opacity:1; } 100%{ opacity:0; } }
+    /* Dot centre follows the connector lines (design px, so it scales with the card).
+       Stops are placed by path length so the dot moves at a constant speed.
+       Left:  Start (91.41,12) ↓ (91.41,49.31) ← (40.66,49.31) ↓ (40.66,134.31) → (90.66,134.31) ↓ Success (90.66,187)
+       Right: Start (91.41,12) ↓ (91.41,49.31) → (141.66,49.31) ↓ (141.66,134.31) ← (90.66,134.31) ↓ Success (90.66,187) */
+    @keyframes a-path-l{
+      0%{ transform:translate(88.41px, 9px); }
+      13.53%{ transform:translate(88.41px, 46.31px); }
+      31.93%{ transform:translate(37.66px, 46.31px); }
+      62.76%{ transform:translate(37.66px, 131.31px); }
+      80.89%{ transform:translate(87.66px, 131.31px); }
+      100%{ transform:translate(87.66px, 184px); }
+    }
+    @keyframes a-path-r{
+      0%{ transform:translate(88.41px, 9px); }
+      13.51%{ transform:translate(88.41px, 46.31px); }
+      31.69%{ transform:translate(138.66px, 46.31px); }
+      62.46%{ transform:translate(138.66px, 131.31px); }
+      80.93%{ transform:translate(87.66px, 131.31px); }
+      100%{ transform:translate(87.66px, 184px); }
+    }
     @keyframes a-wf-orig{ 0%,90%{ opacity:0; } 100%{ opacity:1; } }
     @keyframes a-wf-move{
       0%{ opacity:1; transform:none; }
@@ -710,8 +735,8 @@
                   </div>
                   <img class="abs fa-dy" style="--d:1080ms; left:90.91px; top:164px" src="assets/new-layout/vector23.svg" width="1" height="10" alt="" />
                   <div class="node fa-pop" style="--d:1180ms; left:46.69px; top:174px; width:89.44px; height:26px; color:var(--ink); padding-left:15px"><img src="assets/new-layout/vector33.svg" width="89.44" height="26" alt="" /><span>Success ✓</span></div>
-                  <img class="flow__dot" style="offset-path:path('M91.41 12 V49.31 H40.66 V134.31 H90.66 V187')" src="assets/new-layout/vector12.svg" width="6" height="6" alt="" />
-                  <img class="flow__dot" style="offset-path:path('M91.41 12 V49.31 H141.66 V134.31 H90.66 V187')" src="assets/new-layout/vector12.svg" width="6" height="6" alt="" />
+                  <img class="flow__dot flow__dot--l" src="assets/new-layout/vector12.svg" width="6" height="6" alt="" />
+                  <img class="flow__dot flow__dot--r" src="assets/new-layout/vector12.svg" width="6" height="6" alt="" />
                 </div>
               </div>
               <div class="card__foot">
@@ -903,7 +928,8 @@
     })();
   </script>
   <script>
-    // Micro-animation trigger: plays once per pointer entry / keyboard focus.
+    // Micro-animation trigger: plays once per pointer entry (mouse), per tap (touch screens)
+    // or when keyboard focus enters a module.
     (function () {
       var canHover = window.matchMedia('(hover: hover)');
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -923,12 +949,13 @@
       }
       document.querySelectorAll('.module').forEach(function (m) {
         function play() {
-          if (!canHover.matches || reduce.matches || m.classList.contains('is-play')) return;
+          if (reduce.matches || m.classList.contains('is-play')) return;
           m.classList.add('is-play');
           countUp(m);
           setTimeout(function () { m.classList.remove('is-play'); }, PLAY_MS);
         }
-        m.addEventListener('mouseenter', play);
+        m.addEventListener('mouseenter', function () { if (canHover.matches) play(); });
+        m.addEventListener('click', function () { if (!canHover.matches) play(); });   // tap
         m.addEventListener('focusin', play);
       });
     })();
