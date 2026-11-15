@@ -536,7 +536,7 @@
         gap:16px; margin-top:16px;
       }
       .col{ display:contents; }
-      .module{ width:327.5px; zoom:var(--mz, 1); }
+      .module{ width:327.5px; zoom:var(--mz, 1); scroll-margin-top:16px; }
       .h-685{ height:685px; } .h-321{ height:321px; } .h-340{ height:340px; }
       .h-400{ height:400px; } .h-261{ height:261px; } .h-300{ height:300px; }
       .h-361{ height:361px; }
@@ -592,7 +592,7 @@
 
         <!-- Column 1 -->
         <div class="col">
-          <section class="module h-685 lift-top" id="modB2B">
+          <section class="module h-685 lift-top" id="b2b-saas">
             <div class="card">
               <h2 class="card__title">B2B SaaS Dashboards<br />&amp; UX/UI Fintech Work</h2>
               <p class="card__sub">Enterprise dashboards &amp; Fintech components</p>
@@ -641,7 +641,7 @@
 
         <!-- Column 2 -->
         <div class="col">
-          <section class="module h-321">
+          <section class="module h-321" id="forex-withdrawal">
             <div class="card">
               <h2 class="card__title">Forex. Withdrawal Process</h2>
               <p class="card__sub">Process redesign</p>
@@ -672,7 +672,7 @@
             </div>
           </section>
 
-          <section class="module h-340">
+          <section class="module h-340" id="native-mobile-apps">
             <div class="card">
               <h2 class="card__title">Native Mobile Apps</h2>
               <p class="card__sub">iOS &amp; Android UX/UI</p>
@@ -708,7 +708,7 @@
 
         <!-- Column 3 -->
         <div class="col">
-          <section class="module h-400">
+          <section class="module h-400" id="ux-flow-maps">
             <div class="card">
               <h2 class="card__title">UX Flow Maps</h2>
               <p class="card__sub">From start to success</p>
@@ -749,7 +749,7 @@
             </div>
           </section>
 
-          <section class="module h-261">
+          <section class="module h-261" id="saas-dashboard-workflow">
             <div class="card">
               <h2 class="card__title">SaaS Dashboard<br />Workflow</h2>
               <p class="card__sub">Workflow process</p>
@@ -789,7 +789,7 @@
 
         <!-- Column 4 -->
         <div class="col">
-          <section class="module h-300">
+          <section class="module h-300" id="interaction-design">
             <div class="card">
               <h2 class="card__title">Interaction Design</h2>
               <p class="card__sub">Case study &amp; Handoff specification</p>
@@ -825,7 +825,7 @@
             </div>
           </section>
 
-          <section class="module h-361">
+          <section class="module h-361" id="design-system">
             <div class="card">
               <h2 class="card__title">Design System</h2>
               <p class="card__sub">Tokens &amp; samples</p>
@@ -879,6 +879,21 @@
       window.addEventListener('resize', fit);
       if (mq.addEventListener) mq.addEventListener('change', fit);
     })();
+
+    // Mobile: BACK on a subpage links to index.html#<module>. The browser jumps there
+    // before the web fonts finish loading (the header can still change height), so the
+    // module is re-aligned once fonts are ready — unless the visitor has scrolled already.
+    (function () {
+      var id = decodeURIComponent(location.hash.slice(1));
+      var target = id && document.getElementById(id);
+      if (!target || !target.classList.contains('module') || !window.PORTFOLIO_MOBILE.matches) return;
+      var userScrolled = false;
+      function mark() { userScrolled = true; }
+      ['wheel', 'touchmove', 'keydown'].forEach(function (t) { window.addEventListener(t, mark, { once: true, passive: true }); });
+      function align() { if (!userScrolled) target.scrollIntoView({ block: 'start' }); }
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { requestAnimationFrame(align); });
+      window.addEventListener('load', function () { requestAnimationFrame(align); }, { once: true });
+    })();
   </script>
 
   <script>
@@ -888,7 +903,7 @@
       var canvas = document.getElementById('starSwarmCanvas');
       var design = canvas.parentElement;
       var INTERVAL = 7, DURATION = 2.9, LIFT_PAD = 160;
-      var modA1 = document.getElementById('modB2B');
+      var modA1 = document.getElementById('b2b-saas');
       var active = false, start = 0, last = Date.now();
 
       function resize() {
