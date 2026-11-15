@@ -957,7 +957,34 @@
         m.addEventListener('mouseenter', function () { if (canHover.matches) play(); });
         m.addEventListener('click', function () { if (!canHover.matches) play(); });   // tap
         m.addEventListener('focusin', play);
+        m._play = play;
       });
+
+      // Mobile layout: also play automatically, once per visit, when a module's
+      // illustration is fully in view for 0.2 s (a quick scroll past doesn't trigger it).
+      // A tap still replays it any time.
+      var mobile = window.PORTFOLIO_MOBILE;
+      if (!('IntersectionObserver' in window) || !mobile) return;
+      var ART = '.b2b__panel, .fx__progress, .mob__panel, .flow__panel, .wf__panel, .ix__panel, .ds__panel';
+      var DWELL_MS = 200, timers = new WeakMap();
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var art = e.target;
+          if (!mobile.matches) return;
+          if (e.intersectionRatio >= 0.98) {
+            if (timers.has(art)) return;
+            timers.set(art, setTimeout(function () {
+              timers.delete(art);
+              io.unobserve(art);                                  // once per visit
+              art.closest('.module')._play();
+            }, DWELL_MS));
+          } else if (timers.has(art)) {
+            clearTimeout(timers.get(art));                        // left the view before 0.2 s
+            timers.delete(art);
+          }
+        });
+      }, { threshold: [0, 0.98, 1] });
+      document.querySelectorAll(ART).forEach(function (art) { io.observe(art); });
     })();
   </script>
   <!-- Exact live confetti: selector '.cta, [data-confetti]', 13 particles, same colours/timing/navigation delay. -->
