@@ -1,5 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="370" height="200" viewBox="0 0 370 200" fill="none">
   <!-- Aktivitäten hero: neon dashboard speedometer (same style as the Quests illustrations) -->
+  <style>
+    /* Speed loops between 118 and 150 km/h (needle drawn at 150 = 310deg, 1 km/h = 1deg).
+       The rev counter follows: 118 km/h = 228deg, 150 km/h = 268deg (needle drawn at 250deg).
+       Arcs use pathLength 220 = the 220deg scale, so the dash length is the angle swept. */
+    .spd-needle, .rpm-needle{ transform-box:view-box; }
+    .spd-needle{ transform-origin:250px 118px; animation:spd 9s ease-in-out infinite; }
+    .rpm-needle{ transform-origin:74px 64px; animation:rpm 9s ease-in-out infinite; }
+    .spd-arc{ stroke-dasharray:150 300; animation:spdArc 9s ease-in-out infinite; }
+    .rpm-arc{ stroke-dasharray:100 300; animation:rpmArc 9s ease-in-out infinite; }
+    @keyframes spd{ 0%{ transform:rotate(-18deg); } 14%{ transform:rotate(-9deg); } 28%{ transform:rotate(0deg); } 42%{ transform:rotate(-12deg); } 57%{ transform:rotate(-32deg); } 71%{ transform:rotate(-26deg); } 85%{ transform:rotate(-4deg); } 100%{ transform:rotate(-18deg); } }
+    @keyframes spdArc{ 0%{ stroke-dasharray:132 300; } 14%{ stroke-dasharray:141 300; } 28%{ stroke-dasharray:150 300; } 42%{ stroke-dasharray:138 300; } 57%{ stroke-dasharray:118 300; } 71%{ stroke-dasharray:124 300; } 85%{ stroke-dasharray:146 300; } 100%{ stroke-dasharray:132 300; } }
+    @keyframes rpm{ 0%{ transform:rotate(-4.5deg); } 14%{ transform:rotate(6.75deg); } 28%{ transform:rotate(18deg); } 42%{ transform:rotate(3deg); } 57%{ transform:rotate(-22deg); } 71%{ transform:rotate(-14.5deg); } 85%{ transform:rotate(13deg); } 100%{ transform:rotate(-4.5deg); } }
+    @keyframes rpmArc{ 0%{ stroke-dasharray:95.5 300; } 14%{ stroke-dasharray:106.75 300; } 28%{ stroke-dasharray:118 300; } 42%{ stroke-dasharray:103 300; } 57%{ stroke-dasharray:78 300; } 71%{ stroke-dasharray:85.5 300; } 85%{ stroke-dasharray:113 300; } 100%{ stroke-dasharray:95.5 300; } }
+    @media (prefers-reduced-motion: reduce){ .spd-needle, .rpm-needle, .spd-arc, .rpm-arc{ animation:none; } }
+  </style>
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse">
       <stop stop-color="#0A1238"/>
@@ -33,9 +48,9 @@
   <!-- small gauge (rpm) -->
   <circle cx="74" cy="64" r="44" fill="#10164A" opacity=".8"/>
   <path d="M35.9 86.0 A44 44 0 1 1 117.3 71.6" stroke="#2A3270" stroke-width="3" stroke-linecap="round"/>
-  <path d="M35.9 86.0 A44 44 0 0 1 59.0 22.7" stroke="#22D3EE" stroke-width="3" stroke-linecap="round"/>
+  <path class="rpm-arc" pathLength="220" d="M35.9 86.0 A44 44 0 1 1 117.3 71.6" stroke="#22D3EE" stroke-width="3" stroke-linecap="round"/>
   <line x1="39.4" y1="84.0" x2="44.6" y2="81.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="34.6" y1="70.9" x2="40.5" y2="69.9" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="34.6" y1="57.1" x2="40.5" y2="58.1" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="39.4" y1="44.0" x2="44.6" y2="47.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="48.3" y1="33.4" x2="52.1" y2="38.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="60.3" y1="26.4" x2="62.4" y2="32.1" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="74.0" y1="24.0" x2="74.0" y2="30.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="87.7" y1="26.4" x2="85.6" y2="32.1" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="99.7" y1="33.4" x2="95.9" y2="38.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="108.6" y1="44.0" x2="103.4" y2="47.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="113.4" y1="57.1" x2="107.5" y2="58.1" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="113.4" y1="70.9" x2="107.5" y2="69.9" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/>
-  <line x1="74" y1="64" x2="62.4" y2="32.1" stroke="#EC4899" stroke-width="2" stroke-linecap="round"/>
+  <line class="rpm-needle" x1="74" y1="64" x2="62.4" y2="32.1" stroke="#EC4899" stroke-width="2" stroke-linecap="round"/>
   <circle cx="74" cy="64" r="4" fill="#E4E4E7"/>
 
   <g transform="translate(12 0)">
@@ -43,23 +58,39 @@
   <circle cx="250" cy="118" r="96" fill="url(#face)"/>
   <circle cx="250" cy="118" r="96" stroke="#4D8BFF" stroke-opacity=".35" stroke-width="1.5"/>
   <path d="M167.3 148.1 A88 88 0 1 1 332.7 148.1" stroke="#2A3270" stroke-width="5" stroke-linecap="round"/>
-  <path d="M167.3 148.1 A88 88 0 0 1 306.6 50.6" stroke="url(#arc)" stroke-width="9" stroke-linecap="round" filter="url(#soft)" opacity=".8"/>
-  <path d="M167.3 148.1 A88 88 0 0 1 306.6 50.6" stroke="url(#arc)" stroke-width="5" stroke-linecap="round"/>
+  <path class="spd-arc" pathLength="220" d="M167.3 148.1 A88 88 0 1 1 332.7 148.1" stroke="url(#arc)" stroke-width="9" stroke-linecap="round" filter="url(#soft)" opacity=".8"/>
+  <path class="spd-arc" pathLength="220" d="M167.3 148.1 A88 88 0 1 1 332.7 148.1" stroke="url(#arc)" stroke-width="5" stroke-linecap="round"/>
   <line x1="172.9" y1="146.0" x2="184.2" y2="141.9" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="169.2" y1="132.2" x2="175.2" y2="131.2" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="168.0" y1="118.0" x2="180.0" y2="118.0" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="169.2" y1="103.8" x2="175.2" y2="104.8" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="172.9" y1="90.0" x2="184.2" y2="94.1" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="179.0" y1="77.0" x2="184.2" y2="80.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="187.2" y1="65.3" x2="196.4" y2="73.0" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="197.3" y1="55.2" x2="201.1" y2="59.8" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="209.0" y1="47.0" x2="215.0" y2="57.4" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="222.0" y1="40.9" x2="224.0" y2="46.6" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="235.8" y1="37.2" x2="237.8" y2="49.1" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="250.0" y1="36.0" x2="250.0" y2="42.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="264.2" y1="37.2" x2="262.2" y2="49.1" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="278.0" y1="40.9" x2="276.0" y2="46.6" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="291.0" y1="47.0" x2="285.0" y2="57.4" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="302.7" y1="55.2" x2="298.9" y2="59.8" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="312.8" y1="65.3" x2="303.6" y2="73.0" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="321.0" y1="77.0" x2="315.8" y2="80.0" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="327.1" y1="90.0" x2="315.8" y2="94.1" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="330.8" y1="103.8" x2="324.8" y2="104.8" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="332.0" y1="118.0" x2="320.0" y2="118.0" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/><line x1="330.8" y1="132.2" x2="324.8" y2="131.2" stroke="#7C83B8" stroke-width="1.2" stroke-linecap="round"/><line x1="327.1" y1="146.0" x2="315.8" y2="141.9" stroke="#E4E4E7" stroke-width="2" stroke-linecap="round"/>
   <g fill="#A1A1AA" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="700" text-anchor="middle"><text x="195.5" y="140.8">0</text><text x="192.0" y="121.0">20</text><text x="195.5" y="101.2">40</text><text x="205.6" y="83.7">60</text><text x="221.0" y="70.8">80</text><text x="239.9" y="63.9">100</text><text x="260.1" y="63.9">120</text><text x="279.0" y="70.8">140</text><text x="294.4" y="83.7">160</text><text x="304.5" y="101.2">180</text><text x="308.0" y="121.0">200</text><text x="304.5" y="140.8">220</text></g>
   <text x="250" y="152" fill="#7C83B8" font-family="Inter, Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle">km/h</text>
 
   <!-- needle -->
-  <line x1="250" y1="118" x2="297.6" y2="61.3" stroke="#EC4899" stroke-width="6" stroke-linecap="round" filter="url(#soft)" opacity=".7"/>
-  <line x1="250" y1="118" x2="297.6" y2="61.3" stroke="#F472B6" stroke-width="3" stroke-linecap="round"/>
+  <g class="spd-needle"><line x1="250" y1="118" x2="297.6" y2="61.3" stroke="#EC4899" stroke-width="6" stroke-linecap="round" filter="url(#soft)" opacity=".7"/>
+  <line x1="250" y1="118" x2="297.6" y2="61.3" stroke="#F472B6" stroke-width="3" stroke-linecap="round"/></g>
   <circle cx="250" cy="118" r="9" fill="#1A2160" stroke="#E4E4E7" stroke-width="2"/>
   <circle cx="250" cy="118" r="3" fill="#EC4899"/>
 
   </g>
-  <!-- indicator lights -->
-  <g>
-    <circle cx="160" cy="22" r="3" fill="#10B981"/><circle cx="160" cy="22" r="7" fill="#10B981" opacity=".2"/>
-    <circle cx="344" cy="22" r="3" fill="#F59E0B"/><circle cx="344" cy="22" r="7" fill="#F59E0B" opacity=".2"/>
+  <!-- dashboard indicators, tied to the tiles below (top edge level with the rev counter, y = 20; the row sits
+       at equal distance, 5.6px, from the rev counter and the speedometer face):
+       pink pump (needle colour) = partner station nearby (Tanken bei Partnern), green leaf = ECO mode active (ECO Driving),
+       amber cup = time for a break (Pausen) -->
+  <g stroke-width="1.6666" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="134.57" cy="31" r="11" fill="#EC4899" fill-opacity=".18" stroke="#EC4899" stroke-opacity=".45"/>
+    <g transform="translate(128.88 25.75) scale(0.7)" stroke="#EC4899">
+      <path d="M1.6666 14.1661V2.4999C1.6666 2.05789 1.84219 1.63398 2.15474 1.32144C2.46728 1.00889 2.89119 0.8333 3.3332 0.8333H8.333C8.77501 0.8333 9.19892 1.00889 9.51146 1.32144C9.82401 1.63398 9.9996 2.05789 9.9996 2.4999V14.1661M0.8333 14.1661H10.8329M3.74985 4.58315H7.91635"/>
+      <path d="M9.9996 5.8331H11.6662C11.9977 5.8331 12.3156 5.96479 12.55 6.1992C12.7845 6.43361 12.9162 6.75154 12.9162 7.08305V10.8329C12.9162 11.1644 13.0478 11.4823 13.2823 11.7167C13.5167 11.9512 13.8346 12.0829 14.1661 12.0829C14.4976 12.0829 14.8155 11.9512 15.0499 11.7167C15.2844 11.4823 15.4161 11.1644 15.4161 10.8329V4.1665L12.9162 1.6666"/>
+    </g>
+    <circle cx="162.57" cy="31" r="11" fill="#10B981" fill-opacity=".18" stroke="#10B981" stroke-opacity=".45"/>
+    <g transform="translate(157.10 25.53) scale(0.82)" stroke="#10B981">
+      <path d="M0.8333 12.4995C0.8333 5.8331 5.41645 0.8333 12.4995 0.8333C12.4995 7.91635 7.4997 12.4995 0.8333 12.4995Z"/>
+      <path d="M0.8333 12.4995L7.08305 6.24975"/>
+    </g>
+    <circle cx="190.57" cy="31" r="11" fill="#F59E0B" fill-opacity=".18" stroke="#F59E0B" stroke-opacity=".45"/>
+    <g transform="translate(185.05 25.31) scale(0.78)" stroke="#F59E0B">
+      <path d="M0.8333 5.41645H9.9996V9.58295C9.9996 10.688 9.56063 11.7477 8.77926 12.5291C7.99789 13.3105 6.93812 13.7495 5.8331 13.7495H4.9998C3.89478 13.7495 2.83501 13.3105 2.05364 12.5291C1.27227 11.7477 0.8333 10.688 0.8333 9.58295V5.41645Z"/>
+      <path d="M9.9996 6.6664H11.2496C11.8021 6.6664 12.3319 6.88589 12.7226 7.27657C13.1133 7.66726 13.3328 8.19714 13.3328 8.74965C13.3328 9.30216 13.1133 9.83205 12.7226 10.2227C12.3319 10.6134 11.8021 10.8329 11.2496 10.8329H9.9996M3.3332 0.8333V2.4999M5.8331 0.8333V2.4999M8.333 0.8333V2.4999"/>
+    </g>
   </g>
   <g fill="#fff">
     <circle cx="140" cy="60" r="1" opacity=".5"/><circle cx="352" cy="70" r="1.2" opacity=".6"/>
