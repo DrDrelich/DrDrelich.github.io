@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="370" height="220" viewBox="0 0 370 220" fill="none">
+  <!-- City Roadparty: neon skyline, light trails, disco ball -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="220" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E0B36"/>
+      <stop offset=".6" stop-color="#2A1060"/>
+      <stop offset="1" stop-color="#3B0F4F"/>
+    </linearGradient>
+    <linearGradient id="trailA" x1="0" y1="0" x2="370" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22D3EE" stop-opacity="0"/>
+      <stop offset=".45" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#4D8BFF"/>
+    </linearGradient>
+    <linearGradient id="trailB" x1="0" y1="0" x2="370" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EC4899"/>
+      <stop offset=".6" stop-color="#C084FC"/>
+      <stop offset="1" stop-color="#C084FC" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="discoGlow" cx="214" cy="46" r="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C084FC" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#C084FC" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="disco" x1="200" y1="32" x2="228" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F4F5"/>
+      <stop offset="1" stop-color="#7C83B8"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-200%" width="140%" height="500%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <rect width="370" height="220" fill="url(#sky)"/>
+  <circle cx="214" cy="46" r="70" fill="url(#discoGlow)"/>
+
+  <!-- spotlight beams -->
+  <path d="M40 220 L110 0 H140 Z" fill="#22D3EE" opacity=".08"/>
+  <path d="M330 220 L260 0 H230 Z" fill="#EC4899" opacity=".08"/>
+
+  <!-- disco ball -->
+  <line x1="214" y1="0" x2="214" y2="30" stroke="#A1A1AA" stroke-width="1"/>
+  <circle cx="214" cy="46" r="16" fill="url(#disco)"/>
+  <g stroke="#0E0B36" stroke-opacity=".35" stroke-width=".8">
+    <path d="M198 46 H230 M200 38 H228 M200 54 H228 M214 30 V62 M206 32 Q202 46 206 60 M222 32 Q226 46 222 60"/>
+  </g>
+  <circle cx="208" cy="40" r="3" fill="#fff" opacity=".9"/>
+  <g stroke="#F4F4F5" stroke-opacity=".7" stroke-width="1.2" stroke-linecap="round">
+    <path d="M184 30 l-6 -4 M246 30 l6 -4 M186 64 l-7 4 M242 64 l7 4"/>
+  </g>
+
+  <!-- skyline -->
+  <g>
+    <rect x="0" y="96" width="34" height="80" fill="#1A1146"/>
+    <rect x="38" y="70" width="40" height="106" fill="#20155A"/>
+    <rect x="82" y="104" width="30" height="72" fill="#1A1146"/>
+    <rect x="116" y="58" width="36" height="118" fill="#231864"/>
+    <path d="M134 40 L144 58 H124 Z" fill="#231864"/>
+    <rect x="156" y="92" width="34" height="84" fill="#1A1146"/>
+    <rect x="252" y="84" width="38" height="92" fill="#20155A"/>
+    <rect x="294" y="62" width="34" height="114" fill="#231864"/>
+    <rect x="332" y="100" width="38" height="76" fill="#1A1146"/>
+  </g>
+  <!-- neon edges -->
+  <g stroke-width="1.4" fill="none">
+    <path d="M38 176 V70 H78 V176" stroke="#22D3EE" stroke-opacity=".7"/>
+    <path d="M116 176 V58 H124 L134 40 L144 58 H152 V176" stroke="#EC4899" stroke-opacity=".75"/>
+    <path d="M294 176 V62 H328 V176" stroke="#C084FC" stroke-opacity=".75"/>
+  </g>
+  <!-- windows -->
+  <g fill="#22D3EE" opacity=".7">
+    <rect x="46" y="80" width="5" height="4"/><rect x="58" y="80" width="5" height="4"/><rect x="46" y="94" width="5" height="4"/>
+    <rect x="66" y="108" width="5" height="4"/><rect x="58" y="122" width="5" height="4"/>
+  </g>
+  <g fill="#EC4899" opacity=".7">
+    <rect x="124" y="70" width="5" height="4"/><rect x="138" y="70" width="5" height="4"/><rect x="124" y="86" width="5" height="4"/>
+    <rect x="138" y="102" width="5" height="4"/><rect x="130" y="118" width="5" height="4"/>
+  </g>
+  <g fill="#C084FC" opacity=".75">
+    <rect x="302" y="74" width="5" height="4"/><rect x="314" y="74" width="5" height="4"/><rect x="302" y="90" width="5" height="4"/>
+    <rect x="314" y="106" width="5" height="4"/><rect x="262" y="96" width="5" height="4"/><rect x="274" y="112" width="5" height="4"/>
+  </g>
+  <g fill="#FBBF24" opacity=".6">
+    <rect x="164" y="104" width="4" height="4"/><rect x="176" y="120" width="4" height="4"/><rect x="8" y="110" width="4" height="4"/>
+    <rect x="342" y="114" width="4" height="4"/><rect x="90" y="118" width="4" height="4"/>
+  </g>
+
+  <!-- road -->
+  <path d="M0 168 H370 V220 H0 Z" fill="#0B0F19" opacity=".85"/>
+
+  <!-- light trails -->
+  <g filter="url(#glow)" opacity=".9">
+    <path d="M-10 186 C90 160 200 150 380 146" stroke="url(#trailA)" stroke-width="6"/>
+    <path d="M-10 196 C110 176 240 168 380 160" stroke="url(#trailB)" stroke-width="6"/>
+  </g>
+  <path d="M-10 186 C90 160 200 150 380 146" stroke="url(#trailA)" stroke-width="2.2"/>
+  <path d="M-10 192 C100 168 220 158 380 153" stroke="url(#trailA)" stroke-width="1.2" opacity=".7"/>
+  <path d="M-10 196 C110 176 240 168 380 160" stroke="url(#trailB)" stroke-width="2.2"/>
+  <path d="M-10 202 C120 184 250 176 380 168" stroke="url(#trailB)" stroke-width="1.2" opacity=".7"/>
+
+  <!-- music notes -->
+  <g fill="#22D3EE">
+    <path d="M60 30 v16 a4 4 0 1 1 -2 -3.4 V26 l12 -3 v13 a4 4 0 1 1 -2 -3.4 V27 Z" opacity=".85"/>
+  </g>
+  <g fill="#EC4899">
+    <path d="M300 22 v13 a3.6 3.6 0 1 1 -1.8 -3.1 V18 h8 v4 Z" opacity=".85"/>
+  </g>
+  <g fill="#fff">
+    <circle cx="20" cy="18" r="1" opacity=".6"/><circle cx="96" cy="14" r="1.2" opacity=".7"/>
+    <circle cx="168" cy="22" r="1" opacity=".6"/><circle cx="262" cy="14" r="1.2" opacity=".7"/>
+    <circle cx="350" cy="40" r="1" opacity=".6"/><circle cx="180" cy="70" r="1" opacity=".5"/>
+  </g>
+</svg>
