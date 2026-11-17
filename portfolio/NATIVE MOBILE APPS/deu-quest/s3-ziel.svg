@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="68" height="80" viewBox="0 0 68 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Marker/Ziel">
+<path id="Vector" d="M34 80C52.7777 80 68 64.7777 68 46C68 27.2223 52.7777 12 34 12C15.2224 12 4.57764e-05 27.2223 4.57764e-05 46C4.57764e-05 64.7777 15.2224 80 34 80Z" fill="url(#paint0_radial_0_39)"/>
+<path id="Vector_2" d="M34 60C41.732 60 48 53.732 48 46C48 38.268 41.732 32 34 32C26.2681 32 20 38.268 20 46C20 53.732 26.2681 60 34 60Z" fill="#0052FF" fill-opacity="0.35"/>
+<path id="Vector_3" d="M35.5 1.5C35.5 0.671573 34.8285 0 34 0C33.1716 0 32.5 0.671573 32.5 1.5V44.5C32.5 45.3284 33.1716 46 34 46C34.8285 46 35.5 45.3284 35.5 44.5V1.5Z" fill="white"/>
+<path id="Vector_4" d="M63.5 0H37.5C36.3955 0 35.5 0.89543 35.5 2V18C35.5 19.1046 36.3955 20 37.5 20H63.5C64.6046 20 65.5 19.1046 65.5 18V2C65.5 0.89543 64.6046 0 63.5 0Z" fill="white"/>
+<path id="Vector_5" d="M45.5 0H35.5V10H45.5V0Z" fill="#0B0F19"/>
+<path id="Vector_6" d="M65.5 0H55.5V10H65.5V0Z" fill="#0B0F19"/>
+<path id="Vector_7" d="M55.5 10H45.5V20H55.5V10Z" fill="#0B0F19"/>
+<path id="Vector_8" d="M34 53C37.866 53 41 49.866 41 46C41 42.134 37.866 39 34 39C30.1341 39 27 42.134 27 46C27 49.866 30.1341 53 34 53Z" fill="white" stroke-width="3" stroke="#0052FF"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_39" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(34 46) scale(34)">
+<stop stop-color="#0052FF" stop-opacity="0.45"/>
+<stop offset="1" stop-color="#0052FF" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

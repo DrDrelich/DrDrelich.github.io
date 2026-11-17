@@ -510,6 +510,162 @@
     }
 
     /* =================================================================
+       Live Deu Quest screens (Figma "Portfolio", page "Deu Quest Mobile"):
+       Aktivitäten 190:436, Quests 190:553, Rally map 191:4079, Profil 190:951.
+       Each covers one phone of 3.webp. Screens are 402×874 and every element
+       sits at its Figma position (see the templates). The numbers in the
+       comments below are the micro-interaction IDs of the motion spec.
+    ================================================================= */
+    .live-slot--dq{ aspect-ratio:402 / 874; }
+    .dq{
+      position:relative; width:402px; height:874px;
+      transform-origin:top left;
+      border-radius:44px; overflow:hidden;
+      background:#0B0F19;
+      box-shadow:0 6px 22px -5px rgba(0,0,0,.13);
+      color:#fff;
+      font-family:"Inter", system-ui, sans-serif;
+      -webkit-font-smoothing:antialiased;
+      /* motion tokens */
+      --ease-out:cubic-bezier(.22,1,.36,1);       /* entrances (iOS "smooth") */
+      --ease-spring:cubic-bezier(.34,1.56,.64,1); /* small overshoot (iOS "bouncy") */
+      --ease-io:cubic-bezier(.65,0,.35,1);        /* drawing strokes */
+    }
+    .dq img{ display:block; max-width:none; }
+    .dq-a, .dq-t, .dq-clip, .dq-shine, .dq-layer, .dq-pulse, .dq-medals, .dq-route-svg{ position:absolute; }
+    .dq-t{ margin:0; line-height:normal; white-space:nowrap; }
+    .dq-c{ transform:translateX(-50%); }
+    .dq-clip, .dq-shine{ overflow:hidden; box-sizing:border-box; }
+    .dq-clip > img{ position:absolute; }
+    .dq-layer{ inset:0; pointer-events:none; }
+    .dq-streets{ transform:rotate(-12deg); }
+    .dq-medals{ display:flex; gap:26px; align-items:center; justify-content:center; }
+    .dq-medal{ display:inline-grid; place-items:start; }
+    .dq-medal > *{ grid-area:1 / 1; }
+    .dq-medal p{ margin-bottom:0; font-size:12px; line-height:normal; color:#f4f4f5; white-space:nowrap; }
+
+    @keyframes dq-rise{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
+    @keyframes dq-fadein{ to{ opacity:1; } }
+
+    /* 4 · 8 — staggered entrance of cards / tiles (--i = order) */
+    .dq-in{ opacity:0; transform:translateY(12px); }
+    .is-visible .dq-in{ animation:dq-rise .55s var(--ease-out) both; animation-delay:calc(.15s + var(--i) * .07s); }
+
+    /* 2 · 8 — photos move with a scroll parallax (JS sets --py) */
+    .dq-parallax{ transform:translateY(var(--py, 0px)) scale(1.1); will-change:transform; }
+    /* 2 — one light sweep across the speedometer */
+    .dq-hero::after{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(105deg, transparent 35%, rgba(255,255,255,.22) 50%, transparent 65%);
+      transform:translateX(-100%);
+    }
+    .is-visible .dq-hero::after{ animation:dq-sweep 1.2s cubic-bezier(.45,0,.2,1) .35s both; }
+    @keyframes dq-sweep{ from{ transform:translateX(-100%); } to{ transform:translateX(100%); } }
+
+    /* 1 — "Pkt" pops once the counter lands (JS adds .is-done) */
+    .dq-pop{ transform-origin:0 100%; }
+    .dq-pop.is-done{ animation:dq-pop .32s ease-out; }
+    @keyframes dq-pop{ 50%{ transform:scale(1.08); } }
+
+    /* 3 — progress bars fill in turn; the points value appears as each bar lands */
+    .dq-fill{ clip-path:inset(0 100% 0 0); }
+    .is-visible .dq-fill{ animation:dq-fill .7s cubic-bezier(.33,1,.68,1) both; animation-delay:calc(.45s + var(--i) * .06s); }
+    @keyframes dq-fill{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0 0 0 0); } }
+    .dq-num{ opacity:0; transform:scale(.8); transform-origin:100% 50%; }
+    .is-visible .dq-num{ animation:dq-num .35s var(--ease-spring) both; animation-delay:calc(1.05s + var(--i) * .06s); }
+    @keyframes dq-num{ from{ opacity:0; transform:scale(.8); } to{ opacity:1; transform:none; } }
+
+    /* 5 — category icons: one short gesture on first view, replayed on hover / tap */
+    .dq-tile > :first-child{ pointer-events:auto; cursor:pointer; }
+    .dq-icon{ transform-origin:50% 50%; }
+    .is-visible .dq-icon{ animation-duration:.9s; animation-timing-function:ease-in-out; animation-fill-mode:both; animation-delay:calc(.75s + var(--i) * .07s); }
+    .is-visible .dq-icon--road,
+    .is-visible .dq-icon--fuel{ animation-name:dq-icon-pulse; }
+    .is-visible .dq-icon--leaf{ animation-name:dq-icon-sway; }
+    .is-visible .dq-icon--coffee{ animation-name:dq-icon-bob; }
+    .is-visible .dq-icon--jam{ animation-name:dq-icon-shake; animation-duration:.6s; }
+    @keyframes dq-icon-pulse{ 30%{ transform:scale(1.2); } 55%{ transform:scale(.95); } 75%{ transform:scale(1.08); } }
+    @keyframes dq-icon-sway{ 20%{ transform:rotate(-14deg); } 45%{ transform:rotate(10deg); } 70%{ transform:rotate(-5deg); } }
+    @keyframes dq-icon-bob{ 25%{ transform:translateY(-3px); } 50%{ transform:none; } 75%{ transform:translateY(-1.5px); } }
+    @keyframes dq-icon-shake{ 20%{ transform:translateX(-2px); } 40%{ transform:translateX(2px); } 60%{ transform:translateX(-1.5px); } 80%{ transform:translateX(1.5px); } }
+
+    /* 9 · 16 — "live" pulse: a ring grows out of the status dot, forever */
+    .dq-pulse{ border-radius:50%; background:#fff; opacity:0; }
+    .dq-pulse--green{ background:#10b981; }
+    .is-visible .dq-pulse{ animation:dq-pulse 1.6s cubic-bezier(0,0,.2,1) infinite; }
+    @keyframes dq-pulse{ 0%{ transform:scale(1); opacity:.7; } 100%{ transform:scale(2.4); opacity:0; } }
+
+    /* 10 — participant avatars pop in one after another (--a = place in the stack) */
+    .dq-av{ opacity:0; transform:scale(.6); }
+    .is-visible .dq-av{ animation:dq-av .4s var(--ease-spring) both; animation-delay:calc(.4s + var(--i) * .07s + var(--a) * .04s); }
+    @keyframes dq-av{ from{ opacity:0; transform:scale(.6); } to{ opacity:1; transform:none; } }
+    .dq-more.is-done{ animation:dq-tick .4s var(--ease-spring); }
+    @keyframes dq-tick{ 40%{ transform:translateX(-50%) scale(1.4); } }
+
+    /* 11 — one shine across the points pill when its card has arrived */
+    .dq-shine::after{
+      content:""; position:absolute; inset:0;
+      background:linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+      transform:translateX(-110%);
+    }
+    .is-visible .dq-shine::after{ animation:dq-shine .9s ease-in-out both; animation-delay:calc(.8s + var(--i) * .07s); }
+    @keyframes dq-shine{ from{ transform:translateX(-110%); } to{ transform:translateX(110%); } }
+
+    /* 13 — routes draw from Start to the finish, one by one, then a light runs
+       along each route in the direction of travel. JS inlines the route SVGs and
+       sets --len (path length) and --r (route index). */
+    .dq-route-draw{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); }
+    .is-visible .dq-route-draw{ animation:dq-draw 1s var(--ease-io) forwards; animation-delay:calc(.3s + var(--r) * .8s); }
+    @keyframes dq-draw{ to{ stroke-dashoffset:0; } }
+    .dq-route-flow{ stroke-dasharray:22px var(--len); stroke-dashoffset:22px; opacity:0; }
+    .is-visible .dq-route-flow{
+      animation:dq-flow 3.2s linear infinite, dq-fadein .4s ease forwards;
+      animation-delay:calc(1.3s + var(--r) * .8s);
+    }
+    @keyframes dq-flow{ from{ stroke-dashoffset:22px; } to{ stroke-dashoffset:calc(var(--len) * -1); } }
+
+    /* 15 — the finish flag waves (JS groups the flag paths of the inlined marker) */
+    .dq-flag{ transform-box:view-box; transform-origin:35.5px 1px; }
+    .is-visible .dq-flag{ animation:dq-wave 2s ease-in-out infinite alternate; }
+    @keyframes dq-wave{ from{ transform:rotate(-4deg); } to{ transform:rotate(4deg); } }
+
+    /* 19 — the profile ring draws round the photo, then the online dot pops */
+    @property --dq-sweep{ syntax:"<angle>"; inherits:false; initial-value:0deg; }
+    .dq-ring{
+      -webkit-mask:conic-gradient(#000 var(--dq-sweep), transparent 0);
+              mask:conic-gradient(#000 var(--dq-sweep), transparent 0);
+    }
+    .is-visible .dq-ring{ animation:dq-ring .7s var(--ease-io) .25s both; }
+    @keyframes dq-ring{ from{ --dq-sweep:0deg; } to{ --dq-sweep:360deg; } }
+    .dq-online{ transform:scale(0); }
+    .is-visible .dq-online{ animation:dq-online .45s var(--ease-spring) .95s both; }
+    @keyframes dq-online{ from{ transform:scale(0); } to{ transform:none; } }
+
+    /* 20 — the red "on the road" dot breathes */
+    .is-visible .dq-blink{ animation:dq-blink 1.2s ease-in-out infinite alternate; }
+    @keyframes dq-blink{ to{ opacity:.35; } }
+
+    /* 21 — the rank lifts once its counter lands (JS adds .is-done) */
+    .dq-rank.is-done{ animation:dq-lift .5s var(--ease-spring); }
+    @keyframes dq-lift{ 45%{ transform:translateX(-50%) translateY(-5px); } }
+
+    /* 23 — recent actions slide in; their points flash the category colour */
+    .dq-row{ opacity:0; transform:translateY(10px); }
+    .is-visible .dq-row{ animation:dq-rise .5s var(--ease-out) both; animation-delay:calc(.5s + var(--r) * .08s); }
+    .is-visible .dq-flash{ animation:dq-flash .9s ease both; animation-delay:calc(.95s + var(--r) * .08s); }
+    @keyframes dq-flash{ 30%, 60%{ color:var(--accent); } }
+
+    @media (prefers-reduced-motion: reduce){
+      .dq *, .dq *::after{ animation:none !important; }
+      .dq-in, .dq-row, .dq-av, .dq-num, .dq-online{ opacity:1; transform:none; }
+      .dq-fill{ clip-path:none; }
+      .dq-parallax{ transform:none; }
+      .dq-hero::after, .dq-shine::after, .dq-pulse, .dq-route-flow{ display:none; }
+      .dq-ring{ -webkit-mask:none; mask:none; }
+      .dq-route-draw{ stroke-dasharray:none; stroke-dashoffset:0; }
+    }
+
+    /* =================================================================
        Mobile (≤759px): 4-phone sections as a 2 × 2 grid.
        Image sections: the same 4-phone image is shown in 4 tiles, each
        cropped to one phone (one download). Crop per tile = phone width
@@ -1064,6 +1220,179 @@
     </div>
   </template>
 
+  <!-- Live Deu Quest screen: Aktivitäten (Figma 190:436) -->
+  <template id="tpl-dq-activities">
+    <div class="dq" data-dq>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-shape.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-bg.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-blob-a.svg" style="left:-220px;top:-220px;width:520px;height:520px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-blob-b.svg" style="left:160px;top:100px;width:460px;height:460px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-blob-c.svg" style="left:-140px;top:560px;width:400px;height:400px" alt="" />
+      <p class="dq-t" style="left:16px;top:61px;font-size:13px;color:#a1a1aa;">Heute, 16. November</p>
+      <p class="dq-t" style="left:16px;top:74px;font-size:36px;font-weight:700;color:#f4f4f5;">Aktivitäten</p>
+      <div class="dq-clip" style="left:334.19px;top:64.77px;width:55.48px;height:55.48px;border-radius:50%;border:2px solid #fff;"><img src="./NATIVE MOBILE APPS/deu-quest/s1-alex.jpg" style="left:0;top:0;width:100%;height:100%" alt="" /></div>
+      <div class="dq-layer dq-in" style="--i:0"><div class="dq-clip dq-hero" style="left:16px;top:128px;width:370px;height:200px;border-radius:12px;"><img class="dq-parallax" src="./NATIVE MOBILE APPS/deu-quest/s1-hero.jpg" style="left:0;top:0;width:370px;height:200px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-hero-scrim.svg" style="left:0px;top:0px;width:370px;height:200px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-hero-border.svg" style="left:15.5px;top:127.5px;width:371px;height:201px" alt="" /><p class="dq-t" style="left:32px;top:241px;font-size:15px;color:#e4e4e7;">Meine Aktionen heute</p><p class="dq-t dq-count" style="left:32px;top:252px;font-size:56px;font-weight:700;" data-to="185">185</p><p class="dq-t dq-pop" style="left:140px;top:288px;font-size:20px;font-weight:700;">Pkt</p></div>
+      <div class="dq-layer dq-in dq-tile" style="--i:1"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-km-surface.svg" style="left:15.5px;top:341.5px;width:371px;height:77px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-km-iconbg.svg" style="left:32px;top:360px;width:40px;height:40px" alt="" /><img class="dq-a dq-icon dq-icon--road" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-road.svg" style="left:46.5px;top:371.75px;width:11.001px;height:16.501px" alt="" /><p class="dq-t" style="left:84px;top:359px;font-size:15px;color:#f4f4f5;">Zurückgelegte Kilometer</p><p class="dq-t dq-num" style="right:32px;text-align:right;top:354px;font-size:22px;font-weight:700;color:#4d8bff;">+70</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-km-track.svg" style="left:84px;top:388px;width:286px;height:6px" alt="" /><img class="dq-a dq-fill" src="./NATIVE MOBILE APPS/deu-quest/s1-km-fill.svg" style="left:84px;top:388px;width:286px;height:6px" alt="" /></div>
+      <div class="dq-layer dq-in dq-tile" style="--i:2"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-tile-surface.svg" style="left:15.5px;top:429.5px;width:182px;height:109px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-fuel-bg.svg" style="left:30px;top:444px;width:32px;height:32px" alt="" /><img class="dq-a dq-icon dq-icon--fuel" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-fuel.svg" style="left:38.5px;top:452.5px;width:16.249px;height:14.999px" alt="" /><p class="dq-t dq-num" style="right:221px;text-align:right;top:444px;font-size:24px;font-weight:700;color:#22d3ee;">+10</p><p class="dq-t" style="left:30px;top:497px;font-size:13px;color:#f4f4f5;">Tanken bei Partnern</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-bar-track.svg" style="left:30px;top:524px;width:153px;height:5px" alt="" /><img class="dq-a dq-fill" src="./NATIVE MOBILE APPS/deu-quest/s1-fuel-fill.svg" style="left:30px;top:524px;width:21.4px;height:5px" alt="" /></div>
+      <div class="dq-layer dq-in dq-tile" style="--i:3"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-tile-surface.svg" style="left:204.5px;top:429.5px;width:182px;height:109px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-eco-bg.svg" style="left:219px;top:444px;width:32px;height:32px" alt="" /><img class="dq-a dq-icon dq-icon--leaf" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-leaf.svg" style="left:228.334px;top:453.334px;width:13.333px;height:13.333px" alt="" /><p class="dq-t dq-num" style="right:32px;text-align:right;top:444px;font-size:24px;font-weight:700;color:#10b981;">+50</p><p class="dq-t" style="left:219px;top:497px;font-size:13px;color:#f4f4f5;">ECO Driving</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-bar-track.svg" style="left:219px;top:524px;width:153px;height:5px" alt="" /><img class="dq-a dq-fill" src="./NATIVE MOBILE APPS/deu-quest/s1-eco-fill.svg" style="left:219px;top:524px;width:108.6px;height:5px" alt="" /></div>
+      <div class="dq-layer dq-in dq-tile" style="--i:4"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-tile-surface.svg" style="left:15.5px;top:545.5px;width:182px;height:109px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-pause-bg.svg" style="left:30px;top:560px;width:32px;height:32px" alt="" /><img class="dq-a dq-icon dq-icon--coffee" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-coffee.svg" style="left:39.333px;top:568.084px;width:14.166px;height:14.583px" alt="" /><p class="dq-t dq-num" style="right:221px;text-align:right;top:560px;font-size:24px;font-weight:700;color:#f59e0b;">+40</p><p class="dq-t" style="left:30px;top:603px;font-size:13px;color:#f4f4f5;">Pausen während</p><p class="dq-t" style="left:30px;top:619px;font-size:13px;color:#f4f4f5;">der Fahrt</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-bar-track.svg" style="left:30px;top:640px;width:153px;height:5px" alt="" /><img class="dq-a dq-fill" src="./NATIVE MOBILE APPS/deu-quest/s1-pause-fill.svg" style="left:30px;top:640px;width:87.2px;height:5px" alt="" /></div>
+      <div class="dq-layer dq-in dq-tile" style="--i:5"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-tile-surface.svg" style="left:204.5px;top:545.5px;width:182px;height:109px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-jam-bg.svg" style="left:219px;top:560px;width:32px;height:32px" alt="" /><img class="dq-a dq-icon dq-icon--jam" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-jam.svg" style="left:226.667px;top:571.833px;width:16.666px;height:9.166px" alt="" /><p class="dq-t dq-num" style="right:32px;text-align:right;top:560px;font-size:24px;font-weight:700;color:#ec4899;">+15</p><p class="dq-t" style="left:219px;top:613px;font-size:13px;color:#f4f4f5;">Stehen im Stau</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-bar-track.svg" style="left:219px;top:640px;width:153px;height:5px" alt="" /><img class="dq-a dq-fill" src="./NATIVE MOBILE APPS/deu-quest/s1-jam-fill.svg" style="left:219px;top:640px;width:32.1px;height:5px" alt="" /></div>
+      <div class="dq-layer dq-in" style="--i:6"><p class="dq-t" style="left:16px;top:665px;font-size:17px;font-weight:700;color:#f4f4f5;">Freunde. Aktionen heute</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-friend-surface.svg" style="left:15.5px;top:693.5px;width:371px;height:73px" alt="" /><div class="dq-clip" style="left:32px;top:708px;width:44px;height:44px;border-radius:50%;border:2px solid #000;background:#000;"><img src="./NATIVE MOBILE APPS/deu-quest/s1-profile.png" style="left:-12px;top:-12px;width:64px;height:64px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-alex-ring.svg" style="left:29.5px;top:705.5px;width:49px;height:49px" alt="" /><p class="dq-t" style="left:88px;top:710px;font-size:15px;font-weight:700;color:#f4f4f5;">Alex</p><p class="dq-t" style="left:88px;top:732px;font-size:13px;color:#a1a1aa;">hat die Parking-Quest geschafft</p><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-badge-100.svg" style="left:304px;top:714px;width:66px;height:32px" alt="" /><p class="dq-t dq-c" style="left:336.5px;top:723.04px;font-size:12px;font-weight:700;">+100</p></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-nav-bg.svg" style="left:19.5px;top:785.5px;width:363px;height:65px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-home.svg" style="left:53.05px;top:809.05px;width:17.9px;height:18.4px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-nav-pill.svg" style="left:100px;top:792px;width:132px;height:52px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-car.svg" style="left:112.591px;top:811.216px;width:17.417px;height:14.576px" alt="" />
+      <p class="dq-t" style="left:139.3px;top:809px;font-size:14px;font-weight:700;">Aktivitäten</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-flag.svg" style="left:262.55px;top:809.05px;width:13.4px;height:18.9px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-icon-gear.svg" style="left:333.37px;top:807.37px;width:21.26px;height:21.26px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s1-frame.svg" style="left:-0.5px;top:-0.5px;width:403px;height:875px" alt="" />
+    </div>
+  </template>
+  <!-- Live Deu Quest screen: Quests (Figma 190:553) -->
+  <template id="tpl-dq-quests">
+    <div class="dq" data-dq>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-shape.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-bg.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-blob-a.svg" style="left:-200px;top:-200px;width:520px;height:520px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-blob-b.svg" style="left:-200px;top:200px;width:440px;height:440px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-blob-c.svg" style="left:180px;top:600px;width:400px;height:400px" alt="" />
+      <p class="dq-t" style="left:16px;top:61px;font-size:13px;color:#a1a1aa;">3 Quests in deiner Nähe</p>
+      <p class="dq-t" style="left:16px;top:74px;font-size:36px;font-weight:700;color:#f4f4f5;">Quests</p>
+      <div class="dq-layer dq-in dq-card" style="--i:0"><div class="dq-clip" style="left:16px;top:128px;width:370px;height:236px;border-radius:12px;"><img class="dq-parallax" src="./NATIVE MOBILE APPS/deu-quest/s2-rally.jpg" style="left:0;top:0;width:370px;height:236px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-card1-scrim.svg" style="left:0px;top:0px;width:370px;height:236px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-card1-border.svg" style="left:15.5px;top:127.5px;width:371px;height:237px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-gest-pill.svg" style="left:29.25px;top:142.25px;width:117.5px;height:31.5px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-gest-ring.svg" style="left:39px;top:151px;width:14px;height:14px" alt="" /><span class="dq-pulse" style="left:42px;top:154px;width:8px;height:8px"></span><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-gest-dot.svg" style="left:42px;top:154px;width:8px;height:8px" alt="" /><p class="dq-t" style="left:58px;top:149.7px;font-size:13px;">GESTARTET</p><div class="dq-shine" style="left:296px;top:143px;width:76px;height:30px;border-radius:15px;"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-pts-30.svg" style="left:0px;top:0px;width:76px;height:30px" alt="" /></div><p class="dq-t" style="right:45.5px;text-align:right;top:150.04px;font-size:12px;">750 Pkt</p><p class="dq-t" style="left:32px;top:276px;font-size:26px;font-weight:700;">Berlin Weihnachtsrally</p><div class="dq-layer dq-av" style="--a:0;transform-origin:48px 334px"><div class="dq-clip" style="left:32px;top:318px;width:32px;height:32px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s2-av1.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring.svg" style="left:30px;top:316px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:1;transform-origin:74px 334px"><div class="dq-clip" style="left:58px;top:318px;width:32px;height:32px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s2-av2.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring.svg" style="left:56px;top:316px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:2;transform-origin:100px 334px"><div class="dq-clip" style="left:84px;top:318px;width:32px;height:32px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s2-av3.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring.svg" style="left:82px;top:316px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:3;transform-origin:126px 334px"><div class="dq-clip" style="left:110px;top:318px;width:32px;height:32px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s2-av4.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring.svg" style="left:108px;top:316px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:4;transform-origin:152px 334px"><div class="dq-clip" style="left:136px;top:318px;width:32px;height:32px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s2-av5.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring.svg" style="left:134px;top:316px;width:36px;height:36px" alt="" /></div></div>
+      <div class="dq-layer dq-in dq-card" style="--i:1"><div class="dq-clip" style="left:16px;top:380px;width:370px;height:220px;border-radius:12px;border:1px solid rgba(255,255,255,.32);"><img class="dq-parallax" src="./NATIVE MOBILE APPS/deu-quest/s2-roadparty.jpg" style="left:0;top:0;width:100%;height:100%" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-card2-scrim.svg" style="left:16px;top:380px;width:370px;height:220px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-card2-border.svg" style="left:15.5px;top:379.5px;width:371px;height:221px" alt="" /><div class="dq-shine" style="left:296px;top:394px;width:76px;height:32px;border-radius:16px;"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-pts-32.svg" style="left:0px;top:0px;width:76px;height:32px" alt="" /></div><p class="dq-t" style="right:44.5px;text-align:right;top:402.04px;font-size:12px;">300 Pkt</p><p class="dq-t" style="left:32px;top:512px;font-size:26px;font-weight:700;">City Roadparty</p><div class="dq-layer dq-av" style="--a:0;transform-origin:48px 570px"><div class="dq-clip" style="left:32px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r1.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:30px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:1;transform-origin:74px 570px"><div class="dq-clip" style="left:58px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r2.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:56px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:2;transform-origin:100px 570px"><div class="dq-clip" style="left:84px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r3.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:82px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:3;transform-origin:126px 570px"><div class="dq-clip" style="left:110px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r4.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:108px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:4;transform-origin:152px 570px"><div class="dq-clip" style="left:136px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r5.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:134px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:5;transform-origin:178px 570px"><div class="dq-clip" style="left:162px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r6.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:160px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:6;transform-origin:204px 570px"><div class="dq-clip" style="left:188px;top:554px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r7.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:186px;top:552px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:7;transform-origin:230px 570px"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-overflow.svg" style="left:213px;top:553px;width:34px;height:34px" alt="" /><p class="dq-t dq-more dq-c" style="left:230px;top:562.5px;font-size:12px;font-weight:700;color:#0b0f19;" data-from="+5">+6</p></div></div>
+      <div class="dq-layer dq-in dq-card" style="--i:2"><div class="dq-clip" style="left:16px;top:616px;width:370px;height:210px;border-radius:12px;border:1px solid rgba(255,255,255,.32);"><img class="dq-parallax" src="./NATIVE MOBILE APPS/deu-quest/s2-sterne.jpg" style="left:0;top:0;width:100%;height:100%" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-card3-scrim.svg" style="left:16px;top:616px;width:370px;height:210px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-card3-border.svg" style="left:15.5px;top:615.5px;width:371px;height:211px" alt="" /><div class="dq-shine" style="left:296px;top:630px;width:76px;height:32px;border-radius:16px;"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-pts-32.svg" style="left:0px;top:0px;width:76px;height:32px" alt="" /></div><p class="dq-t" style="right:44.5px;text-align:right;top:638.04px;font-size:12px;">500 Pkt</p><p class="dq-t" style="left:32px;top:738px;font-size:26px;font-weight:700;">Sterne-Quest</p><div class="dq-layer dq-av" style="--a:0;transform-origin:48px 796px"><div class="dq-clip" style="left:32px;top:780px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r3.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:30px;top:778px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:1;transform-origin:74px 796px"><div class="dq-clip" style="left:58px;top:780px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r5.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:56px;top:778px;width:36px;height:36px" alt="" /></div><div class="dq-layer dq-av" style="--a:2;transform-origin:100px 796px"><div class="dq-clip" style="left:84px;top:780px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.32);"><img src="./NATIVE MOBILE APPS/deu-quest/s2-r1.jpg" style="left:0px;top:0px;width:32px;height:32px" alt="" /></div><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-av-ring2.svg" style="left:82px;top:778px;width:36px;height:36px" alt="" /></div></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-bottom-fade.svg" style="left:0px;top:740px;width:402px;height:134px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-nav-bg.svg" style="left:19.5px;top:785.5px;width:363px;height:65px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-icon-home.svg" style="left:53.05px;top:809.05px;width:17.9px;height:18.4px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-icon-car.svg" style="left:126.55px;top:810.65px;width:18.9px;height:15.8px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-nav-pill.svg" style="left:174px;top:792px;width:132px;height:52px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-icon-flag.svg" style="left:206.925px;top:809.75px;width:12.376px;height:17.417px" alt="" />
+      <p class="dq-t" style="left:231.8px;top:809px;font-size:14px;font-weight:700;">Quests</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-icon-gear.svg" style="left:333.37px;top:807.37px;width:21.26px;height:21.26px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s2-frame.svg" style="left:-0.5px;top:-0.5px;width:403px;height:875px" alt="" />
+    </div>
+  </template>
+  <!-- Live Deu Quest screen: Berlin Weihnachtsrally map (Figma 191:4079) -->
+  <template id="tpl-dq-rally">
+    <div class="dq" data-dq>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-shape.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-map-bg.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-parks.svg" style="left:10px;top:300px;width:400px;height:460px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-river.svg" style="left:-24.32px;top:599.55px;width:459.881px;height:79.094px" alt="" />
+      <img class="dq-a dq-streets" src="./NATIVE MOBILE APPS/deu-quest/s3-streets.svg" style="left:-204.2px;top:-204.55px;width:807.069px;height:1311.019px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-map-road.svg" style="left:113.78px;top:356.789px;width:332.441px;height:626.421px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-top-fade.svg" style="left:0px;top:0px;width:402px;height:300px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-blob.svg" style="left:-188px;top:-211px;width:520px;height:520px" alt="" />
+      <img class="dq-a dq-route" src="./NATIVE MOBILE APPS/deu-quest/s3-route-a.svg" style="left:54.5px;top:273.4px;width:176.201px;height:328.601px" data-route="0" data-stop="61.9,317" alt="" />
+      <img class="dq-a dq-route" src="./NATIVE MOBILE APPS/deu-quest/s3-route-b.svg" style="left:153.8px;top:273.4px;width:92px;height:313.203px" data-route="1" data-stop="208.7,366" alt="" />
+      <img class="dq-a dq-route" src="./NATIVE MOBILE APPS/deu-quest/s3-route-c.svg" style="left:194.4px;top:258.1px;width:156.301px;height:328.501px" data-route="2" data-stop="334.9,399.6" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-start.svg" style="left:176px;top:565px;width:52px;height:28px" alt="" />
+      <p class="dq-t dq-c" style="left:202px;top:571.787px;font-size:11px;font-weight:700;color:#0b0f19;">Start</p>
+      <img class="dq-a dq-ziel" src="./NATIVE MOBILE APPS/deu-quest/s3-ziel.svg" style="left:189.7px;top:234.4px;width:68px;height:80px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-halo-anna.svg" style="left:34.9px;top:290px;width:54px;height:54px" alt="" />
+      <div class="dq-clip" style="left:43.9px;top:299px;width:36px;height:36px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-m-anna.jpg" style="left:0px;top:0px;width:36px;height:36px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-ring-anna.svg" style="left:40.4px;top:295.5px;width:43px;height:43px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-halo-nina.svg" style="left:43px;top:345px;width:54px;height:54px" alt="" />
+      <div class="dq-clip" style="left:52px;top:354px;width:36px;height:36px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-m-nina.jpg" style="left:-2px;top:0px;width:38px;height:38px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-ring-nina.svg" style="left:48.5px;top:350.5px;width:43px;height:43px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-halo-robert.svg" style="left:181.7px;top:339px;width:54px;height:54px" alt="" />
+      <div class="dq-clip" style="left:190.7px;top:348px;width:36px;height:36px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-m-robert.jpg" style="left:-1.7px;top:0px;width:38px;height:38px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-ring-robert.svg" style="left:187.2px;top:344.5px;width:43px;height:43px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-halo-arcus.svg" style="left:307.9px;top:372.6px;width:54px;height:54px" alt="" />
+      <div class="dq-clip" style="left:316.9px;top:381.6px;width:36px;height:36px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-m-arcus.jpg" style="left:-2.9px;top:-2.6px;width:39px;height:39px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-ring-arcus.svg" style="left:313.4px;top:378.1px;width:43px;height:43px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-halo-ich.svg" style="left:151.8px;top:446.1px;width:54px;height:54px" alt="" />
+      <div class="dq-clip" style="left:160.8px;top:455.1px;width:36px;height:36px;border-radius:50%;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-m-ich.jpg" style="left:0px;top:0px;width:36px;height:36px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-ring-ich.svg" style="left:157.3px;top:451.6px;width:43px;height:43px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-back.svg" style="left:17.5px;top:63.5px;width:45px;height:45px" alt="" />
+      <p class="dq-t dq-c" style="left:201.5px;top:75px;font-size:17px;font-weight:700;">Berlin Weihnachtsrally</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-gest-pill.svg" style="left:17.25px;top:126.25px;width:117.5px;height:31.5px" alt="" />
+      <span class="dq-pulse" style="left:30px;top:138px;width:8px;height:8px"></span>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-gest-dot.svg" style="left:27px;top:135px;width:14px;height:14px" alt="" />
+      <p class="dq-t" style="left:46px;top:133.7px;font-size:13px;">GESTARTET</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-pts.svg" style="left:140px;top:127px;width:76px;height:30px" alt="" />
+      <p class="dq-t" style="right:201px;text-align:right;top:134.32px;font-size:12px;">750 Pkt</p>
+      <p class="dq-t" style="left:232px;top:135px;font-size:12px;">+ Details</p>
+      <p class="dq-t" style="left:20px;top:165px;font-size:12px;color:#a1a1aa;">1 Start · 3 Routen · 1 Ziel · 5 Teilnehmer</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-panel.svg" style="left:15.5px;top:693.5px;width:371px;height:157px" alt="" />
+      <p class="dq-t" style="left:32px;top:707px;font-size:15px;font-weight:700;color:#f4f4f5;">Teilnehmer</p>
+      <span class="dq-pulse dq-pulse--green" style="left:131px;top:713.5px;width:7px;height:7px"></span>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-live-dot.svg" style="left:131px;top:713.5px;width:7px;height:7px" alt="" />
+      <p class="dq-t" style="left:144.5px;top:709px;font-size:12px;color:#a1a1aa;">Live</p>
+      <p class="dq-t" style="left:286px;top:709px;font-size:12px;">+ Alle ansehen</p>
+      <div class="dq-clip" style="left:32px;top:736px;width:62px;height:84px;border-radius:10px;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-p-nina.jpg" style="left:0;top:0;width:62px;height:84px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-p-scrim.svg" style="left:32px;top:736px;width:62px;height:84px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-pb-nina.svg" style="left:32px;top:736px;width:62px;height:84px" alt="" />
+      <p class="dq-t dq-c" style="left:62.5px;top:800px;font-size:12px;">Nina</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-bar-nina.svg" style="left:52px;top:828px;width:22px;height:4px" alt="" />
+      <div class="dq-clip" style="left:101px;top:736px;width:62px;height:84px;border-radius:10px;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-p-ich.jpg" style="left:0;top:0;width:62px;height:84px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s3-ich-ellipse.svg" style="left:-28.597px;top:-19.443px;width:123.028px;height:123.028px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-p-scrim.svg" style="left:101px;top:736px;width:62px;height:84px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-pb-ich.svg" style="left:101px;top:736px;width:62px;height:84px" alt="" />
+      <p class="dq-t dq-c" style="left:132.5px;top:800px;font-size:12px;">Ich</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-bar-ich.svg" style="left:121px;top:828px;width:22px;height:4px" alt="" />
+      <div class="dq-clip" style="left:170px;top:736px;width:62px;height:84px;border-radius:10px;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-p-anna.jpg" style="left:0;top:0;width:62px;height:84px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-p-scrim.svg" style="left:170px;top:736px;width:62px;height:84px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-pb-anna.svg" style="left:170px;top:736px;width:62px;height:84px" alt="" />
+      <p class="dq-t dq-c" style="left:201px;top:800px;font-size:12px;">Anna</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-bar-anna.svg" style="left:190px;top:828px;width:22px;height:4px" alt="" />
+      <div class="dq-clip" style="left:239px;top:736px;width:62px;height:84px;border-radius:10px;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-p-robert.jpg" style="left:0;top:0;width:62px;height:84px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-p-scrim.svg" style="left:239px;top:736px;width:62px;height:84px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-pb-robert.svg" style="left:239px;top:736px;width:62px;height:84px" alt="" />
+      <p class="dq-t dq-c" style="left:270.5px;top:800px;font-size:12px;">Robert</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-bar-robert.svg" style="left:259px;top:828px;width:22px;height:4px" alt="" />
+      <div class="dq-clip" style="left:308px;top:736px;width:62px;height:84px;border-radius:10px;"><img src="./NATIVE MOBILE APPS/deu-quest/s3-p-arcus.jpg" style="left:0;top:0;width:62px;height:84px" alt="" /></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-p-scrim.svg" style="left:308px;top:736px;width:62px;height:84px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-pb-arcus.svg" style="left:308px;top:736px;width:62px;height:84px" alt="" />
+      <p class="dq-t dq-c" style="left:339px;top:800px;font-size:12px;">Arcus</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-bar-arcus.svg" style="left:328px;top:828px;width:22px;height:4px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s3-frame.svg" style="left:-0.5px;top:-0.5px;width:403px;height:875px" alt="" />
+    </div>
+  </template>
+  <!-- Live Deu Quest screen: Profil (Figma 190:951) -->
+  <template id="tpl-dq-profile">
+    <div class="dq" data-dq>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-shape.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-bg.svg" style="left:0px;top:0px;width:402px;height:874px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-blob-a.svg" style="left:-184px;top:-200px;width:520px;height:520px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-blob-b.svg" style="left:160px;top:340px;width:440px;height:440px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-back.svg" style="left:17.5px;top:63.5px;width:45px;height:45px" alt="" />
+      <p class="dq-t dq-c" style="left:201px;top:75px;font-size:17px;font-weight:700;">Profil</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-avatar-halo.svg" style="left:133px;top:102px;width:136px;height:136px" alt="" />
+      <div class="dq-clip" style="left:147px;top:116px;width:108px;height:108px;border-radius:50%;border:1px solid #ef4444;"><img src="./NATIVE MOBILE APPS/deu-quest/s4-anna.jpg" style="left:0px;top:0px;width:108px;height:108px" alt="" /></div>
+      <img class="dq-a dq-ring" src="./NATIVE MOBILE APPS/deu-quest/s4-avatar-ring.svg" style="left:143px;top:112px;width:116px;height:116px" alt="" />
+      <img class="dq-a dq-online" src="./NATIVE MOBILE APPS/deu-quest/s4-online.svg" style="left:231.5px;top:199.5px;width:25px;height:25px" alt="" />
+      <p class="dq-t dq-c" style="left:200.5px;top:238px;font-size:32px;font-weight:700;">Anna K.</p>
+      <p class="dq-t dq-c" style="left:201px;top:280px;font-size:14px;color:#d4d4d8;">Berlin · Dabei seit März 2019</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-live-pill.svg" style="left:55px;top:308px;width:292px;height:32px" alt="" />
+      <img class="dq-a dq-blink" src="./NATIVE MOBILE APPS/deu-quest/s4-live-dot.svg" style="left:67px;top:317px;width:14px;height:14px" alt="" />
+      <p class="dq-t dq-c" style="left:208px;top:316.32px;font-size:12px;">Unterwegs in der Berlin Weihnachtsrally</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-stat.svg" style="left:16px;top:356px;width:118px;height:78px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-stat.svg" style="left:142px;top:356px;width:118px;height:78px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-stat.svg" style="left:268px;top:356px;width:118px;height:78px" alt="" />
+      <p class="dq-t dq-count dq-c" style="left:75px;top:366px;font-size:26px;font-weight:700;" data-to="2340" data-delay="0">2.340</p>
+      <p class="dq-t dq-count dq-c" style="left:201px;top:366px;font-size:26px;font-weight:700;" data-to="12" data-delay="150">12</p>
+      <p class="dq-t dq-count dq-rank dq-c" style="left:327px;top:366px;font-size:26px;font-weight:700;" data-to="8" data-from="30" data-prefix="#" data-delay="300">#8</p>
+      <p class="dq-t dq-c" style="left:75px;top:404px;font-size:12px;color:#f4f4f5;">Punkte</p>
+      <p class="dq-t dq-c" style="left:200.5px;top:404px;font-size:12px;color:#f4f4f5;">Quests</p>
+      <p class="dq-t dq-c" style="left:327.5px;top:404px;font-size:12px;color:#f4f4f5;">Rang</p>
+      <p class="dq-t" style="left:16px;top:453px;font-size:17px;font-weight:700;color:#f4f4f5;">Abzeichen</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-badges-surface.svg" style="left:15.5px;top:481.5px;width:371px;height:125px" alt="" />
+      <div class="dq-medals" style="left:32px;top:498px;width:338px"><div class="dq-medal"><img src="./NATIVE MOBILE APPS/deu-quest/s4-eco-outer.svg" style="margin-left:7.5px;width:64px;height:64px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s4-eco-inner.svg" style="margin-left:14.5px;margin-top:7px;width:50px;height:50px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s4-icon-leaf.svg" style="margin-left:31.45px;margin-top:23.95px;width:16.1px;height:16.1px" alt="" /><p style="margin-top:78px">ECO-Fahrerin</p></div><div class="dq-medal"><img src="./NATIVE MOBILE APPS/deu-quest/s4-park-outer.svg" style="margin-left:5.5px;width:64px;height:64px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s4-park-inner.svg" style="margin-left:12.5px;margin-top:7px;width:50px;height:50px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s4-icon-parking.svg" style="margin-left:28.95px;margin-top:23.45px;width:17.1px;height:17.1px" alt="" /><p style="margin-top:78px">Parking-Profi</p></div><div class="dq-medal"><img src="./NATIVE MOBILE APPS/deu-quest/s4-pause-outer.svg" style="margin-left:20px;width:64px;height:64px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s4-pause-inner.svg" style="margin-left:27px;margin-top:7px;width:50px;height:50px" alt="" /><img src="./NATIVE MOBILE APPS/deu-quest/s4-icon-clock.svg" style="margin-left:42.95px;margin-top:22.95px;width:18.1px;height:18.1px" alt="" /><p style="margin-top:78px">Pausen-Champion</p></div></div>
+      <p class="dq-t" style="left:16px;top:623px;font-size:17px;font-weight:700;color:#f4f4f5;">Letzte Aktionen</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-actions-surface.svg" style="left:15.5px;top:651.5px;width:371px;height:113px" alt="" />
+      <div class="dq-layer dq-row" style="--r:0;--accent:#ec4899"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-jam-bg.svg" style="left:32px;top:664px;width:32px;height:32px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-icon-jam.svg" style="left:40.5px;top:676.25px;width:15px;height:8.25px" alt="" /><p class="dq-t" style="left:76px;top:671px;font-size:14px;color:#f4f4f5;">13 Minuten im Stau gestanden</p><p class="dq-t dq-flash" style="right:32px;text-align:right;top:669px;font-size:17px;font-weight:700;">+25</p></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-divider.svg" style="left:76px;top:707.5px;width:294px;height:1px" alt="" />
+      <div class="dq-layer dq-row" style="--r:1;--accent:#10b981"><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-leaf-bg.svg" style="left:32px;top:720px;width:32px;height:32px" alt="" /><img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-icon-leaf-sm.svg" style="left:42px;top:730px;width:12px;height:12px" alt="" /><p class="dq-t" style="left:76px;top:727px;font-size:14px;color:#f4f4f5;">ECO Driving</p><p class="dq-t dq-flash" style="right:32px;text-align:right;top:725px;font-size:17px;font-weight:700;">+50</p></div>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-btn-secondary.svg" style="left:15.5px;top:787.5px;width:151px;height:57px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-icon-chat.svg" style="left:45.334px;top:809.334px;width:13.333px;height:12.916px" alt="" />
+      <p class="dq-t" style="left:68px;top:806.5px;font-size:15px;font-weight:700;">Nachricht</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-btn-primary.svg" style="left:176px;top:788px;width:210px;height:56px" alt="" />
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-icon-plus.svg" style="left:201.167px;top:809.167px;width:13.666px;height:13.666px" alt="" />
+      <p class="dq-t" style="left:224px;top:806.5px;font-size:15px;font-weight:700;">Zur Quest einladen</p>
+      <img class="dq-a" src="./NATIVE MOBILE APPS/deu-quest/s4-frame.svg" style="left:-0.5px;top:-0.5px;width:403px;height:875px" alt="" />
+    </div>
+  </template>
+
   <script>
     /* -----------------------------------------------------------------
        Gallery sections.
@@ -1088,8 +1417,18 @@
          {"template": "tpl-opponent-found",    "left": 50.75},
          {"template": "tpl-duel",              "left": 75.4}
        ]},
+      {"file": "3.webp", "title": "Native iOS application", "alt":"Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges",
+       /* Live screens instead of the image (Figma "Deu Quest Mobile"), same phone
+          geometry as above. A 402×874 screen at 459px is 997.9px tall, so the
+          box is 2000 × (24 + 997.9 + 36) = 2000 × 1057.9. */
+       "layout": {"aspect": "2000 / 1057.9", "top": 2.269, "width": 22.95, "slot": "live-slot--dq"},
+       "overlays": [
+         {"template": "tpl-dq-activities", "left": 1.6},
+         {"template": "tpl-dq-quests",     "left": 26.2},
+         {"template": "tpl-dq-rally",      "left": 50.75},
+         {"template": "tpl-dq-profile",    "left": 75.4}
+       ]},
       {"file": "4.webp", "title": "Native iOS application", "phones": true, "alt": "Native iOS group hunting app: joining a group hunt with Frank on a map, hunting history, and success and failure result screens"},
-      {"file": "3.webp", "title": "Native iOS application", "phones": true, "alt":"Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges"},
       {"file": "5.webp", "title": "Responsive website", "alt": "Responsive website: Forex account onboarding in ten mobile screens, from benefits and preferences through account creation, identity, personal details and document checks to the success screen"}
     ];
     /* -----------------------------------------------------------------
@@ -1186,7 +1525,7 @@
 
         (section.overlays || []).forEach(function (o){
           var slot = document.createElement('div');
-          slot.className = 'live-slot';
+          slot.className = 'live-slot' + (L.slot ? ' ' + L.slot : '');
           slot.setAttribute('aria-hidden', 'true');   // the box label describes it
           slot.style.left = o.left + '%';
           slot.style.top = L.top + '%';
@@ -1223,20 +1562,257 @@
     }
     fitLiveScreens();
 
-    /* One-shot entrance motion (Dashboard) plays the first time its screen
-       is mostly in view — not on page load, when it may be far below. */
+    /* Deu Quest screens: the parts CSS cannot do alone — counters, the "+6"
+       tick, scroll parallax, icon replay on hover/tap, and inlining the route
+       and finish-flag SVGs so their strokes can be drawn / the flag waved. */
+    var DQ = (function (){
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var parallax = [];
+      var uid = 0;
+
+      function fmt(el, v){ el.textContent = (el.dataset.prefix || '') + v.toLocaleString('de-DE'); }
+
+      function inlineSvg(img, done){
+        fetch(img.src).then(function (r){ return r.text(); }).then(function (txt){
+          var svg = new DOMParser().parseFromString(txt, 'image/svg+xml').documentElement;
+          if (!svg || svg.nodeName !== 'svg') return;
+          svg = document.importNode(svg, true);
+          svg.removeAttribute('style');
+          svg.setAttribute('class', img.className.replace('dq-a', 'dq-route-svg'));
+          svg.setAttribute('style', img.getAttribute('style'));
+          svg.setAttribute('aria-hidden', 'true');
+          img.parentNode.replaceChild(svg, img);
+          done(svg);
+        }).catch(function (){ /* keep the static <img> */ });
+      }
+
+      // 13 — each route SVG has a faint wide glow (1st path) and the coloured
+      // dashes (2nd path, pre-cut into segments). The two do not always follow
+      // the same line (route B's glow takes another way round Robert), so the
+      // draw reveal and the cut at the leading participant use a "track"
+      // rebuilt from the dash segments, and the running light follows that
+      // track up to the participant, then the glow on to the finish. Figma exports the start piece first, then the end piece,
+      // then the rest in order; the track joins them in travel order.
+      // stop = leading participant's marker centre (screen coords), ox/oy = route offset.
+      function track(dashes){
+        var segs = dashes.getAttribute('d').split('M').filter(Boolean);
+        if (segs.length < 3) return null;
+        var end = segs[1].match(/-?[\d.]+/g);                 // "x1 y1 L x2 y2", from the finish inwards
+        var d = 'M' + segs[0] + segs.slice(2).map(function (s){ return 'L' + s; }).join('')
+              + 'L' + end[2] + ' ' + end[3] + 'L' + end[0] + ' ' + end[1];
+        var path = dashes.cloneNode();
+        path.removeAttribute('id');
+        path.removeAttribute('mask');
+        path.setAttribute('d', d);
+        return path;
+      }
+
+      function stroke(src, cls, width, color, opacity){
+        var p = src.cloneNode();
+        p.removeAttribute('id');
+        p.setAttribute('stroke', color);
+        p.setAttribute('stroke-opacity', opacity);
+        p.setAttribute('stroke-width', width);
+        p.setAttribute('fill', 'none');
+        if (cls) p.setAttribute('class', cls);
+        return p;
+      }
+
+      function route(svg, index, stop, ox, oy){
+        var NS = 'http://www.w3.org/2000/svg';
+        var g = svg.querySelector('g');
+        var paths = g ? g.querySelectorAll('path') : [];
+        var glow = paths[0], dashes = paths[1];
+        if (!glow || !dashes) return;
+        var path = track(dashes) || glow;
+        var defs = document.createElementNS(NS, 'defs');
+        svg.insertBefore(defs, svg.firstChild);
+        defs.appendChild(path);                                // in the DOM, so it can be measured
+        var len = Math.ceil(path.getTotalLength());
+        var glowLen = Math.ceil(glow.getTotalLength());
+        var id = 'dq-route-' + (++uid);
+
+        // Draw from Start: reveal the glow along its own line and the dashes along the track.
+        var mask = document.createElementNS(NS, 'mask');
+        mask.setAttribute('id', id);
+        mask.setAttribute('maskUnits', 'userSpaceOnUse');
+        var r1 = stroke(glow, 'dq-route-draw', 18, '#fff', 1);
+        r1.style.setProperty('--len', glowLen + 'px');
+        var r2 = stroke(path, 'dq-route-draw', 18, '#fff', 1);
+        r2.style.setProperty('--len', len + 'px');
+        mask.appendChild(r1);
+        mask.appendChild(r2);
+        defs.appendChild(mask);
+        g.setAttribute('mask', 'url(#' + id + ')');
+
+        // Keep the coloured dashes only from Start to the leading participant.
+        var lightPath = path, lightLen = len;
+        if (stop){
+          var p = stop.split(',').map(Number), sx = p[0] - ox, sy = p[1] - oy;
+          var cut = nearest(path, len, sx, sy);
+          // The light: along the dashes up to the participant, then along the
+          // glow (the faint route still visible) from there to the finish.
+          var at = path.getPointAtLength(cut);
+          var from = nearest(glow, glowLen, at.x, at.y), pts = [];
+          for (var a = 0; a < cut; a += 2) pts.push(path.getPointAtLength(a));
+          for (var b = from; b <= glowLen; b += 2) pts.push(glow.getPointAtLength(b));
+          pts.push(glow.getPointAtLength(glowLen));
+          lightPath = document.createElementNS(NS, 'path');
+          lightPath.setAttribute('d', 'M' + pts.map(function (q){ return q.x.toFixed(1) + ' ' + q.y.toFixed(1); }).join('L'));
+          defs.appendChild(lightPath);
+          lightLen = Math.ceil(lightPath.getTotalLength());
+          var keep = document.createElementNS(NS, 'mask');
+          keep.setAttribute('id', id + '-stop');
+          keep.setAttribute('maskUnits', 'userSpaceOnUse');
+          var part = stroke(path, '', 18, '#fff', 1);
+          part.setAttribute('stroke-linecap', 'butt');
+          part.setAttribute('stroke-dasharray', cut + ' ' + (len + 20));
+          keep.appendChild(part);
+          defs.appendChild(keep);
+          dashes.setAttribute('mask', 'url(#' + id + '-stop)');
+        }
+
+        // The light runs all the way to the finish.
+        var flow = stroke(lightPath, 'dq-route-flow', 3, '#fff', '.75');
+        flow.setAttribute('stroke-linecap', 'round');
+        flow.setAttribute('stroke-linejoin', 'round');
+        svg.appendChild(flow);
+        svg.style.setProperty('--len', lightLen + 'px');
+        svg.style.setProperty('--r', index);
+      }
+
+      // Length along `path` of the point closest to (x, y), to 1px.
+      function nearest(path, len, x, y){
+        var at = 0, best = Infinity;
+        for (var l = 0; l <= len; l++){
+          var q = path.getPointAtLength(l), d = (q.x - x) * (q.x - x) + (q.y - y) * (q.y - y);
+          if (d < best){ best = d; at = l; }
+        }
+        return at;
+      }
+
+      // 15 — group the four flag paths so they can swing round the top of the pole
+      function flag(svg){
+        var NS = 'http://www.w3.org/2000/svg';
+        var parts = ['Vector_4', 'Vector_5', 'Vector_6', 'Vector_7']
+          .map(function (id){ return svg.querySelector('[id="' + id + '"]'); })
+          .filter(Boolean);
+        if (!parts.length) return;
+        var g = document.createElementNS(NS, 'g');
+        g.setAttribute('class', 'dq-flag');
+        parts[0].parentNode.insertBefore(g, parts[0]);
+        parts.forEach(function (p){ g.appendChild(p); });
+      }
+
+      function init(slot){
+        if (!slot.querySelector('[data-dq]')) return;
+        slot.querySelectorAll('.dq-count').forEach(function (el){
+          if (!reduce) fmt(el, +(el.dataset.from || 0));
+        });
+        slot.querySelectorAll('.dq-more').forEach(function (el){
+          if (!reduce){ el.dataset.to = el.textContent; el.textContent = el.dataset.from; }
+        });
+        slot.querySelectorAll('.dq-parallax').forEach(function (el){ parallax.push(el); });
+        slot.querySelectorAll('img.dq-route').forEach(function (img){
+          var i = +img.dataset.route, stop = img.dataset.stop;
+          var ox = parseFloat(img.style.left), oy = parseFloat(img.style.top);
+          inlineSvg(img, function (svg){ route(svg, i, stop, ox, oy); });
+        });
+        if (!reduce) slot.querySelectorAll('img.dq-ziel').forEach(function (img){ inlineSvg(img, flag); });
+        // 5 — replay the icon gesture on hover / tap
+        slot.querySelectorAll('.dq-tile').forEach(function (tile){
+          var icon = tile.querySelector('.dq-icon');
+          var hit = tile.firstElementChild;
+          if (!icon || !hit || reduce) return;
+          function replay(){
+            if (!slot.classList.contains('is-visible')) return;
+            icon.style.animation = 'none';
+            void icon.offsetWidth;
+            icon.style.animation = '';
+            icon.style.animationDelay = '0s';
+          }
+          hit.addEventListener('pointerenter', replay);
+          hit.addEventListener('pointerdown', replay);
+        });
+      }
+
+      // 1 · 21 — count up with an ease-out, then let the neighbour / the rank react
+      function count(el){
+        var from = +(el.dataset.from || 0), to = +el.dataset.to;
+        var delay = el.dataset.delay != null ? +el.dataset.delay : 250, dur = 900;
+        setTimeout(function (){
+          var t0 = performance.now();
+          (function step(now){
+            var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+            fmt(el, Math.round(from + (to - from) * e));
+            if (p < 1) return requestAnimationFrame(step);
+            el.classList.add('is-done');
+            var pop = el.parentNode.querySelector('.dq-pop');
+            if (pop) pop.classList.add('is-done');
+          })(t0);
+        }, delay);
+      }
+
+      function play(slot){
+        if (reduce || !slot.querySelector('[data-dq]')) return;
+        slot.querySelectorAll('.dq-count').forEach(count);
+        // 10 — one more participant joins after the avatars have arrived
+        slot.querySelectorAll('.dq-more').forEach(function (el){
+          setTimeout(function (){ el.textContent = el.dataset.to; el.classList.add('is-done'); }, 1700);
+        });
+      }
+
+      // 2 · 8 — photos drift up to ±10px against the scroll (they are scaled 1.1, so no edge shows)
+      var ticking = false;
+      function updateParallax(){
+        ticking = false;
+        var vh = window.innerHeight || 1;
+        parallax.forEach(function (el){
+          var r = el.parentNode.getBoundingClientRect();
+          var p = ((r.top + r.height / 2) - vh / 2) / vh;
+          p = Math.max(-1, Math.min(1, p));
+          el.style.setProperty('--py', (-p * 10).toFixed(2) + 'px');
+        });
+      }
+      if (!reduce){
+        window.addEventListener('scroll', function (){
+          if (!ticking){ ticking = true; requestAnimationFrame(updateParallax); }
+        }, { passive: true, capture: true });
+        window.addEventListener('resize', updateParallax);
+      }
+
+      return { init: init, play: play, update: updateParallax };
+    })();
+    liveSlots.forEach(DQ.init);
+    DQ.update();
+
+    /* One-shot entrance motion (Flight Quiz dashboard, Deu Quest screens) plays
+       the first time its screen is mostly in view — not on page load, when it
+       may be far below. Observing starts only after every gallery image has
+       loaded: before that the sections above are still short, so screens far
+       down the page would briefly sit in the viewport and play unseen. */
     (function startEntrances(){
-      var slots = liveSlots.filter(function (s){ return s.querySelector('.cs-rise'); });
+      var slots = liveSlots.filter(function (s){ return s.querySelector('.cs-rise, [data-dq]'); });
+      function show(s){ s.classList.add('is-visible'); DQ.play(s); }
       if (!('IntersectionObserver' in window)){
-        slots.forEach(function (s){ s.classList.add('is-visible'); });
+        slots.forEach(show);
         return;
       }
-      var io = new IntersectionObserver(function (entries){
-        entries.forEach(function (e){
-          if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.5 });
-      slots.forEach(function (s){ io.observe(s); });
+      function observe(){
+        var io = new IntersectionObserver(function (entries){
+          entries.forEach(function (e){
+            if (!e.isIntersecting) return;
+            // Re-check the live geometry: the observer's snapshot can predate a layout shift.
+            var r = e.target.getBoundingClientRect(), vh = window.innerHeight;
+            var seen = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+            if (seen < r.height * 0.5) return;
+            show(e.target); io.unobserve(e.target);
+          });
+        }, { threshold: [0.5, 0.75, 1] });
+        slots.forEach(function (s){ io.observe(s); });
+      }
+      if (document.readyState === 'complete') observe();
+      else window.addEventListener('load', observe);
     })();
 
     fit();
