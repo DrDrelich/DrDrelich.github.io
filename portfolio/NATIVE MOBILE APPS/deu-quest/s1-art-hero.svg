@@ -13,7 +13,12 @@
     @keyframes spdArc{ 0%{ stroke-dasharray:132 300; } 14%{ stroke-dasharray:141 300; } 28%{ stroke-dasharray:150 300; } 42%{ stroke-dasharray:138 300; } 57%{ stroke-dasharray:118 300; } 71%{ stroke-dasharray:124 300; } 85%{ stroke-dasharray:146 300; } 100%{ stroke-dasharray:132 300; } }
     @keyframes rpm{ 0%{ transform:rotate(-4.5deg); } 14%{ transform:rotate(6.75deg); } 28%{ transform:rotate(18deg); } 42%{ transform:rotate(3deg); } 57%{ transform:rotate(-22deg); } 71%{ transform:rotate(-14.5deg); } 85%{ transform:rotate(13deg); } 100%{ transform:rotate(-4.5deg); } }
     @keyframes rpmArc{ 0%{ stroke-dasharray:95.5 300; } 14%{ stroke-dasharray:106.75 300; } 28%{ stroke-dasharray:118 300; } 42%{ stroke-dasharray:103 300; } 57%{ stroke-dasharray:78 300; } 71%{ stroke-dasharray:85.5 300; } 85%{ stroke-dasharray:113 300; } 100%{ stroke-dasharray:95.5 300; } }
-    @media (prefers-reduced-motion: reduce){ .spd-needle, .rpm-needle, .spd-arc, .rpm-arc{ animation:none; } }
+    /* Break reminder: the coffee indicator blinks (1.4 s) and sends out a ring, like a warning light. */
+    .break-alert{ animation:breakBlink 1.4s ease-in-out infinite; }
+    .break-ring{ transform-box:fill-box; transform-origin:center; opacity:0; animation:breakRing 1.4s ease-out infinite; }
+    @keyframes breakBlink{ 0%, 45%{ opacity:1; } 60%, 85%{ opacity:.25; } 100%{ opacity:1; } }
+    @keyframes breakRing{ 0%{ transform:scale(1); opacity:.8; } 70%, 100%{ transform:scale(1.9); opacity:0; } }
+    @media (prefers-reduced-motion: reduce){ .spd-needle, .rpm-needle, .spd-arc, .rpm-arc, .break-alert, .break-ring{ animation:none; } }
   </style>
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse">
@@ -86,10 +91,14 @@
       <path d="M0.8333 12.4995C0.8333 5.8331 5.41645 0.8333 12.4995 0.8333C12.4995 7.91635 7.4997 12.4995 0.8333 12.4995Z"/>
       <path d="M0.8333 12.4995L7.08305 6.24975"/>
     </g>
-    <circle cx="190.57" cy="31" r="11" fill="#F59E0B" fill-opacity=".18" stroke="#F59E0B" stroke-opacity=".45"/>
-    <g transform="translate(185.05 25.31) scale(0.78)" stroke="#F59E0B">
-      <path d="M0.8333 5.41645H9.9996V9.58295C9.9996 10.688 9.56063 11.7477 8.77926 12.5291C7.99789 13.3105 6.93812 13.7495 5.8331 13.7495H4.9998C3.89478 13.7495 2.83501 13.3105 2.05364 12.5291C1.27227 11.7477 0.8333 10.688 0.8333 9.58295V5.41645Z"/>
-      <path d="M9.9996 6.6664H11.2496C11.8021 6.6664 12.3319 6.88589 12.7226 7.27657C13.1133 7.66726 13.3328 8.19714 13.3328 8.74965C13.3328 9.30216 13.1133 9.83205 12.7226 10.2227C12.3319 10.6134 11.8021 10.8329 11.2496 10.8329H9.9996M3.3332 0.8333V2.4999M5.8331 0.8333V2.4999M8.333 0.8333V2.4999"/>
+    <!-- break reminder: the cup blinks to catch the driver's eye -->
+    <circle class="break-ring" cx="190.57" cy="31" r="11" fill="none" stroke="#F59E0B" stroke-width="1.5"/>
+    <g class="break-alert">
+      <circle cx="190.57" cy="31" r="11" fill="#F59E0B" fill-opacity=".18" stroke="#F59E0B" stroke-opacity=".45"/>
+      <g transform="translate(185.05 25.31) scale(0.78)" stroke="#F59E0B">
+        <path d="M0.8333 5.41645H9.9996V9.58295C9.9996 10.688 9.56063 11.7477 8.77926 12.5291C7.99789 13.3105 6.93812 13.7495 5.8331 13.7495H4.9998C3.89478 13.7495 2.83501 13.3105 2.05364 12.5291C1.27227 11.7477 0.8333 10.688 0.8333 9.58295V5.41645Z"/>
+        <path d="M9.9996 6.6664H11.2496C11.8021 6.6664 12.3319 6.88589 12.7226 7.27657C13.1133 7.66726 13.3328 8.19714 13.3328 8.74965C13.3328 9.30216 13.1133 9.83205 12.7226 10.2227C12.3319 10.6134 11.8021 10.8329 11.2496 10.8329H9.9996M3.3332 0.8333V2.4999M5.8331 0.8333V2.4999M8.333 0.8333V2.4999"/>
+      </g>
     </g>
   </g>
   <g fill="#fff">
