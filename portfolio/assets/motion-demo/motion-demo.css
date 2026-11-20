@@ -1,0 +1,406 @@
+/* =========================================================
+   MOTION DEMO LAYER — local branch feat/motion-demo only.
+   Everything here sits on top of the existing pages; the page
+   files only gained one <link> and one <script>. Turn the whole
+   layer off with ?demo=off (and back on with ?demo=on).
+
+   1 Opening sequence ........ JS (reuses each card's _play())
+   2 Copy email + confetti ... JS + .md-toast
+   3 Favicon + OG preview .... <head> tags
+   4 Token flip (dark) ....... [data-theme="dark"] + View Transition
+   5 Card → case-study morph . @view-transition + names below
+   7 Exploded dashboard ...... .md-explode
+   8 3D phones ............... .md-device (native-mobile-apps only)
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   5 · CARD → CASE-STUDY MORPH (cross-document View Transitions)
+   Same-origin page loads animate; unsupported browsers just
+   navigate. Names pair each homepage card with the white panel
+   of its case study (matched through the BACK link's #hash).
+   --------------------------------------------------------- */
+@view-transition{ navigation:auto; }
+@media (prefers-reduced-motion: reduce){
+  @view-transition{ navigation:none; }
+}
+
+.canvas > .header, .topnav{ view-transition-name:site-header; }
+
+#b2b-saas > .card{                view-transition-name:card-b2b-saas; }
+#forex-withdrawal > .card{        view-transition-name:card-forex-withdrawal; }
+#native-mobile-apps > .card{      view-transition-name:card-native-mobile-apps; }
+#ux-flow-maps > .card{            view-transition-name:card-ux-flow-maps; }    /* external link: no partner, it just fades with the others */
+#saas-dashboard-workflow > .card{ view-transition-name:card-saas-dashboard-workflow; }
+#interaction-design > .card{      view-transition-name:card-interaction-design; }
+#design-system > .card{           view-transition-name:card-design-system; }
+
+#b2b-saas .card__title{                view-transition-name:title-b2b-saas; }
+#forex-withdrawal .card__title{        view-transition-name:title-forex-withdrawal; }
+#native-mobile-apps .card__title{      view-transition-name:title-native-mobile-apps; }
+#saas-dashboard-workflow .card__title{ view-transition-name:title-saas-dashboard-workflow; }
+#interaction-design .card__title{      view-transition-name:title-interaction-design; }
+#design-system .card__title{           view-transition-name:title-design-system; }
+
+main.content:has(.back-btn[href$="#b2b-saas"]){                view-transition-name:card-b2b-saas; }
+main.content:has(.back-btn[href$="#forex-withdrawal"]){        view-transition-name:card-forex-withdrawal; }
+main.content:has(.back-btn[href$="#native-mobile-apps"]){      view-transition-name:card-native-mobile-apps; }
+main.content:has(.back-btn[href$="#saas-dashboard-workflow"]){ view-transition-name:card-saas-dashboard-workflow; }
+main.content:has(.back-btn[href$="#interaction-design"]){      view-transition-name:card-interaction-design; }
+main.content:has(.back-btn[href$="#design-system"]){           view-transition-name:card-design-system; }
+
+.pagehead:has(.back-btn[href$="#b2b-saas"]) .pagehead__title{                view-transition-name:title-b2b-saas; }
+.pagehead:has(.back-btn[href$="#forex-withdrawal"]) .pagehead__title{        view-transition-name:title-forex-withdrawal; }
+.pagehead:has(.back-btn[href$="#native-mobile-apps"]) .pagehead__title{      view-transition-name:title-native-mobile-apps; }
+.pagehead:has(.back-btn[href$="#saas-dashboard-workflow"]) .pagehead__title{ view-transition-name:title-saas-dashboard-workflow; }
+.pagehead:has(.back-btn[href$="#interaction-design"]) .pagehead__title{      view-transition-name:title-interaction-design; }
+.pagehead:has(.back-btn[href$="#design-system"]) .pagehead__title{           view-transition-name:title-design-system; }
+
+.module > .card, main.content{ view-transition-class:md-card; }
+.card__title, .pagehead__title{ view-transition-class:md-title; }
+
+::view-transition-group(*){
+  animation-duration:.52s;
+  animation-timing-function:cubic-bezier(.22,.61,.36,1);
+}
+/* The card (≈330 px) and the case-study panel (1382 px, very tall) differ a
+   lot in size. The panel snapshot scales (top-aligned) with the morphing box;
+   the card snapshot never scales up — it stays at its own size in the
+   top-left corner and fades, so its text can't smear across the screen.
+   The pseudo-elements are styled by the page being opened, hence the
+   page-specific selectors: on a case study the "old" image is the card,
+   on the homepage the "new" one is. */
+::view-transition-old(*.md-card),
+::view-transition-new(*.md-card){
+  height:100%; object-fit:cover; object-position:top;
+}
+html:has(.back-btn)::view-transition-old(*.md-card),
+html:has(.canvas)::view-transition-new(*.md-card){
+  object-fit:none; object-position:left top;
+}
+html:has(.back-btn)::view-transition-old(*.md-card){ animation-duration:.16s; }
+html:has(.canvas)::view-transition-new(*.md-card){ animation-duration:.3s; animation-delay:.2s; }
+html:has(.canvas)::view-transition-old(*.md-card){ animation-duration:.3s; }
+
+/* the other six cards: out fast on the way in, back in late on the way back */
+::view-transition-old(*.md-card):only-child,
+::view-transition-old(*.md-title):only-child{ animation:md-vt-out .16s ease both; }
+::view-transition-new(*.md-card):only-child,
+::view-transition-new(*.md-title):only-child{ animation:md-vt-in .32s cubic-bezier(.22,.61,.36,1) .22s both; }
+@keyframes md-vt-out{ to{ opacity:0; transform:scale(.98); } }
+@keyframes md-vt-in{ from{ opacity:0; transform:translateY(6px); } }
+
+::view-transition-old(*.md-title){ animation-duration:.18s; }
+::view-transition-new(*.md-title){ animation-duration:.3s; animation-delay:.12s; }
+
+/* The theme flip (4) is a circular reveal of the whole page, so
+   nothing may be lifted out of it while it runs. */
+html.md-theme-vt *{ view-transition-name:none !important; }
+html.md-theme-vt::view-transition-old(root),
+html.md-theme-vt::view-transition-new(root){ animation:none; mix-blend-mode:normal; }
+
+/* ---------------------------------------------------------
+   1 · OPENING SEQUENCE — replaces the invisible fly-by that
+   nudged the B2B card every 7 s.
+   --------------------------------------------------------- */
+.module.is-auto-hover:not(:hover){ transform:none; }
+.module.is-auto-hover:not(:hover) .card{ box-shadow:none; }
+
+/* The site's own buttons follow the Interaction Design spec —
+   pressed 100 ms, swap 150 ms (was 120 / 180 ms). */
+.cta{ transition:background-color .15s ease, color .15s ease, transform .1s ease, box-shadow .15s ease; }
+.cta__arrow{ transition:transform .15s ease, filter .15s ease; }
+
+/* ---------------------------------------------------------
+   2 · COPY EMAIL
+   --------------------------------------------------------- */
+.md-copied, .md-copied:hover{ color:var(--forest, #2E4637) !important; text-decoration-color:transparent !important; }
+.md-copied .md-copied__label{ display:inline-block; animation:md-pop .32s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes md-pop{ from{ transform:translateY(3px) scale(.92); opacity:0; } to{ transform:none; opacity:1; } }
+
+.md-toast{
+  position:fixed; z-index:2147482000;
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px 9px 14px;
+  border-radius:12px;
+  background:#1F2E25; color:#F2F4EF;
+  font:12px/16px "JetBrains Mono", ui-monospace, monospace;
+  box-shadow:0 14px 30px -12px rgba(17,17,17,.35);
+  opacity:0; transform:translateY(-4px);
+  transition:opacity .18s ease, transform .18s cubic-bezier(.22,.61,.36,1);
+  pointer-events:none;
+}
+.md-toast.is-in{ opacity:1; transform:none; pointer-events:auto; }
+.md-toast a{ color:#BCD5B6; text-underline-offset:3px; }
+.md-toast a:hover{ color:#fff; }
+.md-toast__tick{ display:inline-flex; width:16px; height:16px; border-radius:50%; background:#BCD5B6; color:#1F2E25; align-items:center; justify-content:center; font-size:10px; }
+
+/* ---------------------------------------------------------
+   4 · TOKEN FLIP — the Design System card re-themes the page
+   --------------------------------------------------------- */
+/* Sits in the card footer where the "TOKENS / COMPONENTS" tag was, in the
+   same type as the footer tags; the full 44 px footer height is the hit area. */
+.md-switch{
+  display:inline-flex; align-items:center; gap:10px;
+  height:44px; padding:0 8px 0 0;
+  border:0; border-radius:12px; background:none;
+  color:var(--ink-3, #4F5651);
+  font:11px/14.52px "JetBrains Mono", ui-monospace, monospace; text-transform:uppercase;
+  white-space:nowrap; cursor:pointer;
+  transition:color .15s ease;
+}
+.md-switch:hover{ color:var(--ink, #1F2E25); }
+.md-switch:hover .md-switch__track{ background:#B9C2B9; }
+.md-switch:active .md-switch__track{ transform:scale(.94); }
+.md-switch:focus-visible{ outline:2px solid var(--forest, #2E4637); outline-offset:2px; }
+.md-switch__track{ position:relative; flex:none; width:30px; height:18px; border-radius:9px; background:#C9D0C8; transition:background-color .2s ease, transform .1s ease; }
+.md-switch__knob{ position:absolute; left:2px; top:2px; width:14px; height:14px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.md-switch[aria-checked="true"] .md-switch__track{ background:#BCD5B6; }
+.md-switch[aria-checked="true"] .md-switch__knob{ transform:translateX(12px); background:#1F2E25; }
+/* the switch replaces this footer tag; hide it from the first paint so it doesn't blink */
+#design-system .card__foot .tag{ visibility:hidden; }
+#design-system .ds__row{ cursor:pointer; }
+#design-system .ds__row:hover .ds__token{ text-decoration:underline; text-underline-offset:3px; }
+
+html[data-theme="dark"]{
+  --bg:#121A15; --card:#1B261F; --ink:#EEF2EC; --ink-2:#CBD3CC; --ink-3:#A9B3AB; --ink-4:#8F9A92;
+  --accent:#E0A487; --forest:#BCD5B6; --btn:#26332B; --line:#4A564E;
+  color-scheme:dark;
+}
+html[data-theme="dark"] .header__loc{ color:var(--ink-3); }
+html[data-theme="dark"] .pill{ background:#26332B; color:var(--ink); }
+html[data-theme="dark"] .pill--sage,
+html[data-theme="dark"] .pill--violet{ color:#1F2E25; }
+html[data-theme="dark"] .pill--sage{ background:var(--sage); }
+html[data-theme="dark"] .pill--violet{ background:var(--violet); }
+html[data-theme="dark"] .module:hover .card{ box-shadow:0 18px 38px -12px rgba(0,0,0,.7), 0 0 0 1px rgba(188,213,182,.14); }
+html[data-theme="dark"] .cta:hover{ color:#1F2E25; }
+html[data-theme="dark"] .cta:hover .cta__arrow,
+html[data-theme="dark"] .cta:hover .cta__ext{ filter:brightness(0); }
+html[data-theme="dark"] .cta:active{ background:#BCD5B6; color:#1F2E25; }
+html[data-theme="dark"] .tag::before{ filter:invert(.85) sepia(.2); }
+html[data-theme="dark"] .md-switch__track{ background:#4A564E; }
+html[data-theme="dark"] .md-switch:hover .md-switch__track{ background:#5A665E; }
+html[data-theme="dark"] .md-switch[aria-checked="true"] .md-switch__track{ background:#BCD5B6; }
+
+/* Inline SVG artwork on the homepage: same colour map as the pre-built
+   dark SVG files, in CSS so it is right on the very first paint. */
+html[data-theme="dark"] .canvas svg [fill="white" i],
+html[data-theme="dark"] .canvas svg [fill="#fff" i],
+html[data-theme="dark"] .canvas svg [fill="#ffffff" i]{ fill:#26332B; }
+html[data-theme="dark"] .canvas svg [fill="#F2F4EF" i]{ fill:#121A15; }
+html[data-theme="dark"] .canvas svg [fill="#EEF0EC" i]{ fill:#2C3931; }
+html[data-theme="dark"] .canvas svg [fill="#D9DED8" i]{ fill:#3A463E; }
+html[data-theme="dark"] .canvas svg [fill="#2E4637" i]{ fill:#4F7A5F; }
+html[data-theme="dark"] .canvas svg [stroke="#2E4637" i]{ stroke:#4F7A5F; }
+html[data-theme="dark"] .canvas svg [stroke="#C9D0C8" i]{ stroke:#55615A; }
+
+/* ---- Case-study pages in dark: page, header, title band, BACK.
+   The slides themselves are images with their own light paper and stay
+   as they are, like printed pages on a dark desk. ---- */
+html[data-theme="dark"]{
+  --page-bg:#121A15; --card-white:#1B261F; --section-bg:#26332B;
+  --ink-body:#CBD3CC; --border-soft:#3A463E; --m-ink:#EEF2EC;
+}
+html[data-theme="dark"] body{ background:#121A15; }
+html[data-theme="dark"] .hn-name{ color:#EEF2EC; }
+html[data-theme="dark"] .hn-loc{ color:#A9B3AB; }
+html[data-theme="dark"] .hn-pill{ background:#26332B; color:#EEF2EC; }
+html[data-theme="dark"] .hn-pill--sage{ background:#BCD5B6; color:#1F2E25; }
+html[data-theme="dark"] .hn-pill--violet{ background:#C6B6E4; color:#1F2E25; }
+html[data-theme="dark"] .hn-link{ color:#EEF2EC; }
+html[data-theme="dark"] .hn-link:hover{ color:#E0A487; }
+html[data-theme="dark"] .pagehead__title{ color:#EEF2EC; }
+html[data-theme="dark"] .pagehead__desc{ color:#E0A487; }
+html[data-theme="dark"] .back-btn{ background:#26332B; color:#EEF2EC; }
+html[data-theme="dark"] .back-btn:hover{ background:#E0A487; color:#1F2E25; }
+html[data-theme="dark"] .back-btn:hover .back-btn__arrow,
+html[data-theme="dark"] .back-btn:active .back-btn__arrow{ filter:brightness(0); }
+html[data-theme="dark"] .back-btn:active{ background:#BCD5B6; color:#1F2E25; }
+html[data-theme="dark"] .back-btn:focus-visible{ color:#EEF2EC; outline-color:#BCD5B6; }
+html[data-theme="dark"] .gallery__title{ color:#EEF2EC; }
+html[data-theme="dark"] .md-hint{ background:#BCD5B6; color:#1F2E25; }
+@media (max-width:759px){
+  html[data-theme="dark"] .topnav{ background:#1B261F; }
+  html[data-theme="dark"] .hn-link{ background:#26332B; color:#EEF2EC; }
+  html[data-theme="dark"] .hn-link:hover{ background:#E0A487; color:#1F2E25; }
+  html[data-theme="dark"] .pagehead,
+  html[data-theme="dark"] .toc-m{ border-color:#3A463E; }
+  html[data-theme="dark"] .toc-m__list li + li{ border-top-color:#2C3931; }
+}
+/* labels sitting on light fills keep dark ink */
+html[data-theme="dark"] .node:has(img[data-md-src$="vector28.svg"]),
+html[data-theme="dark"] .node:has(img[data-md-src$="vector29.svg"]),
+html[data-theme="dark"] .ix__label[style*="var(--ink)"]{ color:#1F2E25 !important; }
+/* the DS card's own hover preview flips to dark; in dark mode, skip that part */
+html[data-theme="dark"] .is-play .ds__panel,
+html[data-theme="dark"] .is-play .ds__token,
+html[data-theme="dark"] .is-play .ds__value,
+html[data-theme="dark"] .is-play .ds__dark{ animation:none !important; }
+html[data-theme="dark"] .is-play .fx__progress .dot--done{ animation-name:md-done-d; }
+html[data-theme="dark"] .is-play .fx__progress .ring--done{ animation-name:md-done-ring-d; }
+html[data-theme="dark"] .is-play .fx__progress .dot--current{ animation-name:a-pop, md-current-d; }
+@keyframes md-done-d{ 0%,40%{ fill:#26332B; } 50%,82%{ fill:#BCD5B6; } 100%{ fill:#26332B; } }
+@keyframes md-done-ring-d{ 0%,40%{ stroke:#55615A; } 50%,82%{ stroke:#BCD5B6; } 100%{ stroke:#55615A; } }
+@keyframes md-current-d{ 0%,40%{ fill:#B97A5E; } 50%,82%{ fill:#BCD5B6; } 100%{ fill:#B97A5E; } }
+
+/* ---------------------------------------------------------
+   7 · EXPLODED DASHBOARD — hover the B2B illustration
+   --------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference){
+  .b2b__panel{
+    transform-style:preserve-3d;
+    transition:transform .75s cubic-bezier(.22,.61,.36,1);
+  }
+  .b2b__side, .b2b__main > *{
+    transition:transform .75s cubic-bezier(.22,.61,.36,1), filter .75s ease;
+  }
+  /* the layout grid the components sit on — revealed when they lift off */
+  .b2b__panel::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(46,70,55,.16) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,70,55,.16) 1px, transparent 1px);
+    background-size:12px 12px; background-position:11.5px 11.5px;
+    opacity:0; transition:opacity .4s ease;
+  }
+  html[data-theme="dark"] .b2b__panel::before{
+    background-image:
+      linear-gradient(rgba(188,213,182,.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(188,213,182,.14) 1px, transparent 1px);
+  }
+  .b2b__panel.md-explode::before{ opacity:1; transition-delay:.3s; }
+  .b2b__panel.md-explode{
+    overflow:visible;
+    transform:perspective(1200px) translateY(4px) rotateX(50deg) rotateZ(-34deg) scale(.8);
+  }
+  .md-explode .b2b__main{ transform-style:preserve-3d; }
+  .md-explode .b2b__side{ transform:translateZ(30px); transition-delay:.12s; }
+  .md-explode .b2b__chart{ transform:translateZ(30px); transition-delay:.18s; }
+  .md-explode .b2b__main > img{ transform:translateZ(30px); transition-delay:.22s; }
+  .md-explode .b2b__row{ transform:translateZ(30px); transition-delay:.26s; }
+  .md-explode .b2b__kpi{ transform:translateZ(62px); transition-delay:.3s; }
+  .md-explode .b2b__side,
+  .md-explode .b2b__main > *{ filter:drop-shadow(0 14px 10px rgba(31,46,37,.16)); }
+  html[data-theme="dark"] .md-explode .b2b__side,
+  html[data-theme="dark"] .md-explode .b2b__main > *{ filter:drop-shadow(0 14px 10px rgba(0,0,0,.45)); }
+
+  .md-layer-tag{
+    position:absolute; z-index:5;
+    display:flex; align-items:center; gap:5px;
+    font:9px/1 "JetBrains Mono", ui-monospace, monospace; white-space:nowrap;
+    color:var(--ink-3, #4F5651);
+    opacity:0; transform:translate(-4px, -50%);
+    transition:opacity .2s ease, transform .3s cubic-bezier(.22,.61,.36,1);
+    pointer-events:none;
+  }
+  .md-layer-tag::before{ content:""; width:14px; height:1px; background:currentColor; opacity:.6; }
+  .md-layer-tag--left{ flex-direction:row-reverse; }            /* "navigation —" with the line ending on the bar */
+  .card .md-layer-tag--left{ transform:translate(4px, -50%); }
+  .card.md-tags-on .md-layer-tag--left{ transform:translate(0, -50%); }
+  .card.md-tags-on .md-layer-tag{ opacity:1; transform:translate(0, -50%); transition-delay:calc(var(--i) * 60ms); }
+}
+.md-layer-tags{ position:absolute; inset:0; pointer-events:none; z-index:5; }
+
+/* ---------------------------------------------------------
+   8 · 3D PHONES — native-mobile-apps.html, live screens only
+   --------------------------------------------------------- */
+.gallery__section:has(.md-device){ overflow:visible; }
+.md-device{
+  transform-style:preserve-3d;
+  cursor:grab; touch-action:pan-y;
+  user-select:none; -webkit-user-select:none;
+  will-change:transform;
+}
+.md-device.is-dragging{ cursor:grabbing; }
+.md-device > :first-child{ backface-visibility:hidden; }
+.md-slab, .md-back, .md-glare{
+  position:absolute; inset:0; pointer-events:none;
+  border-radius:var(--md-r, 24px);
+}
+.md-slab{
+  transform:translateZ(var(--z));
+  background:linear-gradient(90deg, #2b302d, #4a514c 50%, #2b302d);
+}
+.md-back{
+  transform:translateZ(var(--md-depth, -30px)) rotateY(180deg);
+  backface-visibility:hidden;
+  background:radial-gradient(120% 80% at 30% 20%, #3a4a40, #1F2E25 60%, #141d17);
+  display:flex; align-items:center; justify-content:center;
+  color:#BCD5B6; font:12px/1.4 "JetBrains Mono", ui-monospace, monospace; text-align:center;
+}
+.md-back::before{
+  content:""; position:absolute; left:9%; top:5%; width:30%; aspect-ratio:1; border-radius:28%;
+  background:#141d17; box-shadow:inset 0 0 0 1px rgba(188,213,182,.25);
+}
+.md-glare{
+  transform:translateZ(.5px);
+  /* no mix-blend-mode here: blending makes Chrome flatten the 3D stack (the edge disappears) */
+  background:radial-gradient(70% 55% at var(--gx, 50%) var(--gy, 30%), rgba(255,255,255,.3), rgba(255,255,255,0) 70%);
+  opacity:var(--go, 0);
+}
+.md-hint{
+  display:inline-flex; align-items:center; gap:6px;
+  margin-left:12px; padding:4px 10px; border-radius:12px;
+  background:#1F2E25; color:#F2F4EF;
+  font:11px/1.2 "JetBrains Mono", ui-monospace, monospace; vertical-align:3px;
+}
+
+/* ---------------------------------------------------------
+   DEMO PANEL (scaffolding — not part of any proposal)
+   --------------------------------------------------------- */
+.md-panel{
+  position:fixed; left:50%; bottom:12px; z-index:2147481000;
+  transform:translateX(-50%);
+  width:min(360px, calc(100vw - 32px));
+  border-radius:16px;
+  background:rgba(31,46,37,.96); color:#F2F4EF;
+  font:12px/16px "JetBrains Mono", ui-monospace, monospace;
+  box-shadow:0 18px 40px -14px rgba(0,0,0,.45);
+  backdrop-filter:blur(8px);
+}
+.md-panel__head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  width:100%; padding:10px 14px;
+  border:0; background:none; color:inherit; font:inherit; cursor:pointer; text-align:left;
+}
+.md-panel__head b{ font-weight:400; color:#BCD5B6; }
+.md-panel__chev{ transition:transform .2s ease; }
+.md-panel[data-open="false"] .md-panel__chev{ transform:rotate(180deg); }
+.md-panel[data-open="false"] .md-panel__body{ display:none; }
+.md-panel__body{ padding:0 8px 10px; }
+.md-panel ol{ list-style:none; margin:0; padding:0; }
+.md-panel li{ display:flex; align-items:center; gap:10px; padding:5px 6px; border-radius:8px; }
+.md-panel li:hover{ background:rgba(242,244,239,.06); }
+.md-panel li > i{ font-style:normal; width:18px; height:18px; flex:none; border-radius:50%; background:#BCD5B6; color:#1F2E25; display:inline-flex; align-items:center; justify-content:center; font-size:10px; }
+.md-panel li > span{ flex:1; min-width:0; color:#DDE3DB; }
+.md-panel li > span small{ display:block; font-size:10px; line-height:13px; color:#9FB0A4; }
+.md-panel li button, .md-panel li a, .md-panel__foot a{
+  flex:none; height:24px; padding:0 10px; border:0; border-radius:12px;
+  background:#BCD5B6; color:#1F2E25; font:inherit; font-size:11px; line-height:24px;
+  text-decoration:none; cursor:pointer;
+}
+.md-panel li button:hover, .md-panel li a:hover{ background:#fff; }
+.md-panel :focus-visible{ outline:2px solid #BCD5B6; outline-offset:2px; }
+.md-panel__foot{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 6px 0; margin-top:6px; border-top:1px solid rgba(242,244,239,.12); color:#9FB0A4; font-size:10px; }
+.md-panel__foot a{ background:transparent; color:#BCD5B6; padding:0; height:auto; line-height:16px; text-decoration:underline; text-underline-offset:3px; }
+
+.md-off-badge{
+  position:fixed; left:50%; bottom:12px; z-index:2147481000; transform:translateX(-50%);
+  padding:7px 14px; border-radius:14px; background:#B97A5E; color:#fff;
+  font:11px/1 "JetBrains Mono", ui-monospace, monospace; text-decoration:none;
+  box-shadow:0 10px 24px -10px rgba(0,0,0,.4);
+}
+
+/* Link-preview mock (3) */
+.md-modal{ position:fixed; inset:0; z-index:2147482500; display:flex; align-items:center; justify-content:center; background:rgba(18,26,21,.45); }
+.md-unfurl{
+  width:min(520px, calc(100vw - 32px)); padding:14px 16px 16px;
+  border-left:4px solid #BCD5B6; border-radius:10px;
+  background:#fff; color:#1D1C1D; font:14px/1.4 system-ui, -apple-system, sans-serif;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.45);
+}
+.md-unfurl small{ display:block; color:#616061; font-size:12px; }
+.md-unfurl b{ display:block; margin:2px 0 4px; color:#1264A3; }
+.md-unfurl p{ margin:0 0 10px; color:#1D1C1D; font-size:13px; }
+.md-unfurl img{ display:block; width:100%; height:auto; border-radius:8px; border:1px solid #E8E8E8; }
+.md-unfurl__note{ margin-top:10px; color:#616061; font-size:11px; }
