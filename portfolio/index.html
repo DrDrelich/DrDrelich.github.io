@@ -541,6 +541,13 @@
       .h-400{ height:400px; } .h-261{ height:261px; } .h-300{ height:300px; }
       .h-361{ height:361px; }
     }
+    /* Tablets in portrait (600–759px): one 420px column looked lost, so the four
+       desktop columns sit in a 2 × 2 grid (B2B | Forex+Native, Flow+Workflow |
+       Interaction+Design System); fit() scales each card to its column width. */
+    @media (min-width:600px) and (max-width:759px){
+      .grid{ display:grid; grid-template-columns:1fr 1fr; align-items:start; justify-items:center; gap:16px; }
+      .col{ display:flex; flex-direction:column; gap:16px; }
+    }
     /* Touch screens: no sticky hover lift after a tap */
     @media (hover:none){
       .module:hover{ transform:none; }
@@ -875,13 +882,20 @@
       var CARD_W = 327.5, M_GUTTER = 16, M_CARD_MAX = 420;
       var wrap = document.querySelector('.canvas-wrap');
       var mq = window.PORTFOLIO_MOBILE;
+      var twoCol = window.matchMedia('(min-width: 600px)');   // tablet portrait: 2 × 2 columns (CSS)
       function fit() {
         if (mq.matches) {
           wrap.style.removeProperty('--s');
-          var w = Math.min(document.documentElement.clientWidth - M_GUTTER * 2, M_CARD_MAX);
+          var cw = document.documentElement.clientWidth;
+          var w = twoCol.matches ? (cw - M_GUTTER * 3) / 2 : Math.min(cw - M_GUTTER * 2, M_CARD_MAX);
           document.documentElement.style.setProperty('--mz', (w / CARD_W).toFixed(4));
           return;
         }
+        // The desktop layout never scrolls (the canvas is fitted to the window and
+        // scrolling is off). A scroll offset left from the phone layout (a tablet
+        // turned to landscape) or from the #card jump after BACK would cut off the
+        // top with no way to scroll back, so always return to the top.
+        if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
         var availW = window.innerWidth - MARGIN * 2;
         var availH = window.innerHeight - MARGIN * 2 - 1;
         var s = Math.min(availW / DESIGN_W, availH / DESIGN_H, 1);
@@ -889,7 +903,13 @@
       }
       fit();
       window.addEventListener('resize', fit);
+      window.addEventListener('load', fit);           // after the browser's #card jump
+      window.addEventListener('pageshow', fit);       // back/forward cache, rotated meanwhile
+      window.addEventListener('scroll', function () {
+        if (!mq.matches && (window.scrollX || window.scrollY)) window.scrollTo(0, 0);
+      }, { passive: true });
       if (mq.addEventListener) mq.addEventListener('change', fit);
+      if (twoCol.addEventListener) twoCol.addEventListener('change', fit);
     })();
 
     // Mobile: BACK on a subpage links to index.html#<module>. The browser jumps there
