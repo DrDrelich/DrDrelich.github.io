@@ -17,18 +17,124 @@
 
   if (params.has('shot')) return;                    // clean render for the og:image screenshot
 
-  // Confetti: no longer on VIEW / BACK (navigation is instant and the morph is the
-  // transition). It now marks one success moment: copying the email.
-  window.CONFETTI_SELECTOR = '[data-md-confetti]';
+  // Confetti stays on VIEW / BACK with its 1 s delay, exactly as each page set it up
+  // (or confetti.js's default); the copy-email burst is added on top.
+  window.CONFETTI_SELECTOR = (window.CONFETTI_SELECTOR || '.cta, [data-confetti]') + ', [data-md-confetti]';
 
   followSystem();
   setupCopyEmail();
+  setupFallbackMorph();
   if (isHome) {
     setupThemeFlip();
     setupExplode();
-    whenReady(function () { cascade(false); });
+    whenReady(function () {
+      cascade(false);
+      cleanHomeUrl();
+      delete root.dataset.mdFrom;            // fallback morph: the returning cards have faded in
+    });
   }
   if (isNative) whenReady(setupDevices);
+  window.addEventListener('pageshow', function (e) {   // back/forward cache: undo a half-played fallback morph
+    if (!e.persisted) return;
+    document.querySelectorAll('.md-morph').forEach(function (o) { o.remove(); });
+    document.querySelectorAll('.md-morph-away').forEach(function (m) { m.classList.remove('md-morph-away'); });
+    var panel = document.querySelector('main.content');
+    if (panel) panel.style.visibility = '';
+  });
+
+  /* -------------------------------------------------------
+     5 · after BACK — BACK links point to index.html#<card> so the
+     phone layout can scroll back to that card. Once that's done,
+     show the plain address (…/portfolio/) instead.
+     ------------------------------------------------------- */
+  function cleanHomeUrl() {
+    if (!location.hash && !/\/index\.html$/.test(location.pathname)) return;
+    try { history.replaceState(history.state, '', location.pathname.replace(/index\.html$/, '') + location.search); } catch (e) {}
+  }
+
+  /* -------------------------------------------------------
+     5 · MORPH FALLBACK — for browsers without cross-page View
+     Transitions (Firefox, Safari before 18.2). It plays inside the
+     1 s confetti delay: the card grows into the case-study panel
+     (BACK: the panel shrinks into its card) and ends just as the
+     page changes, so the new page opens where the motion stopped.
+     Desktop layout only; reduced motion skips it.
+     ------------------------------------------------------- */
+  var CONFETTI_MS = 1000, MORPH_MS = 430;
+
+  function frameBox() {                     // the scaled 1440-px design frame, on screen
+    var f = document.querySelector('.canvas, .frame');
+    if (!f) return null;
+    var r = f.getBoundingClientRect();
+    return { left: r.left, top: r.top, s: r.width / 1440 };
+  }
+  function storeCardRects() {               // homepage: each card's box in design px
+    var b = frameBox();
+    if (!b || mobile.matches) return;
+    var out = {};
+    document.querySelectorAll('.module').forEach(function (m) {
+      var r = m.querySelector('.card').getBoundingClientRect();
+      out[m.id] = [(r.left - b.left) / b.s, (r.top - b.top) / b.s, r.width / b.s, r.height / b.s];
+    });
+    store('md-cards', JSON.stringify(out));
+  }
+  function playMorph(from, to, r0, r1, color, onCovered) {
+    var o = document.createElement('div');
+    o.className = 'md-morph';
+    o.setAttribute('aria-hidden', 'true');
+    o.style.background = color;
+    document.body.appendChild(o);
+    var box = function (r, rad) { return { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', borderRadius: rad + 'px' }; };
+    var a = box(from, r0), z = box(to, r1);
+    a.opacity = 0; var a2 = Object.assign({}, a, { opacity: 1, offset: .22 }); z.opacity = 1;
+    var anim = o.animate([a, a2, z], { duration: MORPH_MS, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'forwards' });
+    setTimeout(onCovered || function () {}, MORPH_MS * .22);
+    return anim;
+  }
+
+  function setupFallbackMorph() {
+    if (typeof CSSViewTransitionRule !== 'undefined') return;   // native morph available
+    if (isHome) { whenReady(storeCardRects); window.addEventListener('resize', storeCardRects); }
+    document.addEventListener('click', function (e) {
+      if (reduce.matches || mobile.matches) return;              // confetti adds no delay then
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest && e.target.closest('a.cta, a.back-btn');
+      if (!a || (a.target && a.target !== '_self') || a.origin !== location.origin) return;
+      var b = frameBox();
+      if (!b) return;
+      var start = CONFETTI_MS - MORPH_MS - 40;
+
+      if (isHome) {
+        var m = a.closest('.module');
+        if (!m) return;
+        var card = m.querySelector('.card');
+        setTimeout(function () {
+          var r = card.getBoundingClientRect();
+          var top = b.top + 124 * b.s;                            // case-study panel: x 29, y 124, w 1382 (design px)
+          playMorph(r, { left: b.left + 29 * b.s, top: top, width: 1382 * b.s, height: window.innerHeight - top + 24 },
+                    22 * b.s, 14 * b.s, getComputedStyle(card).backgroundColor);
+          document.querySelectorAll('.module').forEach(function (x) { if (x !== m) x.classList.add('md-morph-away'); });
+        }, start);
+      } else {
+        var panel = document.querySelector('main.content');
+        var id = (a.getAttribute('href') || '').split('#')[1] || '';
+        var cards = {};
+        try { cards = JSON.parse(store('md-cards') || '{}'); } catch (x) {}
+        var c = cards[id];
+        if (!panel || !c) return;
+        setTimeout(function () {
+          var pr = panel.getBoundingClientRect();
+          var t = Math.max(pr.top, 0);
+          var from = { left: pr.left, top: t, width: pr.width, height: Math.min(pr.bottom, window.innerHeight) - t };
+          // the homepage opens at the top, its canvas 24 px down and centred like this frame
+          var to = { left: b.left + c[0] * b.s, top: 24 + c[1] * b.s, width: c[2] * b.s, height: c[3] * b.s };
+          store('md-arrive', id);
+          playMorph(from, to, 14 * b.s, 22 * b.s, getComputedStyle(panel).backgroundColor,
+                    function () { panel.style.visibility = 'hidden'; });
+        }, start);
+      }
+    }, true);
+  }
 
   /* -------------------------------------------------------
      Helpers
@@ -65,9 +171,26 @@
     var r = anchor.getBoundingClientRect();
     toastEl.classList.remove('is-in');
     toastEl.style.left = '0px'; toastEl.style.top = '0px';
-    var w = toastEl.offsetWidth;
-    toastEl.style.left = Math.max(12, Math.min(window.innerWidth - w - 12, r.right - w)) + 'px';
-    toastEl.style.top = (r.bottom + 10) + 'px';
+    var w = toastEl.offsetWidth, h = toastEl.offsetHeight;
+    var W = window.innerWidth, gap = 12;
+    // Keep the toast on the clicked link's own row so it never covers the next
+    // link (LinkedIn): left of the link when there is room (desktop header),
+    // else right after its visible label, else at the row's right end as long
+    // as no other link sits there; only failing all that, below the link.
+    var y = r.top + (r.height - h) / 2;
+    var label = anchor.querySelector('.md-copied__label');
+    var textRight = label ? label.getBoundingClientRect().right : r.right;
+    var others = [].filter.call((anchor.parentElement || document).querySelectorAll('a'), function (o) { return o !== anchor; })
+                   .map(function (o) { return o.getBoundingClientRect(); });
+    var clear = function (x) { return others.every(function (o) { return o.right < x || o.left > x + w || o.bottom < y || o.top > y + h; }); };
+    var x = null;
+    if (r.left - gap - w >= gap) x = r.left - gap - w;
+    else if (textRight + 10 + w <= W - gap) x = textRight + 10;
+    else if (clear(W - gap - w)) x = W - gap - w;
+    if (x === null) { x = Math.max(gap, Math.min(W - w - gap, r.right - w)); y = r.bottom + 10; }
+    else if (!clear(x)) { y = r.bottom + 10; }
+    toastEl.style.left = Math.round(x) + 'px';
+    toastEl.style.top = Math.round(y) + 'px';
     requestAnimationFrame(function () { toastEl.classList.add('is-in'); });
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.classList.remove('is-in'); }, ms || 3600);
@@ -121,19 +244,21 @@
         e.preventDefault();
         copyText(EMAIL).then(function (ok) {
           if (!ok) { window.location.href = a.href; return; }
-          if (label) {
+          // only where the address is shown as text (phone case studies use a round icon button)
+          var showsText = label && getComputedStyle(label).display !== 'none';
+          if (showsText) {
             if (!label.dataset.mdW) label.dataset.mdW = label.getBoundingClientRect().width / currentScale(a);
             label.style.display = 'inline-block';
             label.style.minWidth = label.dataset.mdW + 'px';
             label.innerHTML = '<span class="md-copied__label">Copied ✓</span>';
           }
-          a.classList.add('md-copied');
+          if (showsText) a.classList.add('md-copied');   // icon buttons keep their own pressed colours
           confettiAt(a);
           toast(a, '<span class="md-toast__tick">✓</span><span>Email copied</span><a href="mailto:' + EMAIL + '">Open mail app</a>');
           clearTimeout(timer);
           timer = setTimeout(function () {
             a.classList.remove('md-copied');
-            if (label) label.textContent = EMAIL;
+            if (label) { label.textContent = EMAIL; label.style.display = ''; label.style.minWidth = ''; }
           }, 2200);
         });
       });
@@ -213,7 +338,7 @@
         var r = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
         root.animate(
           { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)'] },
-          { duration: 700, easing: 'cubic-bezier(.22,.61,.36,1)', pseudoElement: '::view-transition-new(root)' }
+          { duration: 950, easing: 'cubic-bezier(.22,.61,.36,1)', pseudoElement: '::view-transition-new(root)' }   // a touch slower than first tried (700 ms)
         );
       }).catch(function () {});
       return t.finished.catch(function () {}).then(function () { root.classList.remove('md-theme-vt'); });

@@ -90,6 +90,25 @@ html:has(.canvas)::view-transition-old(*.md-card){ animation-duration:.3s; }
 ::view-transition-old(*.md-title){ animation-duration:.18s; }
 ::view-transition-new(*.md-title){ animation-duration:.3s; animation-delay:.12s; }
 
+/* Fallback for browsers without cross-page View Transitions (Firefox,
+   Safari < 18.2): a card-coloured panel grows or shrinks inside the confetti
+   delay (motion-demo.js), the other cards step back, and on the homepage
+   they fade back in around the card you returned to. */
+.md-morph{
+  position:fixed; z-index:2147482000; pointer-events:none;
+  box-shadow:0 18px 40px -18px rgba(17,17,17,.28);
+}
+.module.md-morph-away{ opacity:0; transform:scale(.985); transition:opacity .26s ease, transform .26s ease; }
+html[data-md-from] .module{ animation:md-arrive .36s cubic-bezier(.22,.61,.36,1) .06s both; }
+html[data-md-from="b2b-saas"] #b2b-saas,
+html[data-md-from="forex-withdrawal"] #forex-withdrawal,
+html[data-md-from="native-mobile-apps"] #native-mobile-apps,
+html[data-md-from="ux-flow-maps"] #ux-flow-maps,
+html[data-md-from="saas-dashboard-workflow"] #saas-dashboard-workflow,
+html[data-md-from="interaction-design"] #interaction-design,
+html[data-md-from="design-system"] #design-system{ animation:none; }
+@keyframes md-arrive{ from{ opacity:0; transform:translateY(6px); } }
+
 /* The theme flip (4) is a circular reveal of the whole page, so
    nothing may be lifted out of it while it runs. */
 html.md-theme-vt *{ view-transition-name:none !important; }

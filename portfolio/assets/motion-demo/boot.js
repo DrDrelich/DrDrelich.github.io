@@ -16,6 +16,13 @@
 
   var off = /[?&]shot\b/.test(q);          // clean light render for the og:image screenshot
 
+  // Morph fallback (browsers without cross-page View Transitions): coming back
+  // from a case study, the other cards fade in around the returning one.
+  try {
+    var from = sessionStorage.getItem('md-arrive');
+    if (from) { sessionStorage.removeItem('md-arrive'); if (/^[\w-]+$/.test(from)) root.dataset.mdFrom = from; }
+  } catch (e) {}
+
   if (!off) {
     var saved = null;
     try { saved = localStorage.getItem('md-theme'); } catch (e) {}
