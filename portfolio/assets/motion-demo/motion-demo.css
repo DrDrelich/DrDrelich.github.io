@@ -192,6 +192,17 @@ html[data-theme="dark"] .canvas svg [fill="#2E4637" i]{ fill:#4F7A5F; }
 html[data-theme="dark"] .canvas svg [stroke="#2E4637" i]{ stroke:#4F7A5F; }
 html[data-theme="dark"] .canvas svg [stroke="#C9D0C8" i]{ stroke:#55615A; }
 
+/* Homepage header on phones (≤759px): it becomes a card (#26332B in dark),
+   so plain pills go one step lighter, like white pills on the light card;
+   the focus areas are one plain-text line there, never pills. */
+@media (max-width:759px){
+  html[data-theme="dark"] .header .header__roles .pill:not(.pill--sage):not(.pill--violet){ background:#34413A; }
+  html[data-theme="dark"] .header__tags .pill{ background:none; color:var(--ink-2); }
+  html[data-theme="dark"] .header__contact{ border-top-color:#3A463E; }
+  html[data-theme="dark"] .header .text-link{ text-decoration-color:rgba(238,242,236,.35); }
+  html[data-theme="dark"] .header .text-link:hover{ text-decoration-color:currentColor; }
+}
+
 /* ---- Case-study pages in dark: page, header, title band, BACK.
    The slides themselves are images with their own light paper and stay
    as they are, like printed pages on a dark desk. ---- */
