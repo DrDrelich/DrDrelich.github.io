@@ -332,15 +332,19 @@ html[data-theme="dark"] .is-play .fx__progress .dot--current{ animation-name:a-p
 /* ---------------------------------------------------------
    8 · 3D PHONES — native-mobile-apps.html, live screens only
    --------------------------------------------------------- */
-.gallery__section:has(.md-device){ overflow:visible; }
+/* At rest a phone is just the original live screen: the 3D stack (edge slabs,
+   back, glare) is only switched on while it is hovered, dragged or springing back. */
+.gallery__section:has(.md-device.is-3d){ overflow:visible; }
 .md-device{
-  transform-style:preserve-3d;
   cursor:grab; touch-action:pan-y;
   user-select:none; -webkit-user-select:none;
-  will-change:transform;
 }
+.md-device.is-3d{ transform-style:preserve-3d; will-change:transform; }
 .md-device.is-dragging{ cursor:grabbing; }
-.md-device > :first-child{ backface-visibility:hidden; }
+.md-device.is-3d > :first-child{ backface-visibility:hidden; }
+.md-device:not(.is-3d) > .md-slab,
+.md-device:not(.is-3d) > .md-back,
+.md-device:not(.is-3d) > .md-glare{ display:none; }
 .md-slab, .md-back, .md-glare{
   position:absolute; inset:0; pointer-events:none;
   border-radius:var(--md-r, 24px);

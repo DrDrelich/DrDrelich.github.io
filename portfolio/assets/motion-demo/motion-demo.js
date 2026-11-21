@@ -466,7 +466,10 @@
      it springs back to face you. Hover tilts it slightly.
      ------------------------------------------------------- */
   function setupDevices() {
-    if (reduce.matches) return;
+    // Desktop with a real mouse only. On phones and touch screens the live screens
+    // stay exactly as designed (some mobile browsers mis-draw the 3D layer stack).
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (reduce.matches || mobile.matches || !fine.matches) return;
     var slots = [].slice.call(document.querySelectorAll('.live-slot'));
     if (!slots.length) return;
 
@@ -528,9 +531,10 @@
         render();
         var moving = st.drag || Math.abs(st.vx) + Math.abs(st.vy) + Math.abs(st.tx - st.rx) + Math.abs(st.ty - st.ry) > .03;
         if (moving) st.raf = requestAnimationFrame(frame);
-        else { st.raf = 0; if (st.tx === 0 && st.ty === 0 && Math.abs(st.ry) < .05) { st.ry = 0; slot.style.transform = ''; } }
+        else { st.raf = 0; if (st.tx === 0 && st.ty === 0 && Math.abs(st.ry) < .05) { st.ry = 0; slot.style.transform = ''; slot.classList.remove('is-3d'); } }
       }
-      function kick() { if (!st.raf) st.raf = requestAnimationFrame(frame); }
+      // the 3D layers (edge, back, glare) exist only while the phone moves or is hovered
+      function kick() { slot.classList.add('is-3d'); if (!st.raf) st.raf = requestAnimationFrame(frame); }
 
       slot.addEventListener('pointermove', function (e) {
         var r;
