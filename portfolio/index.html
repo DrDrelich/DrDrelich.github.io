@@ -545,7 +545,8 @@
        desktop columns sit in a 2 × 2 grid (B2B | Forex+Native, Flow+Workflow |
        Interaction+Design System); fit() scales each card to its column width. */
     @media (min-width:600px) and (max-width:759px){
-      .grid{ display:grid; grid-template-columns:1fr 1fr; align-items:start; justify-items:center; gap:16px; }
+      /* grid-template-rows: the desktop rule's single 100% row would squash row 2 to 0 */
+      .grid{ display:grid; grid-template-columns:1fr 1fr; grid-template-rows:none; grid-auto-rows:auto; align-items:start; justify-items:center; gap:16px; }
       .col{ display:flex; flex-direction:column; gap:16px; }
     }
     /* Touch screens: no sticky hover lift after a tap */
