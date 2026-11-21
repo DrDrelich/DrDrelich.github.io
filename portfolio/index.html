@@ -541,6 +541,11 @@
       .h-400{ height:400px; } .h-261{ height:261px; } .h-300{ height:300px; }
       .h-361{ height:361px; }
     }
+    /* One-column range (≤599px): the cards stop growing at 420px (M_CARD_MAX in
+       fit()), so the header card stops there too and their edges line up. */
+    @media (max-width:599px){
+      .header{ max-width:420px; margin-left:auto; margin-right:auto; }
+    }
     /* Tablets in portrait (600–759px): one 420px column looked lost, so the four
        desktop columns sit in a 2 × 2 grid (B2B | Forex+Native, Flow+Workflow |
        Interaction+Design System); fit() scales each card to its column width. */
