@@ -1,8 +1,6 @@
 /* =========================================================
-   MOTION DEMO LAYER — local branch feat/motion-demo only.
-   Everything here sits on top of the existing pages; the page
-   files only gained one <link> and one <script>. Turn the whole
-   layer off with ?demo=off (and back on with ?demo=on).
+   MOTION LAYER — sits on top of the existing pages; the page
+   files only gained include tags in <head> and before </body>.
 
    1 Opening sequence ........ JS (reuses each card's _play())
    2 Copy email + confetti ... JS + .md-toast
@@ -344,63 +342,3 @@ html[data-theme="dark"] .is-play .fx__progress .dot--current{ animation-name:a-p
   background:#1F2E25; color:#F2F4EF;
   font:11px/1.2 "JetBrains Mono", ui-monospace, monospace; vertical-align:3px;
 }
-
-/* ---------------------------------------------------------
-   DEMO PANEL (scaffolding — not part of any proposal)
-   --------------------------------------------------------- */
-.md-panel{
-  position:fixed; left:50%; bottom:12px; z-index:2147481000;
-  transform:translateX(-50%);
-  width:min(360px, calc(100vw - 32px));
-  border-radius:16px;
-  background:rgba(31,46,37,.96); color:#F2F4EF;
-  font:12px/16px "JetBrains Mono", ui-monospace, monospace;
-  box-shadow:0 18px 40px -14px rgba(0,0,0,.45);
-  backdrop-filter:blur(8px);
-}
-.md-panel__head{
-  display:flex; align-items:center; justify-content:space-between; gap:8px;
-  width:100%; padding:10px 14px;
-  border:0; background:none; color:inherit; font:inherit; cursor:pointer; text-align:left;
-}
-.md-panel__head b{ font-weight:400; color:#BCD5B6; }
-.md-panel__chev{ transition:transform .2s ease; }
-.md-panel[data-open="false"] .md-panel__chev{ transform:rotate(180deg); }
-.md-panel[data-open="false"] .md-panel__body{ display:none; }
-.md-panel__body{ padding:0 8px 10px; }
-.md-panel ol{ list-style:none; margin:0; padding:0; }
-.md-panel li{ display:flex; align-items:center; gap:10px; padding:5px 6px; border-radius:8px; }
-.md-panel li:hover{ background:rgba(242,244,239,.06); }
-.md-panel li > i{ font-style:normal; width:18px; height:18px; flex:none; border-radius:50%; background:#BCD5B6; color:#1F2E25; display:inline-flex; align-items:center; justify-content:center; font-size:10px; }
-.md-panel li > span{ flex:1; min-width:0; color:#DDE3DB; }
-.md-panel li > span small{ display:block; font-size:10px; line-height:13px; color:#9FB0A4; }
-.md-panel li button, .md-panel li a, .md-panel__foot a{
-  flex:none; height:24px; padding:0 10px; border:0; border-radius:12px;
-  background:#BCD5B6; color:#1F2E25; font:inherit; font-size:11px; line-height:24px;
-  text-decoration:none; cursor:pointer;
-}
-.md-panel li button:hover, .md-panel li a:hover{ background:#fff; }
-.md-panel :focus-visible{ outline:2px solid #BCD5B6; outline-offset:2px; }
-.md-panel__foot{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 6px 0; margin-top:6px; border-top:1px solid rgba(242,244,239,.12); color:#9FB0A4; font-size:10px; }
-.md-panel__foot a{ background:transparent; color:#BCD5B6; padding:0; height:auto; line-height:16px; text-decoration:underline; text-underline-offset:3px; }
-
-.md-off-badge{
-  position:fixed; left:50%; bottom:12px; z-index:2147481000; transform:translateX(-50%);
-  padding:7px 14px; border-radius:14px; background:#B97A5E; color:#fff;
-  font:11px/1 "JetBrains Mono", ui-monospace, monospace; text-decoration:none;
-  box-shadow:0 10px 24px -10px rgba(0,0,0,.4);
-}
-
-/* Link-preview mock (3) */
-.md-modal{ position:fixed; inset:0; z-index:2147482500; display:flex; align-items:center; justify-content:center; background:rgba(18,26,21,.45); }
-.md-unfurl{
-  width:min(520px, calc(100vw - 32px)); padding:14px 16px 16px;
-  border-left:4px solid #BCD5B6; border-radius:10px;
-  background:#fff; color:#1D1C1D; font:14px/1.4 system-ui, -apple-system, sans-serif;
-  box-shadow:0 30px 60px -20px rgba(0,0,0,.45);
-}
-.md-unfurl small{ display:block; color:#616061; font-size:12px; }
-.md-unfurl b{ display:block; margin:2px 0 4px; color:#1264A3; }
-.md-unfurl p{ margin:0 0 10px; color:#1D1C1D; font-size:13px; }
-.md-unfurl img{ display:block; width:100%; height:auto; border-radius:8px; border:1px solid #E8E8E8; }
-.md-unfurl__note{ margin-top:10px; color:#616061; font-size:11px; }

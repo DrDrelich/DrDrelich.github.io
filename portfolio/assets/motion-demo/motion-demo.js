@@ -1,9 +1,6 @@
 /* =========================================================
-   MOTION DEMO LAYER — local branch feat/motion-demo only.
-   Adds the 8 proposed effects on top of the existing pages
-   without changing their own scripts. See motion-demo.css.
-   ?demo=off turns the layer off for the session (compare with
-   the live behaviour); ?demo=on turns it back on.
+   MOTION LAYER — added on top of the existing pages without
+   changing their own scripts. See motion-demo.css.
    ========================================================= */
 (function () {
   'use strict';
@@ -19,9 +16,6 @@
   function store(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
 
   if (params.has('shot')) return;                    // clean render for the og:image screenshot
-  if (params.get('demo') === 'off') store('md-off', '1');
-  if (params.get('demo') === 'on') store('md-off', null);
-  if (store('md-off')) { turnOff(); return; }
 
   // Confetti: no longer on VIEW / BACK (navigation is instant and the morph is the
   // transition). It now marks one success moment: copying the email.
@@ -32,7 +26,6 @@
   if (isHome) {
     setupThemeFlip();
     setupExplode();
-    setupPanel();
     whenReady(function () { cascade(false); });
   }
   if (isNative) whenReady(setupDevices);
@@ -45,18 +38,6 @@
     var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
     if (document.readyState === 'complete') fonts.then(go);
     else window.addEventListener('load', function () { fonts.then(go); }, { once: true });
-  }
-
-  function turnOff() {
-    var css = document.querySelector('link[href*="motion-demo.css"]');
-    if (css) css.disabled = true;
-    var a = document.createElement('a');
-    a.className = 'md-off-badge';
-    a.href = location.pathname + '?demo=on';
-    a.textContent = 'Motion demo is off (this is the live behaviour) · turn on';
-    a.style.cssText = 'position:fixed;left:50%;bottom:12px;z-index:2147481000;transform:translateX(-50%);padding:7px 14px;border-radius:14px;background:#B97A5E;color:#fff;font:11px/1 "JetBrains Mono",monospace;text-decoration:none';
-    document.addEventListener('DOMContentLoaded', function () { document.body.appendChild(a); });
-    if (document.body) document.body.appendChild(a);
   }
 
   // Fires the site's own confetti.js burst from an element's position.
@@ -461,76 +442,5 @@
       slot.addEventListener('pointerleave', function () { if (!st.drag) { st.tx = 0; st.ty = Math.round(st.ry / 360) * 360; kick(); } });
       slot.addEventListener('dragstart', function (e) { e.preventDefault(); });
     });
-  }
-
-  /* -------------------------------------------------------
-     DEMO PANEL — scaffolding for trying each effect.
-     ------------------------------------------------------- */
-  function setupPanel() {
-    var p = document.createElement('aside');
-    p.className = 'md-panel';
-    p.setAttribute('aria-label', 'Motion demo controls');
-    p.dataset.open = store('md-panel') === 'open' ? 'true' : 'false';   // starts collapsed: the grid stays visible
-    p.innerHTML =
-      '<button type="button" class="md-panel__head" aria-expanded="' + p.dataset.open + '"><span>Motion demo <b>· 7 effects · local only</b></span><span class="md-panel__chev" aria-hidden="true">▾</span></button>' +
-      '<div class="md-panel__body"><ol>' +
-        row(1, 'Opening sequence', 'plays once per visit', '<button type="button" data-act="cascade">Replay</button>') +
-        row(2, 'Click the email to copy it', 'confetti moved here', '<button type="button" data-act="email">Try</button>') +
-        row(3, 'Favicon · link preview', 'how a shared link unfurls', '<button type="button" data-act="preview">Preview</button>') +
-        row(4, 'Token flip', 'switch in the Design System card footer', '<button type="button" data-act="theme">Flip</button>') +
-        row(5, 'Card → case study morph', 'click any VIEW, then BACK', '<button type="button" data-act="morph">Try</button>') +
-        row(7, 'Exploded dashboard', 'hover the B2B illustration', '<button type="button" data-act="explode" aria-pressed="false">Hold</button>') +
-        row(8, '3D phones', 'Native Mobile Apps, live screens', '<a href="native-mobile-apps.html">Open</a>') +
-      '</ol><div class="md-panel__foot"><span>Compare with what’s live:</span><a href="?demo=off">turn demo off</a></div></div>';
-    document.body.appendChild(p);
-
-    function row(n, title, sub, ctl) { return '<li><i>' + n + '</i><span>' + title + '<small>' + sub + '</small></span>' + ctl + '</li>'; }
-
-    var head = p.querySelector('.md-panel__head');
-    head.addEventListener('click', function () {
-      var open = p.dataset.open !== 'true';
-      p.dataset.open = open ? 'true' : 'false';
-      head.setAttribute('aria-expanded', String(open));
-      store('md-panel', open ? 'open' : null);
-    });
-
-    p.addEventListener('click', function (e) {
-      var b = e.target.closest('[data-act]');
-      if (!b) return;
-      var act = b.dataset.act;
-      if (act === 'cascade') cascade(true);
-      if (act === 'email') { var mail = document.querySelector('.header a[href^="mailto:"]'); if (mail) mail.click(); }
-      if (act === 'preview') showUnfurl();
-      if (act === 'theme') { var r = b.getBoundingClientRect(); flipTheme(r.left + r.width / 2, r.top + r.height / 2); }
-      if (act === 'morph') { var v = document.querySelector('#forex-withdrawal .cta'); if (v) v.click(); }
-      if (act === 'explode') {
-        var m = document.getElementById('b2b-saas');
-        var pressed = b.getAttribute('aria-pressed') !== 'true';
-        b.setAttribute('aria-pressed', String(pressed));
-        b.textContent = pressed ? 'Release' : 'Hold';
-        if (m && m._mdExplode) m._mdExplode(pressed);
-      }
-    });
-  }
-
-  function showUnfurl() {
-    var og = document.querySelector('meta[property="og:image"]');
-    var title = document.querySelector('meta[property="og:title"]');
-    var desc = document.querySelector('meta[property="og:description"]');
-    var modal = document.createElement('div');
-    modal.className = 'md-modal';
-    modal.innerHTML =
-      '<div class="md-unfurl" role="dialog" aria-label="Link preview mock-up">' +
-        '<small>drdrelich.github.io</small>' +
-        '<b>' + (title ? title.content : document.title) + '</b>' +
-        '<p>' + (desc ? desc.content : '') + '</p>' +
-        '<img src="assets/motion-demo/og-image.png" alt="Preview image: the portfolio homepage grid" />' +
-        '<div class="md-unfurl__note">How the link unfurls in Slack, Teams or LinkedIn once the og:image is live' + (og ? '' : ' (tags missing)') + '. Click anywhere or press Esc to close.</div>' +
-      '</div>';
-    function close() { modal.remove(); document.removeEventListener('keydown', onKey); }
-    function onKey(e) { if (e.key === 'Escape') close(); }
-    modal.addEventListener('click', close);
-    document.addEventListener('keydown', onKey);
-    document.body.appendChild(modal);
   }
 })();

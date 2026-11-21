@@ -1,5 +1,5 @@
 /* =========================================================
-   MOTION DEMO — boot (loads in <head> WITHOUT defer, so it runs
+   MOTION LAYER — boot (loads in <head> WITHOUT defer, so it runs
    before the first paint on every page).
 
    1. Theme: the visitor's own choice from the Dark tokens switch
@@ -8,15 +8,13 @@
    2. In dark mode, swaps each illustration SVG for its pre-coloured
       copy in assets/motion-demo/dark/ as the parser inserts it, so
       light artwork never flashes on a dark page.
-   3. Records how cross-page view transitions went (window.__mdVT).
    ========================================================= */
 (function () {
   'use strict';
   var root = document.documentElement;
   var q = location.search;
 
-  var off = /[?&]shot\b/.test(q) || /[?&]demo=off\b/.test(q);
-  try { if (!off && !/[?&]demo=on\b/.test(q) && sessionStorage.getItem('md-off')) off = true; } catch (e) {}
+  var off = /[?&]shot\b/.test(q);          // clean light render for the og:image screenshot
 
   if (!off) {
     var saved = null;
@@ -51,13 +49,4 @@
       });
     }
   }
-
-  var log = window.__mdVT = { reveal: 'no event' };
-  window.addEventListener('pagereveal', function (e) {
-    var t = e.viewTransition;
-    log.reveal = t ? 'started' : 'none';
-    if (!t) return;
-    t.ready.then(function () { log.ready = 'ok'; }, function (err) { log.ready = err.name + ': ' + err.message; });
-    t.finished.then(function () { log.finished = 'ok'; }, function (err) { log.finished = err.name + ': ' + err.message; });
-  });
 })();
