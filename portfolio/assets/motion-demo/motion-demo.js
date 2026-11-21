@@ -285,6 +285,8 @@
 
   function savedTheme() { try { return localStorage.getItem('md-theme'); } catch (e) { return null; } }
   function saveTheme(t) { try { localStorage.setItem('md-theme', t); } catch (e) {} }
+  function clearTheme() { try { localStorage.removeItem('md-theme'); } catch (e) {} }
+  function systemIsDark() { return window.matchMedia('(prefers-color-scheme: dark)').matches; }
   function lightSrc(img) { return img.dataset.mdSrc || img.getAttribute('src'); }
   function darkSrc(src) { var m = src && LIGHT_SVG.exec(src); return m ? DARK_DIR + m[2] : null; }
 
@@ -321,13 +323,19 @@
   // No saved choice yet → keep following the system if it changes while the page is open.
   function followSystem() {
     var sysDark = window.matchMedia('(prefers-color-scheme: dark)');   // local: this runs before the vars above are assigned
-    var on = function (e) { if (!savedTheme()) applyTheme(e.matches); };
+    var on = function (e) {
+      var s = savedTheme();
+      if (!s) applyTheme(e.matches);                       // following the system
+      else if ((s === 'dark') === e.matches) clearTheme(); // system now agrees with the choice: follow it from here on
+    };
     if (sysDark.addEventListener) sysDark.addEventListener('change', on); else sysDark.addListener(on);
   }
 
   function flipTheme(x, y) {
     var dark = root.dataset.theme !== 'dark';
-    saveTheme(dark ? 'dark' : 'light');          // an explicit choice now wins over the system setting
+    // Only a choice that differs from the system is remembered (and then wins over it);
+    // switching back to the system's theme forgets it, so the page follows the system again.
+    if (dark === systemIsDark()) clearTheme(); else saveTheme(dark ? 'dark' : 'light');
     var ds = document.getElementById('design-system');
     if (ds) ds.classList.remove('is-play');      // stop the card's own dark preview mid-way
     return prepareDark().then(function () {

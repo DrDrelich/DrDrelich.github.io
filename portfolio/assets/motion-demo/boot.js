@@ -2,9 +2,10 @@
    MOTION LAYER — boot (loads in <head> WITHOUT defer, so it runs
    before the first paint on every page).
 
-   1. Theme: the visitor's own choice from the Dark tokens switch
-      (localStorage "md-theme") wins; otherwise the system / browser
-      setting (prefers-color-scheme). Sets <html data-theme="dark">.
+   1. Theme: follows the system / browser setting (prefers-color-scheme).
+      A Dark tokens choice that differs from it is remembered
+      (localStorage "md-theme") and wins; one that matches it is forgotten.
+      Sets <html data-theme="dark">.
    2. In dark mode, swaps each illustration SVG for its pre-coloured
       copy in assets/motion-demo/dark/ as the parser inserts it, so
       light artwork never flashes on a dark page.
@@ -26,8 +27,10 @@
   if (!off) {
     var saved = null;
     try { saved = localStorage.getItem('md-theme'); } catch (e) {}
-    var dark = saved ? saved === 'dark'
-                     : !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var sys = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    // a saved choice that now equals the system setting is no longer an override: forget it
+    if (saved && (saved === 'dark') === sys) { try { localStorage.removeItem('md-theme'); } catch (e) {} saved = null; }
+    var dark = saved ? saved === 'dark' : sys;
     if (dark) {
       root.dataset.theme = 'dark';
       var LIGHT = /(^|\/)assets\/new-layout\/([\w-]+\.svg)$/;
