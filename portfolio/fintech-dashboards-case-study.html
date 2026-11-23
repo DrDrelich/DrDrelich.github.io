@@ -177,6 +177,12 @@
     .cs{ display:flex; flex-direction:column; gap:8px; }
 
     .cs-block{
+      /* The blocks stay light paper in dark mode (like the slides on the
+         other case-study pages), so pin the tokens motion-demo.css flips
+         under html[data-theme="dark"]. */
+      --ink:#1A1A1A;
+      --border-soft:#D4D4D4;
+      color:var(--ink);
       background:var(--cs-soft);
       border-radius:12px;
       padding:48px 56px;
@@ -309,6 +315,8 @@
       padding:24px 8px 0;
       font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; color:var(--cs-muted);
     }
+    /* The footer sits on the frame, which goes dark. */
+    html[data-theme="dark"] .cs-foot{ color:#A9B3AB; }
 
     /* ---------- Mobile (≤759px): shell comes from subpage-mobile.css ---------- */
     @media (max-width:759px){
