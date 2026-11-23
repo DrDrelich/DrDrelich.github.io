@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurable Operator Dashboards - Fintech Case Study - Jacek Waz</title>
+  <meta name="description" content="Case study by Jacek Waz: configurable, user-built dashboards for internal operators of a Forex brokerage SaaS platform. Sole Product Designer, ~5 years, fully shipped." />
+  <meta property="og:title" content="Configurable Operator Dashboards - Fintech Case Study - Jacek Waz" />
+  <meta property="og:description" content="Enterprise B2B SaaS case study: +1.5 h saved per operator daily, 45% faster task completion, SUS 82, CSAT 88%." />
+  <meta property="og:image" content="https://drdrelich.github.io/portfolio/assets/fintech-dashboards/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://drdrelich.github.io/portfolio/fintech-dashboards-case-study.html" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       Configurable Operator Dashboards - Case Study
+       Desktop · Light mode · 1440px design frame scaled to fit
+       Shell (header, panel, Back button, fit()) copied from the
+       other subpages so the header never jumps.
+       ========================================================= */
+
+    :root{
+      --page-bg:      #F2EFEF;
+      --card-white:   #FFFFFF;
+      --card-gray:    #E8E8E8;
+      --ink:          #1A1A1A;
+      --ink-body:     #484848;
+      --border-soft:  #D4D4D4;
+      --blue:         #007AFF;
+      --radius:       14px;
+
+      /* Case study accents (from the PDF version) */
+      --cs-green:     #1F2E25;
+      --cs-brown:     #8A5A44;
+      --cs-orange:    #C2410C;
+      --cs-blue:      #1D4ED8;
+      --cs-muted:     #6B6B6B;   /* 5.3:1 on white - passes WCAG AA */
+      --cs-soft:      #F2F4EF;
+      --cs-line:      #E1E4DE;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--page-bg);
+      font-family:"Inter","Helvetica Neue",Arial,sans-serif;
+      color:var(--ink);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      overflow-x:hidden;
+    }
+
+    /* ---------- Responsive scaling (mirrors the homepage) ---------- */
+    .stage{ min-height:100vh; }
+    .wrap{
+      --s:1;
+      width:calc(1440px * var(--s));
+      margin-top:24px;
+      margin-bottom:24px;
+      margin-left:calc(50vw - 720px * var(--s));
+    }
+    .frame{
+      width:1440px;
+      padding:28px 29px 0;
+      transform:scale(var(--s));
+      transform-origin:top left;
+    }
+
+    /* ---------- Top navigation bar ---------- */
+    .topnav{
+      height:95px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+    }
+
+    /* ---------- Content panel ---------- */
+    .content{
+      width:100%;
+      margin-top:24px;
+      background:var(--card-white);
+      border-radius:var(--radius);
+      padding:0 24px 24px;
+    }
+    .pagehead{
+      height:80px;
+      display:flex;
+      align-items:center;
+    }
+    .m-only{ display:none; }
+
+    /* ---------- Header (homepage "portfolio-layout-new") ---------- */
+    .hn-title{ margin:0; display:flex; align-items:baseline; white-space:nowrap; }
+    .hn-name{ font-family:"Space Grotesk", system-ui, sans-serif; font-weight:400; font-size:32px; line-height:normal; color:#1F2E25; }
+    .hn-loc{ margin-left:11.8px; font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; line-height:normal; color:#1A1A1A; }
+    .hn-roles, .hn-tags{ display:flex; gap:8px; margin:0; padding:0; list-style:none; }
+    .hn-pill{
+      display:flex; align-items:center; height:28px; padding:0 13px; border-radius:14px;
+      background:#fff; font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:12px; color:#1A1A1A; white-space:nowrap;
+    }
+    .hn-pill--sage{ background:#BCD5B6; }
+    .hn-pill--violet{ background:#C6B6E4; }
+    .hn-pill--lg{ height:30px; padding:0 12px; border-radius:15px; color:#1F2E25; }
+    .hn-link{
+      display:inline-flex; align-items:center; gap:9px;
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:12px; line-height:16px; color:#1F2E25; white-space:nowrap;
+      text-decoration:underline; text-decoration-color:transparent;
+      text-underline-offset:3px; text-decoration-thickness:1px; border-radius:4px;
+      transition:color .18s ease, text-decoration-color .18s ease, opacity .18s ease;
+    }
+    .hn-link:hover{ color:#8A5A44; text-decoration-color:currentColor; }
+    .hn-link:active{ color:#2E4637; text-decoration-thickness:2px; opacity:.72; }
+    .hn-link:focus-visible{ outline:2px solid #2E4637; outline-offset:3px; }
+    .hn-link--mail{ gap:8.65px; }
+    .hn-icon-mail{ display:block; width:12.7938px; height:9.6px; margin:-0.8px; }
+    .hn-icon-ext{ display:block; width:12.8px; height:12.8px; margin:-0.9px; }
+    .hn-m-icon{ display:none; }
+
+    .pagehead__title{
+      margin:0; font-family:"Space Grotesk", system-ui, sans-serif; font-weight:400;
+      font-size:22px; line-height:26.39px; letter-spacing:0; color:#1F2E25; white-space:nowrap;
+    }
+    .pagehead__desc{
+      margin:5px 0 0; font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:11px; line-height:14.52px; color:#8A5A44; white-space:nowrap;
+    }
+
+    .back-btn{
+      display:inline-flex; align-items:center; gap:14.65px;
+      height:44px; padding:0 16px 0 18px; border:0; border-radius:22px;
+      background:#E4E8E2; color:#1F2E25;
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      text-decoration:none; white-space:nowrap; cursor:pointer; user-select:none;
+      transition:background-color .18s ease, color .18s ease, transform .12s ease, box-shadow .18s ease;
+    }
+    .back-btn__arrow{
+      display:block; width:8px; height:8px; margin:-1px;
+      transform:scaleX(-1);
+      transition:transform .18s ease, filter .18s ease;
+    }
+    .back-btn__label{ font-family:inherit; font-size:11px; font-weight:400; line-height:14.52px; text-transform:uppercase; }
+    .back-btn:hover{ background:#8A5A44; color:#fff; }
+    .back-btn:hover .back-btn__arrow{ transform:translate(-1.5px,-1.5px) scaleX(-1); filter:brightness(0) invert(1); }
+    .back-btn:active{
+      background:#2E4637; color:#fff; transform:scale(.96);
+      box-shadow:inset 0 2px 4px rgba(0,0,0,.18);
+    }
+    .back-btn:active .back-btn__arrow{ filter:brightness(0) invert(1); }
+    .back-btn:focus-visible{ outline:2px solid #2E4637; outline-offset:2px; border-color:transparent; box-shadow:none; color:#1F2E25; }
+
+    @media (min-width:760px){
+      .frame{ padding-top:30px; }
+      .topnav{ height:77px; align-items:center; }
+      .content{ margin-top:17px; }
+      .hn-intro{ flex:none; height:87px; display:flex; flex-direction:column; align-items:flex-start; }
+      .hn-roles{ margin-top:8px; }
+      .hn-right{ display:flex; flex-direction:column; align-items:flex-end; }
+      .hn-contact{ display:flex; align-items:center; gap:19px; height:31.645px; padding-right:3px; }
+      .hn-tags{ margin-top:6.19px; }
+      .pagehead__text{ margin-left:24px; }
+    }
+
+    /* =========================================================
+       CASE STUDY CONTENT
+       ========================================================= */
+    .cs{ display:flex; flex-direction:column; gap:8px; }
+
+    .cs-block{
+      background:var(--cs-soft);
+      border-radius:12px;
+      padding:48px 56px;
+    }
+
+    .cs-kicker{
+      margin:0;
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:12px; line-height:16px; letter-spacing:.06em; text-transform:uppercase;
+      color:var(--cs-brown);
+    }
+    .cs-h1{
+      margin:14px 0 0;
+      font-family:"Space Grotesk", system-ui, sans-serif; font-weight:500;
+      font-size:44px; line-height:1.12; letter-spacing:-0.015em; color:var(--cs-green);
+    }
+    .cs-h2{
+      margin:12px 0 0;
+      font-family:"Space Grotesk", system-ui, sans-serif; font-weight:500;
+      font-size:34px; line-height:1.18; letter-spacing:-0.01em; color:var(--cs-green);
+      max-width:980px; text-wrap:balance;
+    }
+    .cs-h3{
+      margin:0 0 8px;
+      font-family:"JetBrains Mono", ui-monospace, monospace; font-weight:400;
+      font-size:12px; line-height:16px; letter-spacing:.06em; text-transform:uppercase;
+      color:var(--cs-muted);
+    }
+    .cs-lead{
+      margin:16px 0 0;
+      font-size:19px; line-height:1.55; color:#2B2B2B;
+      max-width:1000px; text-wrap:pretty;
+    }
+    .cs-p{ margin:0; font-size:16px; line-height:1.6; color:#2B2B2B; text-wrap:pretty; }
+
+    /* Meta row */
+    .cs-meta{
+      margin:32px 0 0; padding:20px 0 0;
+      border-top:1px solid var(--cs-line);
+      display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:24px;
+    }
+    .cs-meta div{ display:flex; flex-direction:column; gap:4px; }
+    .cs-meta dt{
+      font-family:"JetBrains Mono", ui-monospace, monospace;
+      font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--cs-muted);
+    }
+    .cs-meta dd{ margin:0; font-size:17px; font-weight:500; color:var(--ink); }
+
+    .cs-shot{
+      margin:32px 0 0;
+      border:1px solid var(--border-soft);
+      border-radius:10px; overflow:hidden; background:#fff;
+    }
+    .cs-shot img{ display:block; width:100%; height:auto; }
+
+    /* Two-column layouts */
+    .cs-grid2{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:48px; margin-top:32px; }
+    .cs-grid3{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px; }
+    .cs-grid4{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:24px; }
+
+    .cs-goals{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+    .cs-goals li{ display:flex; gap:12px; font-size:16px; line-height:1.5; color:#2B2B2B; }
+    .cs-goals li::before{ content:"→"; color:var(--cs-blue); font-weight:600; }
+
+    .cs-card{
+      background:#fff; border:1px solid var(--cs-line); border-radius:12px;
+      padding:28px 32px; display:flex; flex-direction:column; gap:14px;
+    }
+    .cs-card__title{ margin:0; font-family:"Space Grotesk", system-ui, sans-serif; font-weight:500; font-size:22px; line-height:1.3; color:var(--cs-green); }
+    .cs-stat{ display:flex; flex-direction:column; gap:2px; }
+    .cs-stat__num{ font-family:"Space Grotesk", system-ui, sans-serif; font-weight:500; font-size:32px; line-height:1.1; color:var(--cs-orange); }
+    .cs-stat__label{ font-size:14px; line-height:1.4; color:var(--cs-muted); }
+    .cs-need{ margin:0; padding-top:14px; border-top:1px solid var(--cs-line); font-size:15px; line-height:1.55; color:var(--cs-orange); }
+    .cs-need strong{ font-weight:600; }
+
+    .cs-divider{ margin:40px 0 0; padding-top:28px; border-top:1px solid var(--cs-line); }
+
+    .cs-chips{ list-style:none; margin:0 0 28px; padding:0; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .cs-chips li{
+      font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; line-height:16px;
+      padding:7px 13px; border-radius:15px; background:#FFFFFF; color:#1F2E25;
+    }
+    .cs-insight__n{ font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; color:var(--ink); }
+    .cs-insight__t{ margin:6px 0 6px; font-family:"Space Grotesk", system-ui, sans-serif; font-weight:500; font-size:21px; line-height:1.3; color:var(--cs-orange); }
+
+    /* Annotated screenshot + legend */
+    .cs-annot{ display:grid; grid-template-columns:minmax(0, 1.75fr) minmax(0, 1fr); gap:40px; margin-top:32px; align-items:start; }
+    .cs-fig{ position:relative; margin:0; border:1px solid var(--border-soft); border-radius:10px; overflow:hidden; background:#fff; }
+    .cs-fig img{ display:block; width:100%; height:auto; }
+    .cs-badge{
+      position:absolute; width:26px; height:26px; border-radius:50%;
+      background:var(--cs-orange); color:#fff;
+      font-size:13px; font-weight:700; line-height:26px; text-align:center;
+      box-shadow:0 0 0 2px #fff;
+    }
+    .cs-legend{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:20px; counter-reset:legend; }
+    .cs-legend li{ display:grid; grid-template-columns:26px minmax(0,1fr); gap:14px; counter-increment:legend; }
+    .cs-legend li::before{
+      content:counter(legend);
+      width:26px; height:26px; border-radius:50%;
+      background:var(--cs-orange); color:#fff;
+      font-size:13px; font-weight:700; line-height:26px; text-align:center;
+    }
+    .cs-legend h4{ margin:2px 0 4px; font-size:17px; font-weight:600; line-height:1.3; color:var(--ink); }
+    .cs-legend p{ margin:0; font-size:15px; line-height:1.5; color:#3A3A3A; }
+
+    .cs-found{ margin-top:40px; padding-top:28px; border-top:1px solid var(--cs-line); }
+    .cs-found h4{
+      margin:0 0 8px;
+      font-family:"JetBrains Mono", ui-monospace, monospace; font-weight:400;
+      font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--cs-blue);
+    }
+    .cs-found p{ margin:0; font-size:15px; line-height:1.55; color:#2B2B2B; }
+
+    /* Metrics */
+    .cs-metrics{ margin-top:32px; }
+    .cs-metric{ background:#fff; border:1px solid var(--cs-line); border-radius:12px; padding:24px 26px; display:flex; flex-direction:column; gap:6px; }
+    .cs-metric__num{ font-family:"Space Grotesk", system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; color:var(--cs-blue); }
+    .cs-metric__label{ font-size:16px; font-weight:600; color:var(--ink); }
+    .cs-metric__note{ font-size:14px; line-height:1.45; color:var(--cs-muted); }
+
+    .cs-quotes{ margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+    .cs-quotes blockquote{ margin:0; font-family:"Inter","Helvetica Neue",Arial,sans-serif; font-weight:500; font-size:21px; line-height:1.45; font-style:italic; color:var(--ink); }
+    .cs-scope{ display:flex; gap:28px; flex-wrap:wrap; margin-top:18px; }
+    .cs-scope .cs-stat__num{ color:var(--cs-blue); }
+    .cs-scope .cs-stat__label{ color:var(--ink); max-width:150px; }
+
+    .cs-foot{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:24px 8px 0;
+      font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12px; color:var(--cs-muted);
+    }
+
+    /* ---------- Mobile (≤759px): shell comes from subpage-mobile.css ---------- */
+    @media (max-width:759px){
+      .cs-block{ padding:28px 20px; border-radius:10px; }
+      .cs-h1{ font-size:30px; text-wrap:balance; }
+      .cs-br{ display:none; }
+      .cs-h2{ font-size:24px; }
+      .cs-lead{ font-size:17px; }
+      .cs-meta, .cs-grid4{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:20px; }
+      .cs-grid2, .cs-grid3, .cs-annot{ grid-template-columns:1fr; gap:28px; }
+      .cs-card{ padding:22px 20px; }
+      .cs-badge{ width:20px; height:20px; font-size:11px; line-height:20px; }
+      .cs-metric__num{ font-size:38px; }
+      .cs-quotes blockquote{ font-size:18px; }
+      .cs-foot{ flex-direction:column; align-items:flex-start; gap:14px; padding:20px 8px 4px; }
+    }
+    @media (max-width:420px){
+      .cs-meta, .cs-grid4{ grid-template-columns:1fr; }
+    }
+  </style>
+  <!-- Mobile layout (≤759px), shared by all subpages -->
+  <link rel="stylesheet" href="subpage-mobile.css?v=20261115d" media="(max-width: 759px)" />
+  <!-- motion layer (assets/motion-demo/) -->
+  <link rel="icon" href="assets/motion-demo/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/motion-demo/motion-demo.css" />
+  <script src="assets/motion-demo/boot.js"></script>
+</head>
+<body>
+  <div class="stage">
+   <div class="wrap">
+    <div class="frame">
+
+      <!-- ============ TOP NAVIGATION BAR (matches homepage header) ============ -->
+      <nav class="topnav" aria-label="Site header">
+        <div class="hn-intro">
+          <p class="hn-title"><span class="hn-name">Jacek Waz</span> <span class="hn-loc">Kraków, PL</span></p>
+          <ul class="hn-roles" aria-label="Roles">
+            <li class="hn-pill hn-pill--sage">UX/UI Designer</li>
+            <li class="hn-pill">Product Designer</li>
+            <li class="hn-pill">Interaction Designer</li>
+          </ul>
+        </div>
+        <div class="hn-right">
+          <div class="hn-contact">
+            <a class="hn-link hn-link--mail" href="mailto:prochow@gmail.com" aria-label="Email: prochow@gmail.com">
+              <span class="hn-m-icon hn-m-icon--mail" aria-hidden="true"></span>
+              <img class="hn-icon-mail" src="assets/new-layout/group1.svg" width="12.7938" height="9.6" alt="" />
+              <span>prochow@gmail.com</span>
+            </a>
+            <a class="hn-link" href="https://www.linkedin.com/in/jacek-waz-77a4801/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: jacek-waz-77a4801, opens in a new tab">
+              <span class="hn-m-icon hn-m-icon--linkedin" aria-hidden="true"></span>
+              <span>linkedin.com/in/jacek-waz-77a4801</span>
+              <img class="hn-icon-ext" src="assets/new-layout/ext-header.svg" width="12.8" height="12.8" alt="" />
+            </a>
+          </div>
+          <ul class="hn-tags" aria-label="Focus areas">
+            <li class="hn-pill hn-pill--lg hn-pill--sage">Enterprise B2B SaaS Fintech dashboards</li>
+            <li class="hn-pill hn-pill--lg">Design systems</li>
+            <li class="hn-pill hn-pill--lg">Mobile design</li>
+            <li class="hn-pill hn-pill--lg hn-pill--violet">AI-native design</li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- ============ PANEL ============ -->
+      <main class="content">
+
+        <header class="pagehead">
+          <a class="back-btn" href="./#saas-dashboard-workflow" data-confetti aria-label="Back to homepage">
+            <img class="back-btn__arrow" src="assets/new-layout/group6.svg" width="8" height="8" alt="" />
+            <span class="back-btn__label">Back</span>
+          </a>
+          <div class="pagehead__text">
+            <p class="pagehead__title">Case Study: Configurable Operator Dashboards</p>
+            <p class="pagehead__desc">Case study · Enterprise B2B SaaS · Fintech</p>
+          </div>
+        </header>
+
+        <div class="cs">
+
+          <!-- ===== Intro ===== -->
+          <section class="cs-block" aria-labelledby="cs-title">
+            <p class="cs-kicker">UX/UI Case Study · Enterprise B2B SaaS · Fintech</p>
+            <h1 class="cs-h1" id="cs-title">Case Study: Configurable dashboards for operators of<br class="cs-br" /> Forex brokerage platforms (SaaS model)</h1>
+            <p class="cs-lead">Replacing system-wide search with multiple contextual dashboards - created by users themselves according to their own needs, preferences, and expectations - that provide access to related data (partially in real time) within a single view, eliminating the need to switch between screens.</p>
+            <dl class="cs-meta">
+              <div><dt>Role</dt><dd>Sole Product Designer</dd></div>
+              <div><dt>Timeline</dt><dd>~5 years, fully shipped</dd></div>
+              <div><dt>Team</dt><dd>10–12 people, Scrum</dd></div>
+              <div><dt>Tools</dt><dd>Figma · Adobe XD · UserTesting</dd></div>
+            </dl>
+            <figure class="cs-shot">
+              <img src="assets/fintech-dashboards/dashboard-1.webp" width="2610" height="1476" alt="Operator dashboard with dashboard tabs, edit mode, positions table, client details and deal ticket" decoding="async" />
+            </figure>
+          </section>
+
+          <!-- ===== 01 Challenge & Discovery ===== -->
+          <section class="cs-block" aria-labelledby="cs-challenge">
+            <p class="cs-kicker">Challenge &amp; Discovery</p>
+            <h2 class="cs-h2" id="cs-challenge">Operators were hunting for related data across the whole system</h2>
+
+            <div class="cs-grid2">
+              <div style="display:flex; flex-direction:column; gap:28px">
+                <div>
+                  <h3 class="cs-h3">The problem</h3>
+                  <p class="cs-p">The platform had no unified tool for managing data. To answer one question about a client, operators jumped between separate modules - accounts, open positions, balances, profiles, permissions - and assembled the picture themselves. There was no single, consistent “source of truth.”</p>
+                </div>
+                <div>
+                  <h3 class="cs-h3">Business goal</h3>
+                  <ul class="cs-goals">
+                    <li>Faster task completion for back-office operators</li>
+                    <li>Less time spent searching, fewer view switches</li>
+                    <li>A better daily experience for people who live in the tool 8 h / day</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="cs-card">
+                <h3 class="cs-h3" style="margin:0">Who I designed for</h3>
+                <p class="cs-card__title">Internal operators managing the broker's offer for retail and professional Forex traders</p>
+                <div class="cs-grid2" style="margin-top:4px; gap:20px">
+                  <div class="cs-stat"><span class="cs-stat__num">8 h / day</span><span class="cs-stat__label">in the platform, analysing live and historical data</span></div>
+                  <div class="cs-stat"><span class="cs-stat__num">4 monitors</span><span class="cs-stat__label">large screens per workstation</span></div>
+                </div>
+                <p class="cs-need"><strong>Core need:</strong> as much data as possible in one view, no switching between screens, maximum density, more data, less empty space.</p>
+              </div>
+            </div>
+
+            <div class="cs-divider">
+              <ul class="cs-chips" aria-label="Discovery methods">
+                <li>Operator interviews</li>
+                <li>PO, BA &amp; management interviews</li>
+                <li>Functional analysis of data-heavy SaaS competitors</li>
+                <li>Usability testing</li>
+              </ul>
+              <div class="cs-grid3">
+                <div>
+                  <span class="cs-insight__n">Insight 1</span>
+                  <h3 class="cs-insight__t">No two operators need the same view</h3>
+                  <p class="cs-p">Roles and daily tasks call for different data combinations - any fixed layout would fail most of them.</p>
+                </div>
+                <div>
+                  <span class="cs-insight__n">Insight 2</span>
+                  <h3 class="cs-insight__t">Context switching is the real cost</h3>
+                  <p class="cs-p">Related data lived in separate modules. Time went into finding it, not analysing it.</p>
+                </div>
+                <div>
+                  <span class="cs-insight__n">Insight 3</span>
+                  <h3 class="cs-insight__t">Density beats whitespace</h3>
+                  <p class="cs-p">On four large monitors, operators value more rows and columns over consumer-style spacing.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 02 Solution ===== -->
+          <section class="cs-block" aria-labelledby="cs-solution">
+            <p class="cs-kicker">Solution</p>
+            <h2 class="cs-h2" id="cs-solution">A workspace operators assemble themselves</h2>
+            <p class="cs-lead">Instead of designing one “perfect” dashboard, I designed the system for building dashboards: a library of widgets, one shared widget anatomy and an edit mode - so each operator decides what they see first.</p>
+
+            <div class="cs-annot">
+              <figure class="cs-fig">
+                <img src="assets/fintech-dashboards/dashboard-1.webp" width="2610" height="1476" alt="Operator dashboard annotated with five numbered callouts, described in the list next to it" decoding="async" />
+                <span class="cs-badge" aria-hidden="true" style="left:15.5%; top:2.4%">1</span>
+                <span class="cs-badge" aria-hidden="true" style="left:71.5%; top:2.4%">2</span>
+                <span class="cs-badge" aria-hidden="true" style="left:25.8%; top:17.3%">3</span>
+                <span class="cs-badge" aria-hidden="true" style="left:77%; top:12.4%">4</span>
+                <span class="cs-badge" aria-hidden="true" style="left:18%; top:63.3%">5</span>
+              </figure>
+              <ol class="cs-legend">
+                <li><div><h4>Unlimited thematic dashboards</h4><p>Each dashboard (tab) relates data around one topic; operators switch between them using tabs, which can be renamed and reordered.</p></div></li>
+                <li><div><h4>Edit mode + widget library</h4><p>Enable edit mode, select a component, and place it. Adjust its size and position. Operators shape their own workspace.</p></div></li>
+                <li><div><h4>One widget anatomy</h4><p>Views, filters, column settings and xls export sit in the same place in every widget - learn once, use everywhere.</p></div></li>
+                <li><div><h4>Act in context</h4><p>The deal ticket (trade, order, hedge) sits next to the positions it affects.</p></div></li>
+                <li><div><h4>Linked data, one view</h4><p>Widgets are linked thematically and functionally, so the client profile, positions and balances appear together.</p></div></li>
+              </ol>
+            </div>
+          </section>
+
+          <!-- ===== 03 Key design decisions ===== -->
+          <section class="cs-block" aria-labelledby="cs-decisions">
+            <p class="cs-kicker">Key design decisions</p>
+            <h2 class="cs-h2" id="cs-decisions">Dense by design, predictable everywhere</h2>
+
+            <div class="cs-annot">
+              <figure class="cs-fig">
+                <img src="assets/fintech-dashboards/dashboard-2.webp" width="2610" height="1476" alt="Dashboard widgets annotated with four numbered callouts: transaction history, client data audit trail, client list, account balance and posting manager" decoding="async" />
+                <span class="cs-badge" aria-hidden="true" style="left:21%; top:2.5%">1</span>
+                <span class="cs-badge" aria-hidden="true" style="left:62%; top:2.5%">2</span>
+                <span class="cs-badge" aria-hidden="true" style="left:56.5%; top:38.4%">3</span>
+                <span class="cs-badge" aria-hidden="true" style="left:68.5%; top:31%">4</span>
+              </figure>
+              <ol class="cs-legend">
+                <li><div><h4>Time-range presets</h4><p>24h · 1w · 1m · 3m · All in one click; a custom date range only when needed.</p></div></li>
+                <li><div><h4>Consistent table controls</h4><p>In every table, the column settings and the option to export to an XLS file are located in the same corner. Users can configure their own view.</p></div></li>
+                <li><div><h4>Audit trail as a visual diff</h4><p>Changes to client data show old vs new value side by side, with who changed it and when.</p></div></li>
+                <li><div><h4>Risk signals stand out</h4><p>Margin-critical lines are highlighted, so they are spotted at a glance on a dense screen.</p></div></li>
+              </ol>
+            </div>
+
+            <div class="cs-found cs-grid4">
+              <div><h4>Design system</h4><p>Built by me from scratch for the whole platform: tokens, components and data-table patterns.</p></div>
+              <div><h4>Accessibility</h4><p>Fully compliant with WCAG 2.2.</p></div>
+              <div><h4>Fluid layout</h4><p>No mobile version - a deliberate design choice, necessitated by the need to manage a vast amount of data (part of which is in real time).</p></div>
+              <div><h4>Constraints</h4><p>Front-end framework limitations and Forex market regulation.</p></div>
+            </div>
+          </section>
+
+          <!-- ===== 04 Outcomes & Reflection ===== -->
+          <section class="cs-block" aria-labelledby="cs-outcomes">
+            <p class="cs-kicker">Outcomes &amp; Reflection</p>
+            <h2 class="cs-h2" id="cs-outcomes">Shipped, adopted and measurably faster</h2>
+
+            <div class="cs-grid4 cs-metrics">
+              <div class="cs-metric"><span class="cs-metric__num">1.5 h</span><span class="cs-metric__label">saved per operator, daily</span><span class="cs-metric__note">≈ 19% of an 8-hour workday</span></div>
+              <div class="cs-metric"><span class="cs-metric__num">45%</span><span class="cs-metric__label">faster task completion</span><span class="cs-metric__note">vs. the previous workflow</span></div>
+              <div class="cs-metric"><span class="cs-metric__num">82</span><span class="cs-metric__label">SUS usability score</span><span class="cs-metric__note">well above the 68 industry average</span></div>
+              <div class="cs-metric"><span class="cs-metric__num">88%</span><span class="cs-metric__label">CSAT</span><span class="cs-metric__note">real leap in usability &amp; operator satisfaction</span></div>
+            </div>
+
+            <div class="cs-grid2">
+              <div>
+                <h3 class="cs-h3">What operators said after launch</h3>
+                <div class="cs-quotes">
+                  <blockquote>“Finally I can work in a modern layout that makes data analysis easier.”</blockquote>
+                  <blockquote>“Now I have everything I need at hand.”</blockquote>
+                  <blockquote>“I don't waste time looking for data anymore.”</blockquote>
+                </div>
+              </div>
+              <div>
+                <h3 class="cs-h3">Delivery &amp; scope</h3>
+                <p class="cs-p">Fully implemented in production. Day-to-day collaboration with developers, testers, business analysts and the Product Owner in Scrum.</p>
+                <div class="cs-scope">
+                  <div class="cs-stat"><span class="cs-stat__num">2</span><span class="cs-stat__label">enterprise B2B SaaS platforms</span></div>
+                  <div class="cs-stat"><span class="cs-stat__num">100+</span><span class="cs-stat__label">new functional modules designed</span></div>
+                  <div class="cs-stat"><span class="cs-stat__num">50+</span><span class="cs-stat__label">redesigned and optimised internal applications</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-found cs-grid2" style="margin-top:40px">
+              <div><h4>What I learned</h4><p>The functional and regulatory demands of fintech, and how to design enterprise dashboards that stay usable with thousands of records on screen.</p></div>
+              <div><h4>What's next</h4><p>A UI refresh: modernise the visual layer after five years, while keeping the UX that has proven itself in daily use.</p></div>
+            </div>
+          </section>
+
+        </div>
+
+        <footer class="cs-foot">
+          <span>Jacek Waz - UX/UI Designer, Product Designer</span>
+        </footer>
+
+      </main>
+
+    </div>
+   </div>
+  </div>
+
+  <script>
+    /* Responsive scaling - same fit() as the other subpages: the 1440px
+       frame is scaled by s = min(availW/1440, availH/837, 1); the wrapper
+       reserves the scaled height and the page scrolls below. */
+    var MOBILE = window.matchMedia('(max-width: 759px)');
+    var fit = (function(){
+      var DESIGN_W = 1440, DESIGN_H = 837, MARGIN = 24;
+      var wrap = document.querySelector('.wrap');
+      var frame = document.querySelector('.frame');
+      return function fit(){
+        if (MOBILE.matches) {
+          wrap.style.removeProperty('--s');
+          wrap.style.width = '';
+          wrap.style.height = '';
+          return;
+        }
+        var availW = window.innerWidth  - MARGIN * 2;
+        var availH = window.innerHeight - MARGIN * 2 - 1;
+        var s = Math.min(availW / DESIGN_W, availH / DESIGN_H, 1);
+        wrap.style.setProperty('--s', s);
+        wrap.style.width  = (DESIGN_W * s) + 'px';
+        wrap.style.height = (frame.offsetHeight * s) + 'px';
+      };
+    })();
+
+    Array.prototype.forEach.call(document.querySelectorAll('.content img'), function (img){
+      if (!img.complete) img.addEventListener('load', fit);
+    });
+    fit();
+    window.addEventListener('resize', fit);
+    if (MOBILE.addEventListener) MOBILE.addEventListener('change', fit);
+    window.addEventListener('load', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  </script>
+  <link rel="stylesheet" href="confetti.css" />
+  <script>
+    window.CONFETTI_SELECTOR = '.back-btn[data-confetti]';
+  </script>
+  <script src="confetti.js?v=20261115" defer></script>
+  <script src="assets/motion-demo/motion-demo.js" defer></script>
+</body>
+</html>
