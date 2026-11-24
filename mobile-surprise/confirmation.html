@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FEFDFB">
+<title>VIP Confirmation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Archivo:wdth,wght@100,400;100,500;100,700&family=Rubik+Mono+One&family=Zilla+Slab:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  /* Figma 04 — card content, coordinates relative to the card (top-left = 16, 352.3) */
+  .vip { padding: calc(111 * var(--u)) calc(22.5 * var(--u)) calc(22 * var(--u)); }
+  .vip .head { text-align: center; }
+  .vip .gap { height: calc(59.2 * var(--u)); height: clamp(calc(20 * var(--u)), calc(100svh - 814.8 * var(--u)), calc(59.2 * var(--u))); }
+  .vip .t-label { display: block; margin-left: calc(.5 * var(--u)); }
+  /* validation: error sits inside the 24px gap above the button, so nothing moves */
+  .field-wrap { position: relative; margin-top: calc(11.9 * var(--u)); }
+  .field[aria-invalid="true"] { border-color: var(--red); }
+  .field[aria-invalid="true"]:focus { box-shadow: 0 0 0 4px rgba(196, 42, 34, .18); }
+  .field-error {
+    position: absolute; left: calc(1 * var(--u)); top: calc(100% + 5 * var(--u));
+    /* darker than --red: #9E1B14 on the yellow card is 5.3:1 (AA for small text) */
+    font-weight: 700; font-size: calc(13 * var(--u)); line-height: 1.088; color: #9E1B14;
+  }
+  .field-error:empty { display: none; }
+  .shake { animation: shake 380ms cubic-bezier(.36, .07, .19, .97); }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(3px); }
+    30%, 50%, 70% { transform: translateX(-5px); }
+    40%, 60% { transform: translateX(5px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .shake { animation: none; } }
+</style>
+</head>
+<body>
+<main class="app" id="app">
+  <section class="screen page-in" aria-label="VIP confirmation">
+    <img class="bg" src="assets/img/bg-confirm.jpg" alt="">
+    <div class="layer">
+      <button class="icon-btn" id="back" type="button" style="--x:16;--y:62" aria-label="Back">
+        <img class="i-back" src="assets/img/back-icon.svg" alt="">
+      </button>
+      <div class="title" id="title" style="--x:64.8;--y:106.5"></div>
+    </div>
+
+    <div class="flow-top" style="--zh:352.3"></div>
+
+    <form class="paper vip" id="vip-form" novalidate>
+      <span class="tape rot" style="--cx:49.9;--cy:.5;--w:48.1;--h:17;--r:-12.09"></span>
+      <span class="tape rot" style="--cx:316.4;--cy:1.5;--w:48.1;--h:17;--r:9.18"></span>
+      <span class="stamp rot" style="--cx:71.5;--cy:45;--w:99.25;--h:54.15;--r:-9.18" aria-hidden="true">
+        <img src="assets/img/stamp-frame.svg" alt=""><span style="font-size:calc(40.114 * var(--u))">VIP</span>
+      </span>
+      <p class="kicker-2" style="left:calc(136.96 * var(--u)); top:calc(24.8 * var(--u))">PRIVATE<br>INVITATION</p>
+      <img class="perf" src="assets/img/perforation.svg" alt="" style="top:calc(76.5 * var(--u))">
+
+      <div class="head">
+        <h1 class="t-title2">Great choice, Jacek!</h1>
+        <p class="t-head18" style="margin-top:calc(5.6 * var(--u))">You're joining our special VIP group.</p>
+        <p class="t-sub" style="margin-top:calc(22.4 * var(--u))">Confirm your email address to receive<br>instructions on the next steps<br>to fulfill your destiny.</p>
+      </div>
+      <div class="gap"></div>
+      <label class="t-label" for="email">Email address</label>
+      <div class="field-wrap">
+        <input class="field" id="email" name="email" type="email" inputmode="email" autocomplete="email"
+               autocapitalize="off" spellcheck="false" required aria-describedby="email-error"
+               placeholder="Enter your e-mail address">
+        <p class="field-error" id="email-error" role="alert"></p>
+      </div>
+      <button class="btn btn-primary" id="confirm" type="submit" style="margin-top:calc(24 * var(--u))">Confirm Your E-Mail Address</button>
+    </form>
+
+    <div class="flow-end"></div>
+  </section>
+</main>
+<div class="bloom entry" id="bloom"></div>
+
+<script src="assets/sound.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/slogans.js"></script>
+<script>
+(function () {
+  var C = window.Common;
+  new window.Slogan(document.getElementById('title'), 'C');   // Figma variant C
+  var busy = false;
+  var field = document.getElementById('email');
+  var error = document.getElementById('email-error');
+  var tried = false;   // errors appear only after the first Confirm, then update as you type
+  var EMAIL = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[^\s@.]{2,}$/;
+
+  function check() {
+    var v = field.value.trim();
+    var msg = !v ? 'Enter your e-mail address.' : (EMAIL.test(v) ? '' : 'Enter a valid e-mail address.');
+    error.textContent = msg;
+    if (msg) field.setAttribute('aria-invalid', 'true'); else field.removeAttribute('aria-invalid');
+    return !msg;
+  }
+  field.addEventListener('input', function () { if (tried) check(); });
+
+  // Live behaviour after a valid address: whoosh + bloom, then thankyou.html at 430 ms.
+  document.getElementById('vip-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (busy) return;
+    tried = true;
+    if (!check()) {
+      field.classList.remove('shake'); void field.offsetWidth; field.classList.add('shake');
+      field.focus();
+      return;
+    }
+    busy = true;
+    document.activeElement && document.activeElement.blur && document.activeElement.blur();
+    C.flash(document.getElementById('confirm'));
+    C.leaveTo('thankyou.html', { confirmSound: true });
+  });
+
+  document.getElementById('back').addEventListener('click', function () {
+    if (busy) return;
+    window.location.replace('./#box');
+  });
+
+  document.addEventListener('sy:restored', function () { busy = false; });
+  setTimeout(function () { var b = document.getElementById('bloom'); if (b) { b.classList.remove('entry'); b.style.display = 'none'; } }, 800);
+})();
+</script>
+</body>
+</html>
