@@ -9,7 +9,8 @@
 
    Desktop: banner and dice live inside .canvas, so every value
    below is a 1440×837 design px and scales with the page (--s).
-   Phone layout (≤759px): fixed to the viewport, real CSS px.
+   Phone layout (≤759px): real CSS px; the banner sits at the top of
+   the page and a spacer before the header pushes the layout down.
    ========================================================= */
 
 /* ---------------- Banner (Figma 440 × 62) ---------------- */
@@ -37,6 +38,8 @@
   white-space:nowrap;
 }
 .dz-toast__sub{ margin:-.5px 0 0; font-size:11px; line-height:15px; white-space:nowrap; }
+.dz-nw{ white-space:nowrap; }
+.dz-spacer{ display:none; }
 
 /* TRY IT — the site's pill button, recoloured for the green bar */
 .dz-try{
@@ -69,10 +72,21 @@
 .dz-x:focus-visible{ outline:2px solid #fff; outline-offset:0; }
 
 /* Dice — Figma placement (rotation about each image's top-left corner) */
-.dz-dice{ position:absolute; inset:0; pointer-events:none; }
-.dz-pair{ position:absolute; inset:0; transform-origin:23.9px 41.9px; }  /* big + middle die always move as one (torn corner stays covered) */
+.dz-dice{ position:absolute; inset:0; pointer-events:none; transform-origin:29.6px 29.15px; }  /* centre of the three dice */
+.dz-pair{ position:absolute; inset:0; transform-origin:23.9px 41.9px; }  /* entrance: big + middle die drop in as one */
 .dz-die{ position:absolute; transform-origin:0 0; }
 .dz-die img{ display:block; width:100%; height:100%; }
+/* Hover on the banner = the floating dice's hover: the cluster tilts and grows a little and
+   each die turns on its own by 4°. They never move apart: the big die's image has a torn
+   bottom-left corner that the middle die must keep covering (checked up to ±5°). */
+@media (hover:hover) and (prefers-reduced-motion: no-preference){
+  .dz-dice{ transition:scale .35s cubic-bezier(.34,1.56,.64,1), rotate .35s cubic-bezier(.34,1.56,.64,1); }
+  .dz-die img{ transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+  .dz-toast:not(.is-entering):hover .dz-dice{ scale:1.06; rotate:-4deg; }
+  .dz-toast:not(.is-entering):hover .dz-die--a img{ transform:rotate(-4deg); }
+  .dz-toast:not(.is-entering):hover .dz-die--b img{ transform:rotate(4deg); }
+  .dz-toast:not(.is-entering):hover .dz-die--c img{ transform:rotate(6deg); }
+}
 .dz-die--a{ left:14px;    top:14.84px; width:37.82px; height:40.58px; }
 .dz-die--b{ left:1.35px;  top:32.84px; width:30.78px; height:31.29px; transform:rotate(9.84deg); }
 .dz-die--c{ left:18.41px; top:-2.71px; width:21.38px; height:21.73px; transform:rotate(-33.5deg); }
@@ -197,8 +211,6 @@ html[data-theme="dark"] .dz-cube__tip{ background:#BCD5B6; color:#1F2E25; }
   .dz-toast[data-state="in"]{ animation:dz-drop .7s cubic-bezier(.34,1.4,.64,1) both; }
   .dz-toast.is-entering .dz-pair{ animation:dz-tumble .6s cubic-bezier(.34,1.56,.64,1) .22s both; }
   .dz-toast.is-entering .dz-die--c img{ animation:dz-tumble .6s cubic-bezier(.34,1.56,.64,1) .36s both; }
-  .dz-toast:not(.is-entering):hover .dz-pair{ animation:dz-jiggle .6s ease-in-out both; }
-  .dz-toast:not(.is-entering):hover .dz-die--c img{ animation:dz-jiggle .6s ease-in-out .08s both; }
   /* dismissed: a small dip, then up and out of the window */
   .dz-toast[data-state="out"]{ animation:dz-lift .55s both; }
 
@@ -224,7 +236,6 @@ html[data-theme="dark"] .dz-cube__tip{ background:#BCD5B6; color:#1F2E25; }
   100%{ transform:translateY(calc(-100% - 90px)); }
 }
 @keyframes dz-tumble{ from{ opacity:0; transform:translateY(-18px) rotate(-120deg) scale(.6); } to{ opacity:1; transform:none; } }
-@keyframes dz-jiggle{ 0%,100%{ transform:none; } 25%{ transform:rotate(-8deg); } 55%{ transform:rotate(6deg); } 80%{ transform:rotate(-3deg); } }
 @keyframes dz-pop{ 0%{ opacity:0; transform:scale(.3) rotate(-25deg); } 65%{ opacity:1; transform:scale(1.12) rotate(6deg); } 100%{ opacity:1; transform:none; } }
 @keyframes dz-pop-out{ to{ opacity:0; transform:scale(.5) rotate(-15deg); } }
 @keyframes dz-float{ 0%,100%{ transform:none; } 50%{ transform:translateY(-4px) rotate(-3deg); } }
@@ -233,20 +244,30 @@ html[data-theme="dark"] .dz-cube__tip{ background:#BCD5B6; color:#1F2E25; }
 
 /* ---------------- Phone layout (≤759px) ---------------- */
 @media (max-width:759px){
+  /* At the top of the page, as wide as the header card (16 px gutters); the spacer
+     before the header reserves its height, so nothing is covered. Scrolls with the page. */
   .dz-toast{
-    position:fixed; z-index:900;
-    top:24px; left:12px; right:12px;
-    width:auto; max-width:440px; height:auto; min-height:62px;
+    position:absolute; z-index:30;
+    top:24px; left:16px; right:16px;
+    width:auto; max-width:none; height:auto; min-height:62px;
     margin:0 auto;
     display:flex; align-items:center; gap:12px;
     padding:10px 8px 10px 64px;
   }
+  .dz-spacer{ display:block; height:0; transition:height .45s cubic-bezier(.22,.61,.36,1); }
+  .dz-spacer.is-instant{ transition:none; }
   .dz-toast__text{ position:relative; left:auto; top:auto; flex:1 1 auto; min-width:0; }
   .dz-toast__title, .dz-toast__sub{ white-space:normal; }
   .dz-try, .dz-x{ position:relative; left:auto; top:auto; flex:none; }
   .dz-x{ margin-left:-6px; }
   .dz-cube{ position:fixed; z-index:900; top:10px; right:10px; left:auto; }
   .dz-cube__tip{ left:auto; right:100%; margin:0 6px 0 0; }
+}
+@media (max-width:599px){
+  .dz-toast{ max-width:420px; }                      /* same 420 px cap as the header card */
+}
+@media (prefers-reduced-motion: reduce){
+  .dz-spacer{ transition:none !important; }
 }
 @media (max-width:400px){
   .dz-toast{ gap:8px; padding-left:58px; }

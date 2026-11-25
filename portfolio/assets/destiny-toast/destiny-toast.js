@@ -24,7 +24,7 @@
 
   var script = document.currentScript;
   var DIR = script ? script.src.replace(/[^/]*$/, '') : 'assets/destiny-toast/';
-  var V = '?v=3';
+  var V = '?v=6';
   var TARGET = new URL('../your-destiny/', location.href).href;
   var KEY = 'dz-toast';                                              // 'cube' once dismissed (this visit)
   var DESIGN_W = 1440, DESIGN_H = 837;
@@ -44,7 +44,8 @@
       '<div class="dz-toast__bg"></div>' +
       '<div class="dz-toast__text">' +
         '<p class="dz-toast__title">Wanna know your destiny?</p>' +
-        '<p class="dz-toast__sub">Don\'t tempt fate. Discover the truth.</p>' +
+        // two unbreakable phrases: one line when there is room, else "Discover the truth." starts line 2
+        '<p class="dz-toast__sub"><span class="dz-nw">Don\'t tempt fate.</span> <span class="dz-nw">Discover the truth.</span></p>' +
       '</div>' +
       '<button type="button" class="dz-try" aria-haspopup="dialog">TRY IT</button>' +
       '<button type="button" class="dz-x" aria-label="Dismiss">×</button>' +
@@ -92,7 +93,20 @@
   var timers = {};
   function clear(name) { clearTimeout(timers[name]); }
 
-  function showToast(delay) {
+  // Phone layout: the banner sits at the top of the page and this spacer (before the
+  // header) reserves its height, so it pushes the layout down instead of covering it.
+  // The spacer grows and shrinks with the banner; on desktop it is not displayed.
+  var spacer = el('<div class="dz-spacer" aria-hidden="true"></div>');
+  var BANNER_TOP = 24, GAP = 16, STAGE_PAD = 16;           // banner top, gap to the header card, page padding
+  function syncSpacer(instant) {
+    var on = mobile.matches && !toast.hidden && toast.dataset.state === 'in';
+    spacer.classList.toggle('is-instant', !!instant);
+    spacer.style.height = on ? (BANNER_TOP + toast.offsetHeight + GAP - STAGE_PAD) + 'px' : '0px';
+  }
+  if (window.ResizeObserver) new ResizeObserver(function () { syncSpacer(false); }).observe(toast);  // text reflow, rotation
+  if (mobile.addEventListener) mobile.addEventListener('change', function () { syncSpacer(true); });
+
+  function showToast(delay, instant) {
     clear('toast'); clear('cube');
     store(null);
     if (!cube.hidden) {
@@ -103,6 +117,7 @@
       toast.hidden = false;
       toast.classList.add('is-entering');
       toast.dataset.state = 'in';
+      syncSpacer(instant);
       timers.enter = after(1100, function () { toast.classList.remove('is-entering'); });
     });
   }
@@ -113,8 +128,23 @@
     if (toast.hidden) { showCube(focusCube, 0); return; }
     toast.classList.remove('is-entering');
     toast.dataset.state = 'out';
+    syncSpacer(false);                                     // the page slides back up as the banner leaves
     timers.toast = after(560, function () { toast.hidden = true; });
     showCube(focusCube, 260);
+  }
+
+  // Phone layout: the banner lives at the top of the page, so scroll there first.
+  function toTop(cb) {
+    if (!mobile.matches || window.scrollY < 2) { cb(); return; }
+    var done = false;
+    function go() {
+      if (done) return; done = true; window.removeEventListener('scrollend', go);
+      if (window.scrollY) window.scrollTo(0, 0);           // land exactly at the top (smooth scroll may still be running)
+      cb();
+    }
+    window.addEventListener('scrollend', go);
+    setTimeout(go, 700);
+    window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' });
   }
 
   function showCube(focus, delay) {
@@ -129,8 +159,10 @@
   xBtn.addEventListener('click', function () { hideToast(true); });
   cube.addEventListener('click', function () {
     var hadFocus = document.activeElement === cube;
-    showToast(120);
-    if (hadFocus) after(160, function () { tryBtn.focus({ preventScroll: true }); });
+    toTop(function () {
+      showToast(120);
+      if (hadFocus) after(160, function () { tryBtn.focus({ preventScroll: true }); });
+    });
   });
   tryBtn.addEventListener('click', openModal);
 
@@ -227,10 +259,12 @@
   /* ---------- start ---------- */
   function start() {
     var header = canvas.querySelector('.header');
+    canvas.insertBefore(spacer, header || canvas.firstChild);
     canvas.insertBefore(toast, header ? header.nextSibling : canvas.firstChild);
     canvas.insertBefore(cube, toast.nextSibling);
     document.body.appendChild(modal);
     if (store() === 'cube') showCube(false, 300);
+    else if (mobile.matches) showToast(0, true);          // phones: room is made at once, so nothing jumps later
     else {
       var seen = false;
       try { seen = !!sessionStorage.getItem('dz-seen'); sessionStorage.setItem('dz-seen', '1'); } catch (e) {}
