@@ -24,7 +24,7 @@
 
   var script = document.currentScript;
   var DIR = script ? script.src.replace(/[^/]*$/, '') : 'assets/destiny-toast/';
-  var V = '?v=2';
+  var V = '?v=3';
   var TARGET = new URL('../your-destiny/', location.href).href;
   var KEY = 'dz-toast';                                              // 'cube' once dismissed (this visit)
   var DESIGN_W = 1440, DESIGN_H = 837;
