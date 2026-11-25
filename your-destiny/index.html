@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FEFDFB">
+<title>Mobile Surprise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Archivo:wdth,wght@100,400;100,500;100,700&family=Rubik+Mono+One&family=Zilla+Slab:wght@700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/img/bg-slot.jpg">
+<link rel="stylesheet" href="assets/app.css?v=5">
+</head>
+<body>
+<main class="app" id="app">
+
+  <!-- ============ SCREEN 1 — SLOT MACHINE (Figma 01 / 01b) ============ -->
+  <section class="screen" id="s-slot" aria-label="Slot machine">
+    <img class="bg" src="assets/img/bg-slot.jpg" alt="">
+    <div class="layer">
+      <img class="rot" src="assets/img/die-1.png" alt="" style="--cx:39.5;--cy:722;--w:125;--h:134;--r:73.74">
+      <img class="rot" src="assets/img/die-2.png" alt="" style="--cx:111;--cy:685.4;--w:54;--h:54.9;--r:8.05">
+      <img class="rot" src="assets/img/cards.png" alt="" style="--cx:313.5;--cy:741.5;--w:273.6;--h:231.9;--r:5.77">
+
+      <button class="icon-btn" id="info-btn" type="button" style="--x:342;--y:62" aria-label="How it works">
+        <img class="i-info" src="assets/img/info-icon.svg" alt="">
+      </button>
+
+      <div class="title" id="title-slot" style="--x:51.13;--y:106.07"></div>
+
+      <div class="reel" id="reel-l" style="--x:71.7" aria-hidden="true"><div class="strip"></div></div>
+      <div class="reel" id="reel-r" style="--x:180.8" aria-hidden="true"><div class="strip"></div></div>
+      <button class="lever" id="lever" type="button" aria-label="Pull the lever">
+        <img src="assets/img/lever.jpg" alt="">
+      </button>
+
+      <div class="copy" id="copy-idle" style="--y:570">
+        <h1 class="t-title2">Choose your destiny</h1>
+        <p class="t-foot" style="margin-top:calc(10.5 * var(--u))">Pull the lever to spin the reels.</p>
+      </div>
+      <div class="copy fade-out" id="copy-result" style="--y:570" aria-live="polite">
+        <p class="t-kicker">YOUR DESTINY</p>
+        <p class="t-title2 pair" style="margin-top:calc(10.9 * var(--u))">
+          <span class="w" id="w-left"></span><span class="w later" id="w-x">&times;</span><span class="w later" id="w-right"></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="flow-top" style="--zh:622"></div>
+    <div class="flow-gap"></div>
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-accept" type="button" hidden>Accept Your Destiny</button>
+      <button class="btn btn-primary" id="btn-pull" type="button">Pull the Lever</button>
+    </div>
+    <div class="flow-end"></div>
+  </section>
+
+  <!-- ============ SCREEN 2 — THE MYSTERIOUS BOX (Figma 02 / 03) ============ -->
+  <section class="screen" id="s-box" aria-label="Mysterious box" hidden>
+    <img class="bg" src="assets/img/bg-box.jpg" alt="">
+    <div class="layer">
+      <img class="rot box-d d-cards" src="assets/img/cards.png" alt="" style="--cx:89;--cy:328.5;--w:204;--h:173;--r:-8.05">
+      <img class="rot box-d d-die1" src="assets/img/die-1.png" alt="" style="--cx:344.5;--cy:295;--w:145;--h:156;--r:0">
+      <img class="rot box-d d-die2" src="assets/img/die-2.png" alt="" style="--cx:311;--cy:351.4;--w:53.7;--h:54.6;--r:9.84">
+      <img class="rot box-d d-extra" src="assets/img/die-2.png" alt="" style="--cx:330.3;--cy:251.9;--w:37.3;--h:37.9;--r:-33.5">
+      <img class="abs" src="assets/img/chips-1.png" alt="" style="--x:10;--y:470;--w:42;--h:54.05">
+      <img class="abs" src="assets/img/chips-2.png" alt="" style="--x:50;--y:451;--w:42;--h:73.05">
+      <img class="abs" src="assets/img/chips-3.png" alt="" style="--x:90;--y:482;--w:42;--h:41.8">
+
+      <button class="icon-btn" id="box-back" type="button" style="--x:16;--y:62" aria-label="Back">
+        <img class="i-back" src="assets/img/back-icon.svg" alt="">
+      </button>
+      <div class="title" id="title-box" style="--x:60;--y:107.2"></div>
+
+      <button class="abs chest" id="chest" type="button" style="--x:118.4;--y:250;--w:156.3;--h:202.3" aria-label="Unlock the box">
+        <img class="c-closed" src="assets/img/chest-closed.png" alt="">
+        <img class="c-open" src="assets/img/chest-open.png" alt="">
+      </button>
+      <span class="hint" aria-hidden="true"></span>
+
+      <img class="rot" src="assets/img/die-2.png" alt="" style="--cx:339.4;--cy:503.8;--w:44;--h:45;--r:-9.52">
+      <img class="rot" src="assets/img/die-2.png" alt="" style="--cx:310.4;--cy:507.8;--w:44;--h:45;--r:-9.52">
+
+      <div class="copy copy-closed" style="--y:571.2">
+        <h1 class="t-title2 multi">Ready to open<br>the mysterious box?</h1>
+        <p class="t-sub" style="margin-top:calc(9.8 * var(--u))">Inside the box lies a vision prepared especially<br>for you. Do not be afraid - discover your destiny!</p>
+      </div>
+
+      <div class="copy copy-open" style="--y:572">
+        <h2 class="t-title2">Choose your destiny</h2>
+        <p class="t-sub soft" style="margin-top:calc(10.7 * var(--u)); line-height:1.088">Each envelope holds a different vision. Select one.</p>
+      </div>
+
+      <div class="envs" id="envs" role="radiogroup" aria-label="Choose your destiny">
+        <button class="env" type="button" role="radio" aria-checked="false" data-i="0" style="--cx:101" aria-label="Envelope 1"><img src="assets/img/envelope.png" alt=""><span class="glint"></span><span class="num">1</span></button>
+        <button class="env" type="button" role="radio" aria-checked="false" data-i="1" style="--cx:201" aria-label="Envelope 2"><img src="assets/img/envelope.png" alt=""><span class="glint"></span><span class="num">2</span></button>
+        <button class="env" type="button" role="radio" aria-checked="false" data-i="2" style="--cx:301" aria-label="Envelope 3"><img src="assets/img/envelope.png" alt=""><span class="glint"></span><span class="num">3</span></button>
+        <span class="env-bar" id="env-bar"></span>
+      </div>
+
+      <div class="copy env-info" id="env-info" style="--y:719.9" aria-live="polite">
+        <p class="t-title2" id="env-offer"></p>
+      </div>
+    </div>
+
+    <div class="flow-top" id="box-top" style="--zh:706"></div>
+    <div class="flow-gap"></div>
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-unlock" type="button">Unlock the box</button>
+      <button class="btn btn-primary" id="btn-accept2" type="button" hidden></button>
+    </div>
+    <div class="flow-end"></div>
+  </section>
+
+</main>
+<div class="bloom" id="bloom"></div>
+
+<script src="assets/sound.js?v=5"></script>
+<script src="assets/common.js?v=5"></script>
+<script src="assets/slogans.js?v=5"></script>
+<script src="assets/destinies.js?v=5"></script>
+<script src="assets/slot.js?v=5"></script>
+</body>
+</html>

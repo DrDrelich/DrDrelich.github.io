@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FEFDFB">
+<title>Thank You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Archivo:wdth,wght@100,400;100,500;100,700&family=Rubik+Mono+One&family=Zilla+Slab:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=5">
+<style>
+  /* Figma 05 — card content, coordinates relative to the card (top-left = 16, 248) */
+  .sent { padding: calc(106.8 * var(--u)) calc(22 * var(--u)) calc(30.7 * var(--u)); text-align: center;
+          transform-origin: 50% 0; }
+  /* starts from rest 1 s after the page has loaded (.go): a little lift and wobble */
+  .sent.go { animation: settle 1.05s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes settle {
+    0% { transform: none; }
+    14% { transform: rotate(-1.6deg) translateY(calc(-6 * var(--u))); }
+    30% { transform: rotate(.9deg); }
+    48% { transform: rotate(-.45deg); }
+    70% { transform: rotate(.2deg); }
+    100% { transform: none; }
+  }
+  .glass {
+    position: relative; text-align: left;
+    height: calc(60.05 * var(--u));
+    margin-top: calc(13.9 * var(--u));
+    border-radius: calc(16 * var(--u));
+    background: rgba(254, 253, 251, .62);
+  }
+  .glass img { position: absolute; left: calc(14 * var(--u)); top: calc(13.6 * var(--u)); width: calc(44 * var(--u)); height: calc(33 * var(--u)); }
+  .glass .cap { position: absolute; left: calc(70 * var(--u)); top: calc(9 * var(--u)); font-size: calc(12 * var(--u)); line-height: 1.088; color: var(--ink); }
+  .glass .mail { position: absolute; left: calc(70 * var(--u)); top: calc(27 * var(--u)); font-weight: 500; font-size: calc(17 * var(--u)); line-height: 1.088; color: var(--ink); }
+  .later { font-weight: 700; font-size: calc(15 * var(--u)); line-height: 1.088; color: var(--red-2); margin-top: calc(14 * var(--u)); }
+  .deco { position: relative; height: 0; z-index: 4; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .sent { animation: none; } }
+</style>
+</head>
+<body>
+<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+<main class="app" id="app">
+  <section class="screen page-in" aria-label="Submission sent">
+    <img class="bg" src="assets/img/bg-plain.jpg" alt="">
+    <div class="layer">
+      <button class="icon-btn" id="info-btn" type="button" style="--x:342;--y:62" aria-label="How it works">
+        <img class="i-info" src="assets/img/info-icon.svg" alt="">
+      </button>
+      <div class="title" id="title" style="--x:59.6;--y:105.8"></div>
+    </div>
+
+    <div class="flow-top" style="--zh:248"></div>
+
+    <div class="paper textured sent">
+      <span class="tape rot" style="--cx:49.9;--cy:.5;--w:48.1;--h:17;--r:-12.09"></span>
+      <span class="tape rot" style="--cx:186.8;--cy:1.5;--w:48.2;--h:17.1;--r:5.14"></span>
+      <span class="stamp rot" style="--cx:84.4;--cy:42.9;--w:124.44;--h:49.66;--r:-6.91" aria-hidden="true">
+        <img src="assets/img/stamp-frame-sent.svg" alt=""><span style="font-size:calc(35.901 * var(--u))">SENT</span>
+      </span>
+      <p class="kicker-2" style="left:calc(162.8 * var(--u)); top:calc(22.7 * var(--u)); text-align:left">CONFIRMATION<br>E-MAIL</p>
+      <img class="perf" src="assets/img/perforation.svg" alt="" style="top:calc(72.3 * var(--u)); left:calc(-10.5 * var(--u))">
+
+      <h1 class="t-title2">Thanks, Jacek!</h1>
+      <p class="t-head18" style="margin-top:calc(6.1 * var(--u))">E-mail sent successfully!</p>
+      <p class="t-sub" style="margin:calc(22.9 * var(--u)) calc(-5 * var(--u)) 0; line-height:1.088">We have sent a confirmation to your email address.</p>
+      <div class="glass">
+        <img src="assets/img/envelope.png" alt="">
+        <p class="cap">Look for an email from us at</p>
+        <p class="mail">destiny@surprise-me.com</p>
+      </div>
+      <p class="later">We'll get back to you within 24 hours.</p>
+    </div>
+
+    <!-- dice & cards, positioned from the card's bottom edge (Figma y 581.6) -->
+    <div class="deco">
+      <img class="rot" src="assets/img/die-1.png" alt="" style="--cx:71;--cy:94;--w:70.2;--h:75.3;--r:-167.91">
+      <img class="rot" src="assets/img/die-2.png" alt="" style="--cx:148;--cy:57.4;--w:158;--h:160;--r:8.05">
+      <img class="rot" src="assets/img/cards.png" alt="" style="--cx:319;--cy:132.9;--w:264.7;--h:223.9;--r:5.77">
+      <img class="rot" src="assets/img/die-1.png" alt="" style="--cx:105.5;--cy:130.9;--w:83;--h:88.9;--r:108.07">
+    </div>
+
+    <div class="flow-gap"></div>
+    <div class="actions">
+      <button class="btn btn-secondary" id="home" type="button">Back to Home</button>
+    </div>
+    <div class="flow-end"></div>
+  </section>
+</main>
+<div class="bloom entry" id="bloom"></div>
+
+<script src="assets/sound.js?v=5"></script>
+<script src="assets/common.js?v=5"></script>
+<script src="assets/slogans.js?v=5"></script>
+<script>
+(function () {
+  var C = window.Common;
+  new window.Slogan(document.getElementById('title'), 'D');   // Figma variant D
+  C.initInfo(document.getElementById('info-btn'));
+  C.clearState();
+
+  var busy = false;
+  document.getElementById('home').addEventListener('click', function () {
+    if (busy) return;
+    busy = true;
+    C.pressThen(this, function () { C.leaveTo('./'); });
+  });
+  document.addEventListener('sy:restored', function () { busy = false; });
+  setTimeout(function () { var b = document.getElementById('bloom'); if (b) { b.classList.remove('entry'); b.style.display = 'none'; } }, 800);
+
+  /* Confetti — same system as the live thank-you page (120 pieces, 5 s,
+     spawned over the outer 42 % on each side, fade in the last 20 %),
+     coloured with the mobile design palette. Like the card's wobble it starts
+     1 s after the page has loaded. */
+  if (C.reduceMotion) return;
+  C.afterShown(document.querySelector('.screen'), function () {
+    document.querySelector('.sent').classList.add('go');
+    confetti();
+  });
+  function confetti() {
+  var canvas = document.getElementById('confetti');
+  var ctx = canvas.getContext('2d');
+  var DURATION = 5000, PIECE_COUNT = 120;
+  var COLORS = ['#FFCB2E', '#FF7AA4', '#2A72CF', '#2FA357', '#E2402F', '#FFE08A', '#FFC3D6', '#1F6FD1'];
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  function resize() {
+    canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  var W = function () { return window.innerWidth; }, H = function () { return window.innerHeight; };
+  function makePiece() {
+    var left = Math.random() < 0.5;
+    var xFrac = left ? Math.random() * 0.42 : 1 - Math.random() * 0.42;
+    return {
+      x: xFrac * W(), y: -20 - Math.random() * H() * 0.4,
+      w: 6 + Math.random() * 14, h: 3 + Math.random() * 6,
+      rot: Math.random() * Math.PI * 2, rotSpeed: (Math.random() - 0.5) * 0.18,
+      vx: (Math.random() - 0.5) * 1.4, vy: 1.8 + Math.random() * 2.8,
+      skewX: (Math.random() - 0.5) * 0.9,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      opacity: 0.7 + Math.random() * 0.3
+    };
+  }
+  var pieces = Array.from({ length: PIECE_COUNT }, makePiece);
+  var start = performance.now();
+  function tick(now) {
+    var progress = Math.min((now - start) / DURATION, 1);
+    ctx.clearRect(0, 0, W(), H());
+    var ga = progress > 0.8 ? 1 - (progress - 0.8) / 0.2 : 1;
+    for (var i = 0; i < pieces.length; i++) {
+      var p = pieces[i];
+      p.x += p.vx; p.y += p.vy; p.rot += p.rotSpeed;
+      p.vx += Math.sin(now * 0.001 + p.y * 0.01) * 0.012;
+      ctx.save();
+      ctx.globalAlpha = p.opacity * ga;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.transform(1, 0, p.skewX, 1, 0, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w * 0.4, p.h);
+      ctx.restore();
+    }
+    if (progress < 1) requestAnimationFrame(tick);
+    else ctx.clearRect(0, 0, W(), H());
+  }
+  requestAnimationFrame(tick);
+  }
+})();
+</script>
+</body>
+</html>
