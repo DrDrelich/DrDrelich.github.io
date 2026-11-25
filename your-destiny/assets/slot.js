@@ -266,6 +266,7 @@
     resetBox();
     var go = function () {
       swap(slot, box, !opts.silent);
+      fitDice();
       if (!opts.noHistory && location.hash !== '#box') history.pushState({ s: 'box' }, '', '#box');
       C.afterShown(box, boxIntro);
     };
@@ -293,6 +294,23 @@
   var envOffer = document.getElementById('env-offer');
   var boxTop = document.getElementById('box-top');
   var phase = 'closed', envReady = false, selected = null;
+
+  /* Your Destiny: the dice behind "Unlock the box" need about 62u of free
+     space above the button. Where the screen is too short (the sticky button
+     then rides over the text) they would cover the copy, so they are left out.
+     Layout values only (offset*), so the screen-entry scale doesn't skew it. */
+  var dice = box.querySelector('.dice-unlock');
+  var copyClosed = box.querySelector('.copy-closed');
+  var boxGap = box.querySelector('.flow-gap');
+  var boxBar = box.querySelector('.actions');
+  function fitDice() {
+    if (!dice || box.hidden) return;
+    var textBottom = copyClosed.offsetTop + copyClosed.offsetHeight;
+    var barTop = Math.min(boxGap.offsetTop + boxGap.offsetHeight,
+      window.innerHeight - (parseFloat(getComputedStyle(boxBar).bottom) || 0) - boxBar.offsetHeight);
+    box.classList.toggle('no-dice', barTop - 62 * u < textBottom + 4 * u);
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDice);
 
   function resetBox() {
     phase = 'closed'; envReady = false;
@@ -454,6 +472,7 @@
       pair = st.pair;
       restoreDraw(pair);
       slot.hidden = true; box.hidden = false;
+      fitDice();
       phase = 'open'; envReady = true;
       box.classList.add('open', 'ready');
       boxTop.style.setProperty('--zh', 762);
@@ -476,7 +495,7 @@
   C.afterShown(slot, playTeaser);
 
   window.addEventListener('resize', function () {
-    measure(); reelL.render(0); reelR.render(0);
+    measure(); reelL.render(0); reelR.render(0); fitDice();
   });
 
   // debug hook for automated checks (no UI)

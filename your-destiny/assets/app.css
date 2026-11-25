@@ -172,6 +172,18 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
   background: rgba(254, 253, 251, .8);
   box-shadow: inset 0 0 0 2px var(--blue-2), inset 0 0 0 999px rgba(27, 58, 138, 0), 0 0 0 rgba(27, 58, 138, 0);
 }
+/* Your Destiny: hover shows the clicked colour (darker blue on primary
+   buttons, the light blue tint on outlined ones), without the lift. Mouse and
+   trackpad only, so a tap on a phone doesn't leave a stuck hover. Kept before
+   the clicked rules so pressing still adds the lift and drop shadow. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    box-shadow: inset 0 0 0 999px rgba(8, 24, 74, .17), 0 0 0 rgba(27, 58, 138, 0);
+  }
+  .btn-secondary:hover {
+    box-shadow: inset 0 0 0 2px var(--blue-2), inset 0 0 0 999px rgba(27, 58, 138, .08), 0 0 0 rgba(27, 58, 138, 0);
+  }
+}
 /* clicked: slightly darker and lifted a touch (while pressed, and through the
    1 s before the view changes) */
 .btn:active, .btn.is-clicked { transform: translateY(calc(-2 * var(--u))); }
@@ -340,6 +352,20 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
 
 .copy-closed { transition: opacity .3s ease; }
 #s-box.open .copy-closed { opacity: 0; pointer-events: none; }
+/* Your Destiny: three dice tucked behind the top edge of "Unlock the box"
+   (img/dice-unlock.svg, a 165 x 102 Figma group drawn 1:1). They sit in the
+   action bar, under the button, so they follow it on any screen height; they
+   fade out when the box opens, and slot.js leaves them out (.no-dice) where
+   the screen is too short for them to clear the text. */
+.dice-unlock {
+  position: absolute; z-index: -1; pointer-events: none;
+  left: calc(151.3 * var(--u));     /* x 171.3 in the frame; the bar starts at 20 */
+  top: calc(-71.1 * var(--u));      /* top of the small die 62 above the button */
+  width: calc(165 * var(--u)); height: calc(102 * var(--u));
+  transition: opacity .3s ease;
+}
+#s-box.open .dice-unlock { opacity: 0; }
+#s-box.no-dice .dice-unlock { display: none; }
 .copy-open, .envs, .env-info { opacity: 0; pointer-events: none; }
 #s-box.open .copy-open { opacity: 1; animation: fadeUp 600ms ease both; }
 .envs {
