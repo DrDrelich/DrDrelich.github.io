@@ -246,7 +246,6 @@ html[data-theme="dark"] .back-btn:active .back-btn__arrow{ filter:brightness(0);
 html[data-theme="dark"] .back-btn:active{ background:#BCD5B6; color:#1F2E25; }
 html[data-theme="dark"] .back-btn:focus-visible{ color:#EEF2EC; outline-color:#BCD5B6; }
 html[data-theme="dark"] .gallery__title{ color:#EEF2EC; }
-html[data-theme="dark"] .md-hint{ background:#BCD5B6; color:#1F2E25; }
 @media (max-width:759px){
   html[data-theme="dark"] .topnav{ background:#1B261F; }
   html[data-theme="dark"] .hn-link{ background:#26332B; color:#EEF2EC; }
@@ -369,10 +368,4 @@ html[data-theme="dark"] .is-play .fx__progress .dot--current{ animation-name:a-p
   /* no mix-blend-mode here: blending makes Chrome flatten the 3D stack (the edge disappears) */
   background:radial-gradient(70% 55% at var(--gx, 50%) var(--gy, 30%), rgba(255,255,255,.3), rgba(255,255,255,0) 70%);
   opacity:var(--go, 0);
-}
-.md-hint{
-  display:inline-flex; align-items:center; gap:6px;
-  margin-left:12px; padding:4px 10px; border-radius:12px;
-  background:#1F2E25; color:#F2F4EF;
-  font:11px/1.2 "JetBrains Mono", ui-monospace, monospace; vertical-align:3px;
 }

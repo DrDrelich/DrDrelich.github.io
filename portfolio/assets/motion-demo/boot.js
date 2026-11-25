@@ -8,7 +8,9 @@
       Sets <html data-theme="dark">.
    2. In dark mode, swaps each illustration SVG for its pre-coloured
       copy in assets/motion-demo/dark/ as the parser inserts it, so
-      light artwork never flashes on a dark page.
+      light artwork never flashes on a dark page. The same goes for the
+      Native Mobile Apps mock-ups 1/4/5.webp (copies in NATIVE MOBILE
+      APPS/dark/, the light backdrop redrawn on the dark section colour).
    ========================================================= */
 (function () {
   'use strict';
@@ -34,12 +36,15 @@
     if (dark) {
       root.dataset.theme = 'dark';
       var LIGHT = /(^|\/)assets\/new-layout\/([\w-]+\.svg)$/;
+      // Native Mobile Apps gallery: mock-ups with the light #EFEFEF backdrop baked in
+      // have copies on the dark section colour in NATIVE MOBILE APPS/dark/.
+      var GALLERY = /^(.*NATIVE(?: |%20)MOBILE(?: |%20)APPS\/)([145]\.webp)$/;
       var swap = function (img) {
         var src = img.getAttribute('src');
-        var m = src && LIGHT.exec(src);
-        if (!m) return;
+        var m = src && LIGHT.exec(src), g = !m && src && GALLERY.exec(src);
+        if (!m && !g) return;
         img.dataset.mdSrc = src;
-        img.setAttribute('src', 'assets/motion-demo/dark/' + m[2]);
+        img.setAttribute('src', m ? 'assets/motion-demo/dark/' + m[2] : g[1] + 'dark/' + g[2]);
       };
       var mo = new MutationObserver(function (list) {
         for (var i = 0; i < list.length; i++) {

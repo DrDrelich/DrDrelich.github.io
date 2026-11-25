@@ -282,13 +282,20 @@
   // mapped in CSS ([data-theme="dark"] ... [fill="…"]).
   var DARK_DIR = 'assets/motion-demo/dark/';
   var LIGHT_SVG = /(^|\/)assets\/new-layout\/([\w-]+\.svg)$/;
+  // Native Mobile Apps mock-ups with a light backdrop baked in (see boot.js)
+  var GALLERY_IMG = /^(.*NATIVE(?: |%20)MOBILE(?: |%20)APPS\/)([145]\.webp)$/;
 
   function savedTheme() { try { return localStorage.getItem('md-theme'); } catch (e) { return null; } }
   function saveTheme(t) { try { localStorage.setItem('md-theme', t); } catch (e) {} }
   function clearTheme() { try { localStorage.removeItem('md-theme'); } catch (e) {} }
   function systemIsDark() { return window.matchMedia('(prefers-color-scheme: dark)').matches; }
   function lightSrc(img) { return img.dataset.mdSrc || img.getAttribute('src'); }
-  function darkSrc(src) { var m = src && LIGHT_SVG.exec(src); return m ? DARK_DIR + m[2] : null; }
+  function darkSrc(src) {
+    var m = src && LIGHT_SVG.exec(src);
+    if (m) return DARK_DIR + m[2];
+    m = src && GALLERY_IMG.exec(src);
+    return m ? m[1] + 'dark/' + m[2] : null;
+  }
 
   var preloaded = null;
   function prepareDark() {          // warm the cache so a flip has nothing left to fetch
@@ -480,16 +487,6 @@
     if (reduce.matches || mobile.matches || !fine.matches) return;
     var slots = [].slice.call(document.querySelectorAll('.live-slot'));
     if (!slots.length) return;
-
-    // hint on the first live section
-    var firstTitle = slots[0].closest('.gallery__section');
-    firstTitle = firstTitle && firstTitle.querySelector('.gallery__title');
-    if (firstTitle && !firstTitle.querySelector('.md-hint')) {
-      var hint = document.createElement('span');
-      hint.className = 'md-hint';
-      hint.textContent = '↻ Drag a phone to turn it';
-      firstTitle.appendChild(hint);
-    }
 
     slots.forEach(function (slot) {
       var screen = slot.firstElementChild;
