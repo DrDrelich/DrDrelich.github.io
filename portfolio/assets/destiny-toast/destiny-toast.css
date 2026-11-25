@@ -1,0 +1,255 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap");
+/* =========================================================
+   YOUR DESTINY — notification banner, floating dice, modal.
+   Homepage only. Built from Figma 46lctKh6wasTjWgJhZNssQ,
+   page "Main Page Toats" (232:307), banner group 233:1396;
+   the floating dice follow the user's two-dice image.
+   Added on top of index.html by destiny-toast.js — the page's
+   own HTML, CSS and scripts are unchanged.
+
+   Desktop: banner and dice live inside .canvas, so every value
+   below is a 1440×837 design px and scales with the page (--s).
+   Phone layout (≤759px): fixed to the viewport, real CSS px.
+   ========================================================= */
+
+/* ---------------- Banner (Figma 440 × 62) ---------------- */
+.dz-toast{
+  position:absolute; z-index:30;
+  left:460px;          /* Figma x 460 */
+  top:0;               /* Figma y −27 would push the dice above the window, so the banner's top edge sits on the layout's top edge */
+  width:440px; height:62px;
+  color:#fff;
+  font-family:"JetBrains Mono", ui-monospace, monospace;
+  -webkit-font-smoothing:antialiased;
+}
+.dz-toast[hidden]{ display:none; }
+.dz-toast__bg{
+  position:absolute; inset:0;
+  background:#2E4637;
+  border:1px solid #E5E7EB;
+  border-radius:10.15px / 12px;                     /* Figma vector: 12 px corners scaled 520 → 440 wide */
+  box-shadow:5px 5px 14px rgba(0,0,0,.06), 10px 10px 14px rgba(0,0,0,.06);
+}
+.dz-toast__text{ position:absolute; left:64px; top:12.25px; }
+.dz-toast__title{
+  margin:0;
+  font:700 18px/23px "Space Grotesk", system-ui, sans-serif;
+  white-space:nowrap;
+}
+.dz-toast__sub{ margin:-.5px 0 0; font-size:11px; line-height:15px; white-space:nowrap; }
+
+/* TRY IT — the site's pill button, recoloured for the green bar */
+.dz-try{
+  position:absolute; left:328.75px; top:13px;
+  width:66.15px; height:36px; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  border:0; border-radius:18px;
+  background:#E4E8E2; color:#1F2E25;
+  font:400 11px/15px "JetBrains Mono", ui-monospace, monospace;
+  cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease, color .18s ease, transform .12s ease, box-shadow .18s ease;
+}
+.dz-try:hover{ background:#8A5A44; color:#fff; }
+.dz-try:active{ background:#BCD5B6; color:#1F2E25; transform:scale(.96); box-shadow:inset 0 2px 4px rgba(0,0,0,.18); }
+.dz-try:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+/* × — Figma glyph box 12 × 23 at (411.16, 20); the button is a 32 px target around it */
+.dz-x{
+  position:absolute; left:401.16px; top:15.5px;
+  width:32px; height:32px; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  border:0; border-radius:50%;
+  background:transparent; color:#fff;
+  font:400 20px/23px Arial, Helvetica, sans-serif;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease, transform .12s ease;
+}
+.dz-x:hover{ background:rgba(255,255,255,.14); }
+.dz-x:active{ transform:scale(.9); }
+.dz-x:focus-visible{ outline:2px solid #fff; outline-offset:0; }
+
+/* Dice — Figma placement (rotation about each image's top-left corner) */
+.dz-dice{ position:absolute; inset:0; pointer-events:none; }
+.dz-pair{ position:absolute; inset:0; transform-origin:23.9px 41.9px; }  /* big + middle die always move as one (torn corner stays covered) */
+.dz-die{ position:absolute; transform-origin:0 0; }
+.dz-die img{ display:block; width:100%; height:100%; }
+.dz-die--a{ left:14px;    top:14.84px; width:37.82px; height:40.58px; }
+.dz-die--b{ left:1.35px;  top:32.84px; width:30.78px; height:31.29px; transform:rotate(9.84deg); }
+.dz-die--c{ left:18.41px; top:-2.71px; width:21.38px; height:21.73px; transform:rotate(-33.5deg); }
+
+/* ---------------- Floating dice (user's image, 63 × 66) ---------------- */
+.dz-cube{
+  position:absolute; z-index:30;
+  left:458.1px; top:-6.1px;        /* centred on the banner's dice */
+  width:63px; height:66px; padding:0;
+  border:0; border-radius:16px; background:none;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.dz-cube[hidden]{ display:none; }
+.dz-cube:focus-visible{ outline:2px solid var(--forest, #2E4637); outline-offset:2px; }
+.dz-cube__in{ position:absolute; inset:0; transition:scale .35s cubic-bezier(.34,1.56,.64,1), rotate .35s cubic-bezier(.34,1.56,.64,1); }
+.dz-cube__in img{ position:absolute; display:block; transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+.dz-cube__a{ left:17.7px; top:7.65px;  width:38px; height:40.78px; transform:rotate(2deg); }
+.dz-cube__b{ left:2.28px; top:28.23px; width:31px; height:31.52px; transform:rotate(9deg); }
+/* Hover: the pair tilts together; each die turns only 4° and they never move apart —
+   the big die's image has a torn bottom-left corner that the small die must keep covering
+   (checked: anything up to ±5° keeps it hidden, any sideways gap shows it). */
+.dz-cube:hover .dz-cube__in{ scale:1.06; rotate:-4deg; }
+.dz-cube:hover .dz-cube__a{ transform:rotate(-2deg); }
+.dz-cube:hover .dz-cube__b{ transform:rotate(13deg); }
+.dz-cube:active .dz-cube__in{ scale:.94; }
+
+.dz-cube__tip{
+  position:absolute; left:100%; top:50%;
+  margin-left:6px; padding:6px 10px;
+  border-radius:14px;
+  background:#2E4637; color:#fff;
+  font:400 11px/14px "JetBrains Mono", ui-monospace, monospace;
+  white-space:nowrap; pointer-events:none;
+  opacity:0; transform:translate(-4px,-50%);
+  transition:opacity .18s ease, transform .18s ease;
+}
+.dz-cube:hover .dz-cube__tip,
+.dz-cube:focus-visible .dz-cube__tip{ opacity:1; transform:translate(0,-50%); }
+@media (hover:none){ .dz-cube__tip{ display:none; } }
+
+/* ---------------- Modal ---------------- */
+.dz-modal{
+  --dz-s:1;
+  position:fixed; inset:auto; margin:0; padding:0;
+  border:0; background:transparent; overflow:visible;
+  max-width:none; max-height:none;
+  color:var(--ink, #1F2E25);
+  font-family:"JetBrains Mono", ui-monospace, monospace;
+}
+.dz-modal::backdrop{ background:rgba(18,26,21,.42); -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
+.dz-card{
+  position:relative;
+  display:flex; flex-direction:column;
+  width:100%; height:100%;
+  /* homepage module card (white, 22 px corners); only the top keeps its padding —
+     the prototype runs edge to edge and the card's corners clip it */
+  padding:calc(19px * var(--dz-s)) 0 0;
+  background:var(--card, #fff);
+  border-radius:calc(22px * var(--dz-s));
+  overflow:hidden;
+  box-shadow:0 16px 34px -10px rgba(17,17,17,.22), 0 6px 14px -8px rgba(17,17,17,.16), 0 30px 80px -24px rgba(17,17,17,.35);
+  transform-origin:var(--dz-ox, 50%) var(--dz-oy, 50%);
+}
+.dz-card__title{
+  margin:0 calc(20px * var(--dz-s)); padding-right:calc(40px * var(--dz-s));
+  font:400 calc(22px * var(--dz-s))/calc(26.39px * var(--dz-s)) "Space Grotesk", system-ui, sans-serif;
+  color:var(--ink, #1F2E25); white-space:nowrap;
+}
+.dz-card__sub{
+  margin:calc(5px * var(--dz-s)) calc(20px * var(--dz-s)) 0;
+  font-size:calc(11px * var(--dz-s)); line-height:calc(14.52px * var(--dz-s));
+  color:var(--accent, #8A5A44); white-space:nowrap;
+}
+/* × — round version of the site's VIEW button (same colours and states) */
+.dz-card__close{
+  position:absolute; top:calc(12px * var(--dz-s)); right:calc(12px * var(--dz-s));
+  width:calc(44px * var(--dz-s)); height:calc(44px * var(--dz-s));
+  min-width:24px; min-height:24px; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  border:0; border-radius:50%;
+  background:var(--btn, #E4E8E2); color:var(--ink, #1F2E25);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease, color .18s ease, transform .12s ease, box-shadow .18s ease;
+}
+.dz-card__close svg{ width:calc(12px * var(--dz-s)); height:calc(12px * var(--dz-s)); display:block; transition:transform .25s cubic-bezier(.22,.61,.36,1); }
+.dz-card__close:hover{ background:var(--accent, #8A5A44); color:#fff; }
+.dz-card__close:hover svg{ transform:rotate(90deg); }
+.dz-card__close:active{ background:#2E4637; color:#fff; transform:scale(.96); box-shadow:inset 0 2px 4px rgba(0,0,0,.18); }
+.dz-card__close:focus-visible{ outline:2px solid var(--forest, #2E4637); outline-offset:2px; }
+html[data-theme="dark"] .dz-card__close:hover{ color:#1F2E25; }
+html[data-theme="dark"] .dz-card__close:active{ background:#BCD5B6; color:#1F2E25; }
+
+.dz-card__panel{
+  position:relative; flex:1 1 auto; min-height:0;
+  margin-top:calc(13.48px * var(--dz-s));
+  background:var(--bg, #F2F4EF);
+  overflow:hidden;
+  isolation:isolate;
+}
+.dz-card__panel iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#FEFDFB; opacity:0; transition:opacity .25s ease; }
+.dz-card__panel.is-loaded iframe{ opacity:1; }
+.dz-card__spin{
+  position:absolute; left:50%; top:50%; width:18px; height:18px; margin:-9px 0 0 -9px;
+  border-radius:50%; border:2px solid rgba(46,70,55,.18); border-top-color:#2E4637;
+  animation:dz-spin .8s linear infinite;
+}
+.dz-card__panel.is-loaded .dz-card__spin{ display:none; }
+
+html.dz-lock, html.dz-lock body{ overflow:hidden !important; }
+
+/* ---------------- Dark tokens (motion layer) ---------------- */
+html[data-theme="dark"] .dz-toast__bg{ border-color:rgba(188,213,182,.22); box-shadow:5px 5px 14px rgba(0,0,0,.25), 10px 10px 14px rgba(0,0,0,.25); }
+html[data-theme="dark"] .dz-cube__tip{ background:#BCD5B6; color:#1F2E25; }
+
+/* ---------------- Motion ---------------- */
+@keyframes dz-spin{ to{ transform:rotate(360deg); } }
+@keyframes dz-fade-in{ from{ opacity:0; } }
+@keyframes dz-fade-out{ to{ opacity:0; } }
+
+@media (prefers-reduced-motion: no-preference){
+  /* banner drops in (spring), dice tumble after it */
+  .dz-toast[data-state="in"]{ animation:dz-drop .7s cubic-bezier(.34,1.4,.64,1) both; }
+  .dz-toast.is-entering .dz-pair{ animation:dz-tumble .6s cubic-bezier(.34,1.56,.64,1) .22s both; }
+  .dz-toast.is-entering .dz-die--c img{ animation:dz-tumble .6s cubic-bezier(.34,1.56,.64,1) .36s both; }
+  .dz-toast:not(.is-entering):hover .dz-pair{ animation:dz-jiggle .6s ease-in-out both; }
+  .dz-toast:not(.is-entering):hover .dz-die--c img{ animation:dz-jiggle .6s ease-in-out .08s both; }
+  /* dismissed: a small dip, then up and out of the window */
+  .dz-toast[data-state="out"]{ animation:dz-lift .55s both; }
+
+  /* floating dice: pop in, then bob */
+  .dz-cube[data-state="in"]{ animation:dz-pop .55s cubic-bezier(.34,1.56,.64,1) both; }
+  .dz-cube[data-state="in"] .dz-cube__in{ animation:dz-float 3.6s ease-in-out .6s infinite; }
+  .dz-cube[data-state="out"]{ animation:dz-pop-out .2s ease-in both; }
+
+  .dz-modal.is-opening .dz-card{ animation:dz-modal-in .34s cubic-bezier(.22,.61,.36,1) both; }
+  .dz-modal.is-opening::backdrop{ animation:dz-fade-in .3s ease both; }
+  .dz-modal.is-closing .dz-card{ animation:dz-modal-out .22s ease-in both; }
+  .dz-modal.is-closing::backdrop{ animation:dz-fade-out .22s ease-in both; }
+}
+@media (prefers-reduced-motion: reduce){
+  .dz-toast[data-state="in"], .dz-cube[data-state="in"]{ animation:dz-fade-in .2s ease both; }
+  .dz-toast[data-state="out"], .dz-cube[data-state="out"]{ animation:dz-fade-out .2s ease both; }
+  .dz-cube__in, .dz-cube__in img, .dz-card__close svg{ transition:none; }
+}
+@keyframes dz-drop{ from{ transform:translateY(calc(-100% - 90px)); } to{ transform:none; } }
+@keyframes dz-lift{
+  0%{ transform:none; animation-timing-function:ease-out; }
+  18%{ transform:translateY(5px); animation-timing-function:cubic-bezier(.55,0,.8,.2); }
+  100%{ transform:translateY(calc(-100% - 90px)); }
+}
+@keyframes dz-tumble{ from{ opacity:0; transform:translateY(-18px) rotate(-120deg) scale(.6); } to{ opacity:1; transform:none; } }
+@keyframes dz-jiggle{ 0%,100%{ transform:none; } 25%{ transform:rotate(-8deg); } 55%{ transform:rotate(6deg); } 80%{ transform:rotate(-3deg); } }
+@keyframes dz-pop{ 0%{ opacity:0; transform:scale(.3) rotate(-25deg); } 65%{ opacity:1; transform:scale(1.12) rotate(6deg); } 100%{ opacity:1; transform:none; } }
+@keyframes dz-pop-out{ to{ opacity:0; transform:scale(.5) rotate(-15deg); } }
+@keyframes dz-float{ 0%,100%{ transform:none; } 50%{ transform:translateY(-4px) rotate(-3deg); } }
+@keyframes dz-modal-in{ from{ opacity:0; transform:translateY(10px) scale(.94); } }
+@keyframes dz-modal-out{ to{ opacity:0; transform:translateY(6px) scale(.97); } }
+
+/* ---------------- Phone layout (≤759px) ---------------- */
+@media (max-width:759px){
+  .dz-toast{
+    position:fixed; z-index:900;
+    top:24px; left:12px; right:12px;
+    width:auto; max-width:440px; height:auto; min-height:62px;
+    margin:0 auto;
+    display:flex; align-items:center; gap:12px;
+    padding:10px 8px 10px 64px;
+  }
+  .dz-toast__text{ position:relative; left:auto; top:auto; flex:1 1 auto; min-width:0; }
+  .dz-toast__title, .dz-toast__sub{ white-space:normal; }
+  .dz-try, .dz-x{ position:relative; left:auto; top:auto; flex:none; }
+  .dz-x{ margin-left:-6px; }
+  .dz-cube{ position:fixed; z-index:900; top:10px; right:10px; left:auto; }
+  .dz-cube__tip{ left:auto; right:100%; margin:0 6px 0 0; }
+}
+@media (max-width:400px){
+  .dz-toast{ gap:8px; padding-left:58px; }
+  .dz-toast__title{ font-size:16px; line-height:20px; }
+  .dz-toast__sub{ margin-top:2px; }
+}
