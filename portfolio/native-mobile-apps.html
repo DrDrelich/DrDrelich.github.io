@@ -672,6 +672,23 @@
     }
 
     /* =================================================================
+       Surprise Me screens (Figma "Portfolio", page "SurpriseMe - portfolio"):
+       slot machine 228:3, envelope chosen 228:1755, VIP e-mail confirmation
+       228:1996, submission sent 228:2214. 402×874 frames exported at 2×
+       (surprise-me/1–4.webp), placed like the Deu Quest screens: same slot
+       size and gaps, same corner radius; hairline as on the light flight-quiz
+       screens so the off-white screens keep an edge on the gray section.
+    ================================================================= */
+    .sm{
+      width:402px; height:874px;
+      transform-origin:top left;
+      border-radius:44px; overflow:hidden;
+      background:#FFFEFA;
+      box-shadow:0 0 0 1px #dadada, 0 6px 22px -5px rgba(0,0,0,.13);
+    }
+    .sm img{ display:block; width:402px; height:874px; max-width:none; }
+
+    /* =================================================================
        Mobile (≤759px): 4-phone sections as a 2 × 2 grid.
        Image sections: the same 4-phone image is shown in 4 tiles, each
        cropped to one phone (one download). Crop per tile = phone width
@@ -1404,6 +1421,20 @@
     </div>
   </template>
 
+  <!-- Surprise Me screens (Figma 228:3, 228:1755, 228:1996, 228:2214), exported at 2× -->
+  <template id="tpl-sm-slot">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/surprise-me/1.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+  <template id="tpl-sm-envelope">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/surprise-me/2.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+  <template id="tpl-sm-vip">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/surprise-me/3.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+  <template id="tpl-sm-sent">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/surprise-me/4.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+
   <script>
     /* -----------------------------------------------------------------
        Gallery sections.
@@ -1414,7 +1445,6 @@
     var IMAGE_DIR = './NATIVE MOBILE APPS/';
 
     var SECTIONS = [
-      {"file": "1.webp", "title": "Native iOS application", "phones": true, "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
       {"file": "2.webp", "title": "Native iOS application", "alt": "Native iOS in-flight quiz game: a flight-deck dashboard with the flight route, the last played category and a winning streak, an animated radar searching for a duel opponent for the Brussels challenge, the opponent found with their rankings, and a trivia question about Brussels sprouts",
        /* Live screens instead of the image. Geometry copied from the phones in
           the other sections (3.webp, 2000px wide): each phone 459px wide
@@ -1427,6 +1457,17 @@
          {"template": "tpl-challenges-search", "left": 26.2},
          {"template": "tpl-opponent-found",    "left": 50.75},
          {"template": "tpl-duel",              "left": 75.4}
+       ]},
+      {"file": "1.webp", "title": "Native iOS application", "phones": true, "alt": "Native iOS fitness coaching game: notifications, avatar configuration and two My player screens with food, training and energy levels"},
+      {"title": "Native iOS application", "alt": "Surprise Me mobile flow: a slot machine to choose your destiny, a box with five envelopes and the chosen offer, a VIP invitation asking to confirm the e-mail address, and the confirmation that the e-mail was sent",
+       /* Figma "SurpriseMe - portfolio" (228:2): four 402×874 screens, the same
+          size as the Deu Quest screens, so the same box and phone geometry. */
+       "layout": {"aspect": "2000 / 1057.9", "top": 2.269, "width": 22.95, "slot": "live-slot--dq"},
+       "overlays": [
+         {"template": "tpl-sm-slot",     "left": 1.6},
+         {"template": "tpl-sm-envelope", "left": 26.2},
+         {"template": "tpl-sm-vip",      "left": 50.75},
+         {"template": "tpl-sm-sent",     "left": 75.4}
        ]},
       {"file": "3.webp", "title": "Native iOS application", "alt":"Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges",
        /* Live screens instead of the image (Figma "Deu Quest Mobile"), same phone
