@@ -144,22 +144,41 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
   border-radius: calc(26 * var(--u));
   font-weight: 700; font-size: calc(15 * var(--u)); line-height: 1;
   text-transform: uppercase; white-space: nowrap;
-  transition: opacity .42s ease, transform .15s ease, filter .2s ease, box-shadow .2s ease;
+  transition: opacity .42s ease, transform .2s cubic-bezier(.3, .7, .4, 1), box-shadow .2s ease;
 }
+/* The darkening is an inset shadow: it paints over the background but under
+   the label, so only the button's surface gets darker. */
 .btn-primary {
   color: #fff;
   background: #1F6FD1 url(img/btn-texture.jpg) center / 100% 100% no-repeat;
+  box-shadow: inset 0 0 0 999px rgba(8, 24, 74, 0), 0 0 0 rgba(27, 58, 138, 0);
 }
 .btn-secondary {
   color: var(--blue-2);
   background: rgba(254, 253, 251, .8);
-  box-shadow: inset 0 0 0 2px var(--blue-2);
+  box-shadow: inset 0 0 0 2px var(--blue-2), inset 0 0 0 999px rgba(27, 58, 138, 0), 0 0 0 rgba(27, 58, 138, 0);
 }
-.btn:active { transform: translateY(1px) scale(.99); }
+/* clicked: slightly darker and lifted a touch (while pressed, and through the
+   1 s before the view changes) */
+.btn:active, .btn.is-clicked { transform: translateY(calc(-2 * var(--u))); }
+.btn-primary:active, .btn-primary.is-clicked {
+  box-shadow: inset 0 0 0 999px rgba(8, 24, 74, .17), 0 calc(6 * var(--u)) calc(14 * var(--u)) rgba(27, 58, 138, .26);
+}
+.btn-secondary:active, .btn-secondary.is-clicked {
+  box-shadow: inset 0 0 0 2px var(--blue-2), inset 0 0 0 999px rgba(27, 58, 138, .08), 0 calc(6 * var(--u)) calc(14 * var(--u)) rgba(27, 58, 138, .2);
+}
 .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
-.btn.flash { animation: btnFlash 320ms ease-out; }
-@keyframes btnFlash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.7); } }
-.btn.appear { animation: btnIn 420ms ease both; }
+.btn.is-clicked[aria-disabled="true"] { opacity: 1; }
+/* smoke puff from under a clicked button (blobs are made by Common.puff) */
+.puff { position: absolute; pointer-events: none; overflow: visible; }
+.puff i {
+  position: absolute; border-radius: 50%; opacity: 0;
+  /* white cloud puffs with a soft blue-grey rim, so they read on cream and yellow */
+  background: radial-gradient(circle at 44% 40%, #F6F7FB 0%, rgba(236, 239, 246, .99) 30%, rgba(208, 215, 232, .97) 48%, rgba(150, 163, 198, .85) 60%, rgba(150, 163, 198, 0) 70%);
+  will-change: transform, opacity;
+}
+/* backwards, not both: a finished entrance must not pin transform to none */
+.btn.appear { animation: btnIn 420ms ease backwards; }
 @keyframes btnIn { from { opacity: 0; transform: translateY(calc(8 * var(--u))); } to { opacity: 1; transform: none; } }
 
 .icon-btn {
@@ -174,7 +193,8 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
 }
 .icon-btn img.i-info { width: calc(19.504 * var(--u)); height: calc(19.504 * var(--u)); }
 .icon-btn img.i-back { width: calc(8.648 * var(--u)); height: calc(15.088 * var(--u)); margin-left: calc(-1 * var(--u)); }
-.icon-btn:active { transform: scale(.94); }
+.icon-btn { transition: transform .2s cubic-bezier(.3, .7, .4, 1), filter .2s ease; }
+.icon-btn:active { transform: translateY(calc(-1.5 * var(--u))); filter: brightness(.9); }
 
 /* ---------- slogan collage (built by slogans.js; size set per variant) ---------- */
 .title {
@@ -255,6 +275,11 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
 #s-box.open .d-die1 { --tx: -58.5; --ty: 35.4; --s: .455; }
 #s-box.open .d-die2 { --tx: 26; --ty: -55.9; }
 #s-box.open .d-extra { --tx: 0; --ty: 0; --s: 1; opacity: 1; }
+/* start pose of the closed-box load animation (boxIntro in slot.js): the
+   floating cards and dice spring from here into their Figma places */
+#s-box.intro-pre .d-cards { translate: calc(-2.8 * var(--u)) calc(-3.8 * var(--u)); rotate: -10deg; scale: .95; }
+#s-box.intro-pre .d-die1 { translate: calc(-9 * var(--u)) calc(5.5 * var(--u)); rotate: 8deg; scale: .92; }
+#s-box.intro-pre .d-die2 { translate: calc(4.5 * var(--u)) calc(-9 * var(--u)); rotate: -12deg; }
 
 .chest { z-index: 5; }
 .chest img { position: absolute; inset: 0; transition: opacity 260ms ease; }
@@ -277,7 +302,6 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
     inset 0 0 calc(8 * var(--u)) rgba(255, 240, 140, .55),
     0 0 calc(18 * var(--u)) calc(5 * var(--u)) rgba(255, 238, 130, .85);
   pointer-events: none; z-index: 6;
-  animation: hintPulse 1.3s ease-in-out infinite;
   transition: opacity .3s ease;
 }
 .hint::after {
@@ -286,8 +310,10 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
   border-radius: 50%;
   border: calc(3 * var(--u)) solid #FFE347;
   box-shadow: 0 0 0 calc(1 * var(--u)) rgba(27, 58, 138, .45);
-  animation: hintRipple 1.3s ease-out infinite;
+  opacity: 0;
 }
+#s-box.live .hint { animation: hintPulse 1.3s ease-in-out infinite; }
+#s-box.live .hint::after { animation: hintRipple 1.3s ease-out infinite; }
 @keyframes hintPulse {
   0%, 100% { transform: scale(1); filter: brightness(1); }
   50% { transform: scale(1.12); filter: brightness(1.3); }
@@ -313,15 +339,15 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
 
 .env {
   position: absolute;
-  left: calc((var(--cx) - 29) * var(--u)); top: calc((673.25 - 21.75) * var(--u));
-  width: calc(58 * var(--u)); height: calc(43.5 * var(--u));
+  left: calc((var(--cx) - 40) * var(--u)); top: calc(637 * var(--u));
+  width: calc(80 * var(--u)); height: calc(60 * var(--u));
   transition: transform 300ms cubic-bezier(.34, 1.56, .64, 1), opacity 300ms ease;
 }
 .env img { width: 100%; height: 100%; }
 .env .num {
-  position: absolute; left: 0; right: 0; top: calc(50% + 3.5 * var(--u));
+  position: absolute; left: 0; right: 0; top: 58%;   /* centre of the wax seal */
   transform: translateY(-50%);
-  font-weight: 700; font-size: calc(13 * var(--u)); line-height: 1; color: #fff; text-align: center;
+  font-weight: 700; font-size: calc(17.5 * var(--u)); line-height: 1; color: #fff; text-align: center;
 }
 .env .glint {
   position: absolute; inset: 0; overflow: hidden; opacity: 0;
@@ -339,12 +365,12 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
   100% { transform: translateX(320%) skewX(-18deg); opacity: 0; }
 }
 .envs.has-sel .env { opacity: .5; }
-.envs.has-sel .env.sel { opacity: 1; transform: translateY(calc(-8.05 * var(--u))) rotate(-2.86deg); }
+.envs.has-sel .env.sel { opacity: 1; transform: translateY(calc(-9 * var(--u))) rotate(-2.86deg); }
 .env.sel .glint { opacity: 1; }
 .env-bar {
   position: absolute;
-  top: calc(701 * var(--u)); left: calc((var(--bx, 65) - 11) * var(--u));
-  width: calc(22 * var(--u)); height: calc(3 * var(--u));
+  top: calc(703 * var(--u)); left: calc((var(--bx, 101) - 15) * var(--u));
+  width: calc(30 * var(--u)); height: calc(3 * var(--u));
   border-radius: calc(1.5 * var(--u));
   background: var(--red);
   opacity: 0;
@@ -435,7 +461,7 @@ img.abs, img.rot, .abs > img, .rot > img { object-fit: fill; }
 
 @media (prefers-reduced-motion: reduce) {
   .screen.entering, .page-in { animation-duration: 1ms; }
-  .hint, .env .glint::after { animation: none; }
+  #s-box.live .hint, .env .glint::after { animation: none; }
   .hint::after { display: none; }
   .box-d, .envs { transition-duration: 1ms; }
 }

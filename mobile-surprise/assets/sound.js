@@ -154,11 +154,25 @@
 
   // Live confirmation.html: its own context, master gain 0.7, no compressor,
   // sweep only (no bells), stop at +0.8 s.
+  // The sweep now plays 1 s after the tap (button press delay), so the context
+  // is created inside the tap with primeConfirm() — iOS only starts audio
+  // contexts made or resumed during a user gesture.
+  var cctx = null;
+  function primeConfirm() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+      if (!cctx) cctx = new AC();
+      if (cctx.state === 'suspended') cctx.resume();
+    } catch (e) {}
+  }
   function whooshConfirm() {
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
-      var c = new AC();
+      var c = cctx || new AC();
+      cctx = null;
       var m = c.createGain();
       m.gain.value = 0.7;
       m.connect(c.destination);
@@ -186,5 +200,6 @@
     }
   });
 
-  window.Sound = { init: init, tick: tick, thunk: thunk, whoosh: whoosh, crack: crack, chime: chime, whooshConfirm: whooshConfirm };
+  window.Sound = { init: init, tick: tick, thunk: thunk, whoosh: whoosh, crack: crack, chime: chime,
+    whooshConfirm: whooshConfirm, primeConfirm: primeConfirm };
 })();

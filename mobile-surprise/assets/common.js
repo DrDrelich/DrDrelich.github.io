@@ -52,10 +52,83 @@
     setTimeout(function () { window.location.href = url; }, 430);
   }
 
-  function flash(btn) {
-    if (!btn) return;
-    btn.classList.remove('flash'); void btn.offsetWidth; btn.classList.add('flash');
+  /* ---------- pressed buttons: darker + lifted, smoke puff, 1 s before the view changes ---------- */
+  var PRESS_DELAY = reduceMotion ? 300 : 1000;
+
+  // Soft vapour bursting out from under the button's bottom edge. Every blob
+  // has faded out by ~900 ms, before the 1 s mark when the view changes.
+  function puff(btn) {
+    if (reduceMotion || !btn || !btn.animate || !btn.parentNode) return;
+    var w = btn.offsetWidth, h = btn.offsetHeight;
+    if (!w) return;
+    var k = w / 362;                       // the design buttons are 362 px wide
+    var wrap = document.createElement('span');
+    wrap.className = 'puff';
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.style.cssText = 'left:' + btn.offsetLeft + 'px;top:' + btn.offsetTop + 'px;width:' + w + 'px;height:' + h + 'px';
+    btn.parentNode.insertBefore(wrap, btn);   // earlier sibling = painted under the button
+    var N = 18;
+    for (var i = 0; i < N; i++) {
+      var t = (i + 0.2 + Math.random() * 0.6) / N;
+      var side = t - 0.5;                                   // -0.5 (left) .. 0.5 (right)
+      var size = (20 + Math.random() * 16) * k;
+      // mostly sideways: the sticky action bar leaves only ~16 px below the button,
+      // so the vapour billows out along the bottom edge and curls up at the ends
+      var dx = side * (62 + Math.random() * 50) * k + (Math.random() - 0.5) * 12 * k;
+      var dy = (4 + Math.random() * 6) * k - side * side * 4 * 28 * k;
+      var b = document.createElement('i');
+      b.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + (t * w - size / 2) + 'px;top:' + (h - 14 * k - size / 2) + 'px';
+      wrap.appendChild(b);
+      // burst out fast, drift and thin out, gone by ~0.9 s
+      b.animate([
+        { transform: 'translate(0,0) scale(.35)', opacity: 0, easing: 'cubic-bezier(.2,.8,.3,1)' },
+        { transform: 'translate(' + (dx * 0.45) + 'px,' + (dy * 0.45) + 'px) scale(1)', opacity: 1, offset: 0.18, easing: 'ease-out' },
+        { transform: 'translate(' + (dx * 0.8) + 'px,' + (dy * 0.8) + 'px) scale(1.4)', opacity: 0.85, offset: 0.55, easing: 'ease-in' },
+        { transform: 'translate(' + dx + 'px,' + (dy - 6 * k) + 'px) scale(1.75)', opacity: 0 }
+      ], { duration: 760 + Math.random() * 120, delay: Math.random() * 40, easing: 'linear', fill: 'both' });
+    }
+    setTimeout(function () { wrap.remove(); }, PRESS_DELAY);
   }
+
+  function release(btn) { if (btn) btn.classList.remove('is-clicked'); }
+
+  // Visual press only (the action follows right away).
+  function press(btn, holdMs) {
+    if (!btn) return;
+    btn.classList.add('is-clicked');
+    puff(btn);
+    setTimeout(function () { release(btn); }, holdMs || 700);
+  }
+
+  // Press, let the puff play for 1 s, then run fn (the view change). The
+  // button stays pressed until the next view has taken over.
+  function pressThen(btn, fn) {
+    if (window.Sound) window.Sound.init();   // unlock audio inside the tap itself
+    if (btn) { btn.classList.add('is-clicked'); puff(btn); }
+    setTimeout(function () {
+      fn();
+      setTimeout(function () { release(btn); }, 1300);
+    }, PRESS_DELAY);
+  }
+
+  /* ---------- screen-load micro-animations start 1 s after the screen is shown ---------- */
+  var SCREEN_DELAY = 1000;
+  function afterShown(root, fn) {
+    var imgs = Array.prototype.slice.call((root || document).querySelectorAll('img'));
+    var waits = imgs.map(function (im) {
+      if (im.complete) return Promise.resolve();
+      return new Promise(function (res) {
+        im.addEventListener('load', res, { once: true });
+        im.addEventListener('error', res, { once: true });
+      });
+    });
+    if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+    var cap = new Promise(function (res) { setTimeout(res, 5000); });   // never wait forever
+    Promise.race([Promise.all(waits), cap]).then(function () { setTimeout(fn, SCREEN_DELAY); });
+  }
+
+  // iOS only applies :active styles when a touch listener exists
+  document.addEventListener('touchstart', function () {}, { passive: true });
 
   /* ---------- keep newly revealed content above the sticky action bar ---------- */
   function revealAbove(el) {
@@ -118,12 +191,15 @@
     if (e.persisted) {
       var b = document.getElementById('bloom');
       if (b) { b.style.display = 'none'; b.getAnimations && b.getAnimations().forEach(function (a) { a.cancel(); }); }
+      Array.prototype.forEach.call(document.querySelectorAll('.is-clicked'), release);
+      Array.prototype.forEach.call(document.querySelectorAll('.puff'), function (p) { p.remove(); });
       document.dispatchEvent(new CustomEvent('sy:restored'));
     }
   });
 
   window.Common = {
-    randInt: randInt, shuffled: shuffled, bloom: bloom, leaveTo: leaveTo, flash: flash,
+    randInt: randInt, shuffled: shuffled, bloom: bloom, leaveTo: leaveTo,
+    press: press, pressThen: pressThen, puff: puff, afterShown: afterShown,
     revealAbove: revealAbove, initInfo: initInfo, saveState: saveState, loadState: loadState,
     clearState: clearState, reduceMotion: reduceMotion, IMG: IMG
   };

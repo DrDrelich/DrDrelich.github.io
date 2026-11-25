@@ -8,16 +8,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Archivo:wdth,wght@100,400;100,500;100,700&family=Rubik+Mono+One&family=Zilla+Slab:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/app.css?v=4">
 <style>
   /* Figma 05 — card content, coordinates relative to the card (top-left = 16, 248) */
   .sent { padding: calc(106.8 * var(--u)) calc(22 * var(--u)) calc(30.7 * var(--u)); text-align: center;
-          animation: settle .9s cubic-bezier(.22, 1, .36, 1) .25s both; transform-origin: 50% 0; }
+          transform-origin: 50% 0; }
+  /* starts from rest 1 s after the page has loaded (.go): a little lift and wobble */
+  .sent.go { animation: settle 1.05s cubic-bezier(.22, 1, .36, 1) both; }
   @keyframes settle {
-    0% { transform: rotate(-1.6deg) translateY(calc(-6 * var(--u))); }
-    18% { transform: rotate(.9deg); }
-    40% { transform: rotate(-.45deg); }
-    65% { transform: rotate(.2deg); }
+    0% { transform: none; }
+    14% { transform: rotate(-1.6deg) translateY(calc(-6 * var(--u))); }
+    30% { transform: rotate(.9deg); }
+    48% { transform: rotate(-.45deg); }
+    70% { transform: rotate(.2deg); }
     100% { transform: none; }
   }
   .glass {
@@ -86,9 +89,9 @@
 </main>
 <div class="bloom entry" id="bloom"></div>
 
-<script src="assets/sound.js"></script>
-<script src="assets/common.js"></script>
-<script src="assets/slogans.js"></script>
+<script src="assets/sound.js?v=4"></script>
+<script src="assets/common.js?v=4"></script>
+<script src="assets/slogans.js?v=4"></script>
 <script>
 (function () {
   var C = window.Common;
@@ -100,16 +103,21 @@
   document.getElementById('home').addEventListener('click', function () {
     if (busy) return;
     busy = true;
-    C.flash(this);
-    C.leaveTo('./');
+    C.pressThen(this, function () { C.leaveTo('./'); });
   });
   document.addEventListener('sy:restored', function () { busy = false; });
   setTimeout(function () { var b = document.getElementById('bloom'); if (b) { b.classList.remove('entry'); b.style.display = 'none'; } }, 800);
 
   /* Confetti — same system as the live thank-you page (120 pieces, 5 s,
      spawned over the outer 42 % on each side, fade in the last 20 %),
-     coloured with the mobile design palette. */
+     coloured with the mobile design palette. Like the card's wobble it starts
+     1 s after the page has loaded. */
   if (C.reduceMotion) return;
+  C.afterShown(document.querySelector('.screen'), function () {
+    document.querySelector('.sent').classList.add('go');
+    confetti();
+  });
+  function confetti() {
   var canvas = document.getElementById('confetti');
   var ctx = canvas.getContext('2d');
   var DURATION = 5000, PIECE_COUNT = 120;
@@ -160,6 +168,7 @@
     else ctx.clearRect(0, 0, W(), H());
   }
   requestAnimationFrame(tick);
+  }
 })();
 </script>
 </body>

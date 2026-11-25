@@ -271,7 +271,7 @@
         next(600 + randInt(700));
       }, delay);
     }
-    next(900 + randInt(500));
+    next(1000 + randInt(500));   // screen-load animations start 1 s in
   };
   Slogan.prototype.stop = function () { clearTimeout(this.timer); };
 

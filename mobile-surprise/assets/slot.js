@@ -1,10 +1,14 @@
 /* Screen 1 (slot machine) + screen 2 (mysterious box).
    Sequence, timings and sounds follow the live site's component logic:
    pull -> lever + both reels spin (left 5 s, right 7 s; tick per row, thunk per
-   stop) -> both stopped: losers dim, Accept appears -> Accept: flash, whoosh,
+   stop) -> both stopped: losers dim, Accept appears -> Accept: whoosh,
    bloom, swap at 430 ms -> tap lock: crack + whoosh + bloom, open at 430 ms,
    tray rises, chime -> pick envelope (chime) -> Accept: whoosh, bloom,
-   confirmation.html at 430 ms. */
+   confirmation.html at 430 ms.
+   Added on top: buttons that change the view press (darker, lifted, smoke
+   puff) and wait 1 s first; 1 s after the slot screen loads the lever pulls
+   itself once as a silent teaser (no result, no Accept); 1 s after the box
+   screen appears the floating cards and dice spring into their places. */
 (function () {
   var C = window.Common, S = window.Sound;
 
@@ -13,10 +17,9 @@
   var OFFERS = [
     'Private Maldives Overwater Villa',
     'Kyoto Imperial Ryokan Retreat',
-    'Venice–Istanbul Orient Express',
-    'Antarctic Expedition Voyage',
-    'Amalfi Coast Yacht Charter'
+    'Venice–Istanbul Orient Express'
   ];
+  var ENV_CX = [101, 201, 301];   // envelope centres (Figma x), see .env in app.css
   var ROW = 28.45;          // Figma row height (5 rows fill the 142.3 window)
   var STRIP_ROWS = 20;      // two full colour/word periods (10 rows each)
   var LIVE_ROW = 48;        // live reel row height, for blur parity
@@ -59,12 +62,15 @@
   };
   // Live spin profile: constant speed for 62 % of the time, then linear
   // deceleration; the left reel runs one way, the right reel the other.
-  Reel.prototype.spin = function (target, dur, done) {
+  // opts.cycles = full word cycles (live: 40 left / 56 right); opts.silent = no ticks.
+  Reel.prototype.spin = function (target, dur, done, opts) {
     var self = this;
+    opts = opts || {};
     var cur = this.centerIndex();
+    var turns = opts.cycles || (this.key === 'L' ? 40 : 56);
     var D = this.key === 'L'
-      ? -(5 * 40 + ((((cur - target) % 5) + 5) % 5))
-      : (5 * 56 + ((((target - cur) % 5) + 5) % 5));
+      ? -(5 * turns + ((((cur - target) % 5) + 5) % 5))
+      : (5 * turns + ((((target - cur) % 5) + 5) % 5));
     var from = Math.round(this.p);
     var Tc = dur * 0.62, Tb = dur - Tc;
     var vC = D / (Tc + Tb / 2);
@@ -78,7 +84,7 @@
       var bLive = Math.min(16, Math.abs(vel) * LIVE_ROW * 6.5);
       self.render(bLive * (ROW * u / LIVE_ROW));
       var rows = Math.floor(Math.abs(pos));
-      if (rows > lastRow) { lastRow = rows; if (now - lastTickAt >= gap) { lastTickAt = now; S.tick(self.key); } }
+      if (rows > lastRow) { lastRow = rows; if (!opts.silent && now - lastTickAt >= gap) { lastTickAt = now; S.tick(self.key); } }
       if (e >= dur) {
         self.p = (((from + D) % 10) + 10) % 10 + 10;   // same row, small number
         self.render(0);
@@ -88,6 +94,11 @@
       self.raf = requestAnimationFrame(step);
     }
     this.raf = requestAnimationFrame(step);
+  };
+  Reel.prototype.stop = function () {
+    cancelAnimationFrame(this.raf);
+    this.p = Math.round(this.p);
+    this.render(0);
   };
   Reel.prototype.setCenter = function (wordIdx) {
     this.p = 10 + wordIdx; this.render(0);
@@ -112,6 +123,8 @@
   var wRight = document.getElementById('w-right');
 
   var busy = false, transitioning = false, pending = 0;
+  var pressing = false;     // a button's 1 s press delay is running
+  var teaser = null;        // the silent intro spin, while it runs
   var pair = null;          // [leftIdx, rightIdx] of the last completed draw
 
   function setPullButton(mode) {
@@ -137,8 +150,41 @@
     el.classList.remove('later', 'pop'); void el.offsetWidth; el.classList.add('pop');
   }
 
+  function pullLever() {
+    if (!lever.animate || C.reduceMotion) return null;
+    return lever.animate([
+      { transform: 'none', offset: 0, easing: 'cubic-bezier(.42,0,.3,1)' },
+      { transform: 'rotate(12deg) scaleY(.42)', offset: 0.20 },
+      { transform: 'rotate(12deg) scaleY(.42)', offset: 0.33, easing: 'cubic-bezier(.25,0,.25,1)' },
+      { transform: 'rotate(-4deg) scaleY(1.05)', offset: 0.72 },
+      { transform: 'rotate(1.5deg) scaleY(.98)', offset: 0.87 },
+      { transform: 'none', offset: 1 }
+    ], { duration: 1150, easing: 'linear' });
+  }
+
+  /* Intro teaser, 1 s after the slot screen has loaded: the lever pulls itself
+     and the reels shuffle for ~2 s, then come back to the same idle words.
+     Silent, no result line, no Accept button. A real pull cancels it. */
+  function playTeaser() {
+    if (busy || transitioning || pressing || pair || slot.hidden || C.reduceMotion) return;
+    var left = 2;
+    function end() { if (--left === 0) teaser = null; }
+    teaser = { lever: pullLever() };
+    reelL.spin(reelL.centerIndex(), 1700, end, { cycles: 8, silent: true });
+    // even cycle counts: the strip's colour pattern repeats every 2 word cycles,
+    // so both reels end on exactly the rows they started from
+    reelR.spin(reelR.centerIndex(), 2300, end, { cycles: 12, silent: true });
+  }
+  function stopTeaser() {
+    if (!teaser) return;
+    if (teaser.lever) teaser.lever.cancel();
+    reelL.stop(); reelR.stop();
+    teaser = null;
+  }
+
   function pull() {
-    if (busy || transitioning) return;
+    if (busy || transitioning || pressing) return;
+    stopTeaser();
     busy = true;
     S.init();
     emphasize(false);
@@ -148,16 +194,7 @@
     copyResult.classList.add('fade-out');
     copyIdle.classList.remove('fade-out');
 
-    if (lever.animate && !C.reduceMotion) {
-      lever.animate([
-        { transform: 'none', offset: 0, easing: 'cubic-bezier(.42,0,.3,1)' },
-        { transform: 'rotate(12deg) scaleY(.42)', offset: 0.20 },
-        { transform: 'rotate(12deg) scaleY(.42)', offset: 0.33, easing: 'cubic-bezier(.25,0,.25,1)' },
-        { transform: 'rotate(-4deg) scaleY(1.05)', offset: 0.72 },
-        { transform: 'rotate(1.5deg) scaleY(.98)', offset: 0.87 },
-        { transform: 'none', offset: 1 }
-      ], { duration: 1150, easing: 'linear' });
-    }
+    pullLever();
 
     // Two independent, uniformly random draws (25 equally likely pairs).
     var tL = C.randInt(5), tR = C.randInt(5);
@@ -190,11 +227,15 @@
   }
 
   lever.addEventListener('click', pull);
-  btnPull.addEventListener('click', pull);
+  btnPull.addEventListener('click', function () {
+    if (busy || transitioning || pressing) return;
+    C.press(btnPull);        // no view change here, so the reels start right away
+    pull();
+  });
   btnAccept.addEventListener('click', function () {
-    if (transitioning || busy) return;
-    C.flash(btnAccept);
-    setTimeout(toBox, 150);
+    if (transitioning || busy || pressing) return;
+    pressing = true;
+    C.pressThen(btnAccept, function () { pressing = false; toBox(); });
   });
 
   /* ================= screen swaps ================= */
@@ -221,6 +262,7 @@
     var go = function () {
       swap(slot, box, !opts.silent);
       if (!opts.noHistory && location.hash !== '#box') history.pushState({ s: 'box' }, '', '#box');
+      C.afterShown(box, boxIntro);
     };
     if (opts.silent) { go(); transitioning = false; return; }
     setTimeout(go, 430);                                  // behind the bloom's brightest moment
@@ -250,15 +292,63 @@
 
   function resetBox() {
     phase = 'closed'; envReady = false; selected = null;
-    box.classList.remove('open', 'ready', 'unlocking');
+    box.classList.remove('open', 'ready', 'unlocking', 'live');
+    introRun++;
+    // start pose for the load animation (cards and dice spring into place from here)
+    if (!C.reduceMotion && canCompose) box.classList.add('intro-pre');
     boxTop.style.setProperty('--zh', 706);
     btnUnlock.hidden = false;
     renderSelection();
   }
 
+  /* Screen 2 load animation. The floating cards and the two dice start a
+     little off their Figma spots (.intro-pre in app.css: a fifth of the way
+     towards where they go when the box opens) and, 1 s after the screen
+     appears, spring one way into the target layout, with the same easing as
+     the box-opening transition. Nothing on the pool table moves. On the open
+     box (coming back from the confirmation page) the envelopes hop in a wave
+     instead. Uses the individual translate/rotate/scale properties, so the
+     Figma placement in each element's transform stays untouched. Then the
+     lock hint pulses. */
+  var introRun = 0;
+  var SPRING = 'cubic-bezier(.34, 1.56, .64, 1)';
+  var DRIFT = 'cubic-bezier(.34, 1.32, .38, 1)';        // = the box-opening transition (.box-d)
+  var canCompose = window.CSS && CSS.supports && CSS.supports('translate', '1px 1px');
+  function boxIntro() {
+    if (box.hidden) return;
+    var run = introRun;
+    function live() { if (run === introRun) box.classList.add('live'); }
+    if (C.reduceMotion || !canCompose || !box.animate) { live(); return; }
+    var k = u;
+    if (box.classList.contains('open')) {
+      envBtns.forEach(function (b, i) {
+        b.querySelector('img').animate([
+          { translate: '0 0', rotate: '0deg' },
+          { translate: '0 ' + (-9 * k) + 'px', rotate: (i % 2 ? 4 : -4) + 'deg', offset: 0.38 },
+          { translate: '0 0', rotate: '0deg' }
+        ], { duration: 640, delay: 120 + i * 110, easing: SPRING });
+      });
+      setTimeout(live, 900);
+      return;
+    }
+    // start from the .intro-pre pose (read back from CSS), end on the Figma spots
+    [['.d-cards', 0], ['.d-die1', 80], ['.d-die2', 150]].forEach(function (d) {
+      var el = box.querySelector(d[0]);
+      if (!el) return;
+      var cs = getComputedStyle(el);
+      el.animate([
+        { translate: cs.translate, rotate: cs.rotate, scale: cs.scale },
+        { translate: '0px 0px', rotate: '0deg', scale: '1' }
+      ], { duration: 950, delay: d[1], easing: DRIFT, fill: 'backwards' });
+    });
+    box.classList.remove('intro-pre');       // the animations hold the start pose meanwhile
+    setTimeout(live, 1100);
+  }
+
   function unlock() {
-    if (phase !== 'closed' || transitioning) return;
+    if (phase !== 'closed' || transitioning || pressing) return;
     transitioning = true;
+    box.classList.remove('intro-pre');       // opened before the load animation ran
     box.classList.add('unlocking');
     S.init(); S.crack(); S.whoosh();
     C.bloom();
@@ -280,7 +370,7 @@
       b.setAttribute('aria-checked', i === selected ? 'true' : 'false');
     });
     if (has) {
-      envBar.style.setProperty('--bx', 65 + 68 * selected);
+      envBar.style.setProperty('--bx', ENV_CX[selected]);
       envName.textContent = 'Envelope ' + (selected + 1);
       envOffer.textContent = OFFERS[selected];
       btnAccept2.textContent = 'Envelope ' + (selected + 1) + ' - Accept Your Destiny';
@@ -295,7 +385,7 @@
   }
 
   function selectEnv(i) {
-    if (!envReady) return;
+    if (!envReady || transitioning) return;
     S.init();
     if (selected !== i) S.chime();
     selected = i;
@@ -308,26 +398,29 @@
   });
   // Live behaviour: tapping the scene outside the envelopes clears the pick.
   box.addEventListener('click', function (e) {
-    if (selected === null || phase !== 'open') return;
+    if (selected === null || phase !== 'open' || transitioning) return;
     if (e.target.closest('.env, .actions, .icon-btn, .title')) return;
     selected = null;
     renderSelection();
   });
 
   chest.addEventListener('click', unlock);
-  btnUnlock.addEventListener('click', unlock);
+  btnUnlock.addEventListener('click', function () {
+    if (phase !== 'closed' || transitioning || pressing) return;
+    pressing = true;
+    C.pressThen(btnUnlock, function () { pressing = false; unlock(); });
+  });
 
   btnAccept2.addEventListener('click', function (e) {
     e.stopPropagation();
     if (transitioning || selected === null) return;
     transitioning = true;
-    C.flash(btnAccept2);
     C.saveState({ pair: pair, selected: selected });
-    C.leaveTo('confirmation.html');
+    C.pressThen(btnAccept2, function () { C.leaveTo('confirmation.html'); });
   });
 
   document.getElementById('box-back').addEventListener('click', function () {
-    if (transitioning) return;
+    if (transitioning || pressing) return;
     if (history.state && history.state.s === 'box') history.back();
     else { history.replaceState(null, '', location.pathname); toSlot(); }
   });
@@ -357,8 +450,9 @@
       box.classList.add('open', 'ready');
       boxTop.style.setProperty('--zh', 762);
       btnUnlock.hidden = true;
-      selected = typeof st.selected === 'number' ? st.selected : null;
+      selected = typeof st.selected === 'number' && st.selected < envBtns.length ? st.selected : null;
       renderSelection();
+      C.afterShown(box, boxIntro);
       // history: [slot] -> [box], so Back returns to the drawn pair
       history.replaceState(null, '', location.pathname);
       history.pushState({ s: 'box' }, '', '#box');
@@ -367,12 +461,16 @@
     }
   })();
 
-  document.addEventListener('sy:restored', function () { transitioning = false; });
+  document.addEventListener('sy:restored', function () { transitioning = false; pressing = false; });
+
+  // first visit of the slot screen: the teaser, 1 s after it has loaded
+  C.afterShown(slot, playTeaser);
 
   window.addEventListener('resize', function () {
     measure(); reelL.render(0); reelR.render(0);
   });
 
   // debug hook for automated checks (no UI)
-  window.__sy = { reelL: reelL, reelR: reelR, pull: pull, get pair() { return pair; }, slogans: [sloganSlot, sloganBox] };
+  window.__sy = { reelL: reelL, reelR: reelR, pull: pull, get pair() { return pair; }, slogans: [sloganSlot, sloganBox],
+    get teaser() { return !!teaser; }, boxIntro: boxIntro };
 })();
