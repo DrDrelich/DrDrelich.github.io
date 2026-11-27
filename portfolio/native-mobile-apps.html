@@ -1435,6 +1435,21 @@
     <div class="sm"><img src="./NATIVE MOBILE APPS/surprise-me/4.webp" width="402" height="874" alt="" decoding="async" /></div>
   </template>
 
+  <!-- RTA Dubai screens (Figma page "RTA Dubai": 243:2, 244:2, 245:2, 246:2), exported at 2×,
+       shown with the Surprise Me phone style (.sm) -->
+  <template id="tpl-rta-tap">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/rta-dubai/1.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+  <template id="tpl-rta-trip">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/rta-dubai/2.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+  <template id="tpl-rta-zone">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/rta-dubai/3.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+  <template id="tpl-rta-pay">
+    <div class="sm"><img src="./NATIVE MOBILE APPS/rta-dubai/4.webp" width="402" height="874" alt="" decoding="async" /></div>
+  </template>
+
   <script>
     /* -----------------------------------------------------------------
        Gallery sections.
@@ -1468,6 +1483,16 @@
          {"template": "tpl-sm-envelope", "left": 26.2},
          {"template": "tpl-sm-vip",      "left": 50.75},
          {"template": "tpl-sm-sent",     "left": 75.4}
+       ]},
+      {"title": "Native iOS application", "alt": "Dubai transport and parking app: tapping in with a nol Gold card in Apple Wallet, a trip in progress with the live fare estimate, parking zone 318A in Dubai Marina with free spaces and tariffs, and paying for two hours of parking with Apple Pay",
+       /* Figma "RTA Dubai" (238:2): four 402×874 screens, same box and phone
+          geometry as Surprise Me and Deu Quest. */
+       "layout": {"aspect": "2000 / 1057.9", "top": 2.269, "width": 22.95, "slot": "live-slot--dq"},
+       "overlays": [
+         {"template": "tpl-rta-tap",  "left": 1.6},
+         {"template": "tpl-rta-trip", "left": 26.2},
+         {"template": "tpl-rta-zone", "left": 50.75},
+         {"template": "tpl-rta-pay",  "left": 75.4}
        ]},
       {"file": "3.webp", "title": "Native iOS application", "alt":"Native iOS driving rewards app in German: daily activities with points, a quests list, the Berlin Christmas rally map and a driver profile with badges",
        /* Live screens instead of the image (Figma "Deu Quest Mobile"), same phone
